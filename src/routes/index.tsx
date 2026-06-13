@@ -90,15 +90,21 @@ function Hero() {
 /* ---------- Booking widget ---------- */
 function BookingWidget() {
   const [guests, setGuests] = useState(2);
+  const [checkIn, setCheckIn] = useState(new Date().toISOString().slice(0, 10));
+  const [checkOut, setCheckOut] = useState(new Date(Date.now() + 3 * 864e5).toISOString().slice(0, 10));
+  const navigate = useNavigate();
   return (
     <section id="booking" className="relative -mt-20 z-20 px-6">
       <div className="max-w-6xl mx-auto bg-background shadow-luxe border border-border/60">
         <form
-          onSubmit={(e) => { e.preventDefault(); document.getElementById("rooms")?.scrollIntoView({ behavior: "smooth" }); }}
+          onSubmit={(e) => {
+            e.preventDefault();
+            navigate({ to: "/availability", search: { checkIn, checkOut, guests, room: "" } });
+          }}
           className="grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-border"
         >
-          <Field label="Check-in"><input type="date" className="w-full bg-transparent outline-none text-foreground" defaultValue={new Date().toISOString().slice(0,10)} /></Field>
-          <Field label="Check-out"><input type="date" className="w-full bg-transparent outline-none text-foreground" defaultValue={new Date(Date.now()+3*864e5).toISOString().slice(0,10)} /></Field>
+          <Field label="Check-in"><input type="date" className="w-full bg-transparent outline-none text-foreground" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} /></Field>
+          <Field label="Check-out"><input type="date" className="w-full bg-transparent outline-none text-foreground" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} /></Field>
           <Field label="Guests">
             <div className="flex items-center justify-between">
               <button type="button" onClick={() => setGuests(Math.max(1, guests-1))} className="p-1 text-muted-foreground hover:text-primary"><Minus className="h-4 w-4" /></button>
