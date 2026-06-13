@@ -9,9 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AvailabilityRouteImport } from './routes/availability'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RoomsSlugRouteImport } from './routes/rooms.$slug'
 
+const AvailabilityRoute = AvailabilityRouteImport.update({
+  id: '/availability',
+  path: '/availability',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -25,32 +31,43 @@ const RoomsSlugRoute = RoomsSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/availability': typeof AvailabilityRoute
   '/rooms/$slug': typeof RoomsSlugRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/availability': typeof AvailabilityRoute
   '/rooms/$slug': typeof RoomsSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/availability': typeof AvailabilityRoute
   '/rooms/$slug': typeof RoomsSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/rooms/$slug'
+  fullPaths: '/' | '/availability' | '/rooms/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/rooms/$slug'
-  id: '__root__' | '/' | '/rooms/$slug'
+  to: '/' | '/availability' | '/rooms/$slug'
+  id: '__root__' | '/' | '/availability' | '/rooms/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AvailabilityRoute: typeof AvailabilityRoute
   RoomsSlugRoute: typeof RoomsSlugRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/availability': {
+      id: '/availability'
+      path: '/availability'
+      fullPath: '/availability'
+      preLoaderRoute: typeof AvailabilityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -70,8 +87,19 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AvailabilityRoute: AvailabilityRoute,
   RoomsSlugRoute: RoomsSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
