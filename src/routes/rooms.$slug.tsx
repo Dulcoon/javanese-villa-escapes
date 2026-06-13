@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, BedDouble, Bath, Users, Maximize, Eye, Check, ChevronRight } from "lucide-react";
-import { getRoom, rooms, formatIDR } from "@/lib/rooms";
+import { getRoom, rooms, formatIDR, type Room } from "@/lib/rooms";
 
 export const Route = createFileRoute("/rooms/$slug")({
   loader: ({ params }) => {
