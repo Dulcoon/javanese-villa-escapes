@@ -30,7 +30,7 @@ export const Route = createFileRoute("/rooms/$slug")({
 });
 
 function RoomDetail() {
-  const { room } = Route.useLoaderData();
+  const { room } = Route.useLoaderData() as { room: Room };
   const stats = [
     { icon: Maximize, label: room.size },
     { icon: BedDouble, label: `${room.bed} bed` },
