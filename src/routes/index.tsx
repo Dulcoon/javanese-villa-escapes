@@ -171,11 +171,6 @@ function About() {
 }
 
 /* ---------- Rooms ---------- */
-const rooms = [
-  { img: roomJoglo, name: "Joglo Suite", desc: "Soaring carved ceilings and a four-poster teak bed beneath antique pendalungan beams.", size: "65 m²", bed: "King", guests: 2, price: 220 },
-  { img: roomPavilion, name: "Garden Pavilion", desc: "A private plunge pool and outdoor daybed framed by hand-carved jepara screens.", size: "85 m²", bed: "King", guests: 2, price: 340 },
-  { img: roomRoyal, name: "Royal Two-Bedroom Villa", desc: "Two-storey heritage residence with rice-paddy views and a private butler.", size: "180 m²", bed: "2 Kings", guests: 4, price: 480 },
-];
 function Rooms() {
   return (
     <section id="rooms" className="py-32 px-6 bg-ivory/40">
@@ -187,23 +182,25 @@ function Rooms() {
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {rooms.map((r) => (
             <article key={r.name} className="group bg-background border border-border/60 overflow-hidden flex flex-col">
-              <div className="aspect-[4/5] overflow-hidden">
+              <Link to="/rooms/$slug" params={{ slug: r.slug }} className="aspect-[4/5] overflow-hidden block">
                 <img src={r.img} alt={r.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              </div>
+              </Link>
               <div className="p-8 flex-1 flex flex-col">
-                <h3 className="font-serif text-2xl text-primary">{r.name}</h3>
+                <Link to="/rooms/$slug" params={{ slug: r.slug }}>
+                  <h3 className="font-serif text-2xl text-primary hover:text-gold transition-colors">{r.name}</h3>
+                </Link>
                 <p className="mt-3 text-sm text-muted-foreground leading-relaxed flex-1">{r.desc}</p>
                 <div className="mt-6 flex items-center gap-4 text-xs text-muted-foreground border-t border-border/60 pt-4">
                   <span>{r.size}</span><span>·</span><span>{r.bed} bed</span><span>·</span><span>{r.guests} guests</span>
                 </div>
                 <div className="mt-6 flex items-end justify-between">
                   <div>
-                    <div className="font-serif text-3xl text-primary">${r.price}</div>
+                    <div className="font-serif text-2xl text-primary">{formatIDR(r.price)}</div>
                     <div className="text-xs text-muted-foreground tracking-wide uppercase">per night</div>
                   </div>
-                  <a href="#booking" className="text-sm tracking-wide text-gold hover:text-primary border-b border-gold pb-0.5">
-                    Reserve
-                  </a>
+                  <Link to="/rooms/$slug" params={{ slug: r.slug }} className="text-sm tracking-wide text-gold hover:text-primary border-b border-gold pb-0.5">
+                    View Details
+                  </Link>
                 </div>
               </div>
             </article>
