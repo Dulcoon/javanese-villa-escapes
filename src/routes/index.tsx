@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   Wifi, Waves, UtensilsCrossed, Car, Plane, Users, Sparkles, Trees,
@@ -6,9 +6,6 @@ import {
 } from "lucide-react";
 
 import heroVilla from "@/assets/hero-villa.jpg";
-import roomJoglo from "@/assets/room-joglo.jpg";
-import roomPavilion from "@/assets/room-pavilion.jpg";
-import roomRoyal from "@/assets/room-royal.jpg";
 import expBatik from "@/assets/exp-batik.jpg";
 import expGamelan from "@/assets/exp-gamelan.jpg";
 import expDinner from "@/assets/exp-dinner.jpg";
@@ -17,6 +14,8 @@ import aboutDetail from "@/assets/about-detail.jpg";
 import galleryPool from "@/assets/gallery-pool.jpg";
 import galleryGarden from "@/assets/gallery-garden.jpg";
 import galleryRestaurant from "@/assets/gallery-restaurant.jpg";
+import roomPavilion from "@/assets/room-pavilion.jpg";
+import { rooms, formatIDR } from "@/lib/rooms";
 
 export const Route = createFileRoute("/")({
   head: () => ({
