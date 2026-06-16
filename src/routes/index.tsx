@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Wifi, Waves, UtensilsCrossed, Car, Plane, Users, Sparkles, Trees,
   MapPin, Phone, Mail, Star, ChevronDown, Minus, Plus, ArrowRight,
@@ -15,7 +15,16 @@ import galleryPool from "@/assets/gallery-pool.jpg";
 import galleryGarden from "@/assets/gallery-garden.jpg";
 import galleryRestaurant from "@/assets/gallery-restaurant.jpg";
 import roomPavilion from "@/assets/room-pavilion.jpg";
+import carousel1 from "@/assets/carousel1.jpg";
+import carousel2 from "@/assets/carousel2.jpg";
+import carousel3 from "@/assets/carousel3.jpg";
+import carousel4 from "@/assets/carousel4.jpg";
+
 import { rooms, formatIDR } from "@/lib/rooms";
+import {
+  Icon5Bed, Icon5Bath, IconKitchen, IconPool, IconFridge, IconAC, IconWifi,
+  IconWaterHeater, IconDispenser, IconTV, IconAmenities, IconParking, IconSnack, IconWelcomeDrink
+} from "@/components/Icons";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -58,31 +67,45 @@ function Nav() {
 
 /* ---------- Hero ---------- */
 function Hero() {
+  const images = [carousel1, carousel2, carousel3, carousel4];
+  const [currentIdx, setCurrentIdx] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentIdx((prev) => (prev + 1) % images.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
-    <section id="top" className="relative h-screen min-h-[720px] w-full overflow-hidden">
-      <img src={heroVilla} alt="Villa Sekar Jawa di kala senja" className="absolute inset-0 h-full w-full object-cover" />
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/70" />
+    <section id="top" className="relative h-screen min-h-[720px] w-full overflow-hidden bg-black">
+      {images.map((img, idx) => (
+        <img
+          key={img}
+          src={img}
+          alt={`Marme Villa Carousel ${idx + 1}`}
+          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms] ease-in-out ${idx === currentIdx ? "opacity-100" : "opacity-0"
+            }`}
+        />
+      ))}
+      <div className="absolute inset-0 bg-black/40 bg-gradient-to-b from-primary/60 via-primary/30 to-primary/80 backdrop-blur-[1px]" />
       <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
-        <span className="eyebrow text-gold mb-6">Marme Villa Jogja · Warisan Budaya</span>
-        <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl text-ivory max-w-5xl text-balance leading-[1.05]">
-          Rasakan Keindahan Warisan Budaya Jawa
+        <span className="eyebrow text-gold mb-6 drop-shadow-md">Marme Villa Jogja · Warisan Budaya</span>
+        <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl text-ivory max-w-5xl text-balance leading-[1.05] drop-shadow-xl">
+          Exceptional Service, Memorable Stays
         </h1>
-        <p className="mt-8 max-w-xl text-ivory/85 text-lg font-light leading-relaxed">
-          Sebuah villa budaya mewah yang memadukan tradisi, ketenangan, dan kenyamanan modern —
-          terletak di antara terasering sawah di jantung Jawa Tengah.
+        <p className="mt-8 max-w-xl text-ivory text-lg font-light leading-relaxed drop-shadow-md">
+          Marme Villa Jogja lebih dari sekadar tempat menginap. Villa ini dirancang untuk menciptakan momen hangat yang berharga bersama keluarga dan orang terdekat
         </p>
         <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
-          <a href="#booking" className="px-8 py-4 bg-gold text-gold-foreground font-medium tracking-wide hover:bg-gold/90 transition-colors rounded-full">
+          <a href="#rooms" className="px-8 py-4 bg-gold text-gold-foreground font-medium tracking-wide hover:bg-gold/90 transition-colors rounded-full shadow-lg">
             Pesan Liburan Anda
           </a>
-          <a href="#about" className="px-8 py-4 border border-ivory/60 text-ivory hover:bg-ivory/10 transition-colors tracking-wide rounded-full">
-            Jelajahi Villa
+          <a href="#about" className="px-8 py-4 border border-ivory/80 text-ivory hover:bg-ivory/20 transition-colors tracking-wide rounded-full shadow-lg backdrop-blur-sm">
+            Tentang Kami
           </a>
         </div>
       </div>
-      <a href="#booking" className="absolute bottom-10 left-1/2 -translate-x-1/2 text-ivory/70 animate-bounce">
-        <ChevronDown className="h-6 w-6" />
-      </a>
     </section>
   );
 }
@@ -142,22 +165,19 @@ function About() {
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
         <div className="relative aspect-[3/4] overflow-hidden rounded-2xl">
           <img src={aboutDetail} alt="Detail ukiran kayu jati Jawa" loading="lazy" className="h-full w-full object-cover" />
-          <div className="absolute -bottom-6 -right-6 hidden md:block bg-gold text-gold-foreground p-8 max-w-[220px]">
+          {/* <div className="absolute -bottom-6 -right-6 hidden md:block bg-gold text-gold-foreground p-8 max-w-[220px]">
             <div className="font-serif text-4xl">1923</div>
-            <div className="eyebrow mt-2 text-gold-foreground/80">Tahun Warisan</div>
-          </div>
+          </div> */}
         </div>
         <div>
-          <span className="eyebrow">Kisah Kami</span>
+          <span className="eyebrow">Our Story</span>
           <h2 className="font-serif text-4xl md:text-5xl mt-4 leading-tight text-balance">
-            Tempat perlindungan kemewahan Jawa modern.
+            Where Comfort Meets Timeless Mediterranean Charm
           </h2>
           <p className="mt-8 text-muted-foreground leading-relaxed text-lg">
-            Pilar-pilar jati berukir tangan, lantai teraso yang mengilap, dan gemericik air taman air yang lembut — Marme Villa Jogja merupakan restorasi paviliun kerajaan tahun 1920-an, dipindahkan batu demi batu dari keraton Yogyakarta dan dilahirkan kembali sebagai tempat peristirahatan intim bagi para pelancong yang mencari kedalaman makna, keindahan, dan ketenangan.
-          </p>
+            Marme Villa Jogja hadir dengan desain elegan khas Mediterania. Sudut lengkung, guci, batu alam, dan tumbuhan tropis akan membuatmu seperti di dalam keajaiban labirin Mediterania Tropical yang sesungguhnya. </p>
           <p className="mt-4 text-muted-foreground leading-relaxed text-lg">
-            Setiap tekstil ditenun di pulau ini, setiap hidangan disiapkan dari resep warisan leluhur. Tempat yang dulunya merupakan rumah keluarga bangsawan kini menjadi milik Anda, untuk sementara waktu.
-          </p>
+            Villa ini menawarkan suasana santai di pedesaan yang jauh dari kesibukan kota. Ruang yang luas, pemandangan indah, dan fasilitas lengkap akan memberikan pengalaman menginap yang nyaman. Dengan perpaduan kenyamanan modern dan pesona khas Mediterania, setiap kunjungan disini akan terasa istimewa dan penuh kehangatan.</p>
           <div className="mt-12 grid grid-cols-2 gap-8">
             {values.map((val) => (
               <div key={val.v}>
@@ -193,7 +213,7 @@ function Rooms() {
                 </Link>
                 <p className="mt-3 text-sm text-muted-foreground leading-relaxed flex-1">{r.desc}</p>
                 <div className="mt-6 flex items-center gap-4 text-xs text-muted-foreground border-t border-border/60 pt-4">
-                  <span>{r.size}</span><span>·</span><span>ranjang {r.bed}</span><span>·</span><span>maks {r.maxGuests} tamu</span>
+                  <span>{r.size}</span><span>·</span><span>ranjang {r.bed}</span><span>·</span><span>{r.baseGuests} tamu</span>
                 </div>
                 <div className="mt-6 flex items-end justify-between">
                   <div>
@@ -248,25 +268,48 @@ function Experiences() {
 }
 
 /* ---------- Amenities ---------- */
-const amenities = [
-  { i: Waves, t: "Kolam Renang Infinity" }, { i: Wifi, t: "Wi-Fi Gratis" },
-  { i: Sparkles, t: "Spa & Kebugaran" }, { i: UtensilsCrossed, t: "Restoran Khas" },
-  { i: Car, t: "Parkir Pribadi" }, { i: Plane, t: "Antar Jemput Bandara" },
-  { i: Users, t: "Pendopo Pertemuan" }, { i: Trees, t: "Taman Tropis" },
+const amenitiesList = [
+  { i: Icon5Bed, t: "5 Bed room" },
+  { i: Icon5Bath, t: "5 Bath room" },
+  { i: IconKitchen, t: "Kitchen" },
+  { i: IconPool, t: "Private pool" },
+  { i: IconFridge, t: "Kulkas" },
+  { i: IconAC, t: "Air Conditioner" },
+  { i: IconWifi, t: "WiFi" },
+  { i: IconWaterHeater, t: "Waterheater" },
+  { i: IconDispenser, t: "Dispenser" },
+  { i: IconTV, t: "Smart TV 55\"" },
+  { i: IconAmenities, t: "Amenities" },
+  { i: IconParking, t: "Parking Area" },
+  { i: IconSnack, t: "Snack" },
+  { i: IconWelcomeDrink, t: "Welcome drink" },
 ];
+
 function Amenities() {
   return (
     <section className="py-32 px-6 bg-primary text-primary-foreground">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <span className="eyebrow">Fasilitas</span>
           <h2 className="font-serif text-4xl md:text-5xl mt-4">Segalanya untuk Kenyamanan Anda.</h2>
         </div>
+        
+        {/* Top 3 rows (12 items) */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-y-12 gap-x-8 text-center">
-          {amenities.map(({ i: Icon, t }) => (
-            <div key={t} className="flex flex-col items-center">
-              <Icon className="h-8 w-8 text-gold" strokeWidth={1.25} />
-              <div className="mt-4 text-sm tracking-wide">{t}</div>
+          {amenitiesList.slice(0, 12).map(({ i: Icon, t }) => (
+            <div key={t} className="flex flex-col items-center justify-start">
+              <Icon className="h-10 w-10 text-gold mb-4" strokeWidth={1.25} />
+              <div className="text-sm tracking-wide">{t}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom row (2 items, centered) */}
+        <div className="grid grid-cols-2 gap-x-8 max-w-sm mx-auto mt-12 text-center">
+          {amenitiesList.slice(12).map(({ i: Icon, t }) => (
+            <div key={t} className="flex flex-col items-center justify-start">
+              <Icon className="h-10 w-10 text-gold mb-4" strokeWidth={1.25} />
+              <div className="text-sm tracking-wide">{t}</div>
             </div>
           ))}
         </div>

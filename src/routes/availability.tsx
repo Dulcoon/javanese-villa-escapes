@@ -49,7 +49,7 @@ function AvailabilityPage() {
     const seed = (new Date(checkIn).getDate() + r.slug.length) % 5;
     return {
       ...r,
-      isAvailable: r.maxGuests >= guests && seed !== 0,
+      isAvailable: seed !== 0,
       remaining: Math.max(1, 3 - (seed % 3)),
     };
   });
@@ -150,7 +150,7 @@ function AvailabilityPage() {
                     <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
                       <span className="inline-flex items-center gap-1.5"><Maximize className="h-3.5 w-3.5 text-gold" />{r.size}</span>
                       <span className="inline-flex items-center gap-1.5"><BedDouble className="h-3.5 w-3.5 text-gold" />Ranjang {r.bed}</span>
-                      <span className="inline-flex items-center gap-1.5"><Users className="h-3.5 w-3.5 text-gold" />Hingga {r.maxGuests} tamu</span>
+                      <span className="inline-flex items-center gap-1.5"><Users className="h-3.5 w-3.5 text-gold" />Hingga {r.baseGuests} tamu</span>
                       <span className="inline-flex items-center gap-1.5"><Eye className="h-3.5 w-3.5 text-gold" />{r.view}</span>
                     </div>
                     {r.isAvailable && (

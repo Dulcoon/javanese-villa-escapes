@@ -8,7 +8,17 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { getRoom, rooms, formatIDR, type Room } from "@/lib/rooms";
 
+import { z } from "zod";
+import { zodValidator, fallback } from "@tanstack/zod-adapter";
+
+const searchSchema = z.object({
+  checkIn: fallback(z.string(), "").default(""),
+  checkOut: fallback(z.string(), "").default(""),
+  guests: fallback(z.number().int().min(1), 2).default(2),
+});
+
 export const Route = createFileRoute("/rooms/$slug")({
+  validateSearch: zodValidator(searchSchema),
   loader: ({ params }) => {
     const room = getRoom(params.slug);
     if (!room) throw notFound();
@@ -40,17 +50,22 @@ function RoomDetail() {
   const stats = [
     { icon: Maximize, label: room.size },
     { icon: BedDouble, label: `Ranjang ${room.bed}` },
-    { icon: Users, label: `Kapasitas dasar ${room.baseGuests} tamu (Maksimal ${room.maxGuests})` },
+    { icon: Users, label: `${room.baseGuests} tamu` },
     { icon: Bath, label: `${room.bathrooms} kamar mandi` },
     { icon: Eye, label: room.view },
   ];
 
+  const searchParams = Route.useSearch();
+
+  const initialFrom = searchParams.checkIn ? new Date(searchParams.checkIn) : startOfToday();
+  const initialTo = searchParams.checkOut ? new Date(searchParams.checkOut) : addDays(startOfToday(), 1);
+
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: startOfToday(),
-    to: addDays(startOfToday(), 1),
+    from: initialFrom,
+    to: initialTo,
   });
 
-  const [adults, setAdults] = React.useState(2);
+  const [adults, setAdults] = React.useState(searchParams.guests);
   const [children, setChildren] = React.useState(0);
   const [infants, setInfants] = React.useState(0);
 
@@ -234,7 +249,6 @@ function RoomDetail() {
                             <span className="w-4 text-center text-sm font-medium text-foreground">{adults}</span>
                             <button 
                               type="button"
-                              disabled={totalGuests >= room.maxGuests} 
                               onClick={() => setAdults(a => a + 1)} 
                               className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
                             >
@@ -261,7 +275,6 @@ function RoomDetail() {
                             <span className="w-4 text-center text-sm font-medium text-foreground">{children}</span>
                             <button 
                               type="button"
-                              disabled={totalGuests >= room.maxGuests} 
                               onClick={() => setChildren(a => a + 1)} 
                               className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
                             >
@@ -298,7 +311,7 @@ function RoomDetail() {
                         </div>
 
                         <div className="text-xs text-muted-foreground pt-4 border-t border-border/60">
-                          Maksimal {room.maxGuests} tamu (Dewasa + Anak-anak). Kapasitas dasar {room.baseGuests} tamu, lebih dari itu dikenakan biaya tambahan Rp 125.000/malam. Balita tidak dihitung dalam kuota.
+                          Kapasitas villa adalah {room.baseGuests} tamu, lebih dari itu dikenakan biaya tambahan Rp 125.000/orang/malam. Balita tidak dihitung.
                         </div>
                       </div>
                     </PopoverContent>
