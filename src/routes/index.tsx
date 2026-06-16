@@ -84,6 +84,8 @@ function Hero() {
           key={img}
           src={img}
           alt={`Marme Villa Carousel ${idx + 1}`}
+          loading={idx === 0 ? "eager" : "lazy"}
+          decoding={idx === 0 ? "sync" : "async"}
           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms] ease-in-out ${idx === currentIdx ? "opacity-100" : "opacity-0"
             }`}
         />
