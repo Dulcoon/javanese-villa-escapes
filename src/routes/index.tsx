@@ -20,10 +20,10 @@ import { rooms, formatIDR } from "@/lib/rooms";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Villa Sekar Jawa — Luxury Javanese Heritage Villa" },
-      { name: "description", content: "A luxury cultural villa blending traditional Javanese heritage, tranquility, and modern comfort. Book your private Joglo retreat." },
-      { property: "og:title", content: "Villa Sekar Jawa" },
-      { property: "og:description", content: "Luxury cultural villa in Central Java." },
+      { title: "Marme Villa Jogja — Villa Warisan Budaya Jawa yang Mewah" },
+      { name: "description", content: "Villa budaya mewah yang memadukan warisan tradisional Jawa, ketenangan, dan kenyamanan modern. Pesan Joglo pribadi Anda." },
+      { property: "og:title", content: "Marme Villa Jogja" },
+      { property: "og:description", content: "Villa budaya mewah di Jawa Tengah." },
       { property: "og:image", content: heroVilla },
     ],
   }),
@@ -33,23 +33,23 @@ export const Route = createFileRoute("/")({
 /* ---------- Nav ---------- */
 function Nav() {
   const links = [
-    ["About", "#about"], ["Rooms", "#rooms"], ["Experiences", "#experiences"],
-    ["Gallery", "#gallery"], ["Location", "#location"], ["Contact", "#contact"],
+    ["Tentang Kami", "#about"], ["Kamar", "#rooms"], ["Pengalaman", "#experiences"],
+    ["Galeri", "#gallery"], ["Lokasi", "#location"], ["Kontak", "#contact"],
   ];
   return (
     <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-background/70 border-b border-border/40">
       <div className="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between">
         <a href="#top" className="flex flex-col leading-none">
-          <span className="font-serif text-xl tracking-wide text-primary">Sekar Jawa</span>
-          <span className="text-[10px] tracking-[0.3em] text-muted-foreground mt-0.5">VILLA · JAVA</span>
+          <span className="font-serif text-[26px] tracking-[0.08em] font-normal text-primary">MARME</span>
+          <span className="font-sans text-[9.5px] tracking-[0.42em] font-light text-muted-foreground mt-1.5 ml-0.5 uppercase">VILLA JOGJA</span>
         </a>
         <nav className="hidden lg:flex items-center gap-10 text-sm">
           {links.map(([l, h]) => (
             <a key={h} href={h} className="text-foreground/80 hover:text-gold transition-colors">{l}</a>
           ))}
         </nav>
-        <a href="#booking" className="hidden md:inline-flex items-center gap-2 px-5 py-2.5 border border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors text-sm tracking-wide">
-          Reserve <ArrowRight className="h-3.5 w-3.5" />
+        <a href="#booking" className="hidden md:inline-flex items-center gap-2 px-5 py-2.5 border border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors text-sm tracking-wide rounded-full">
+          Pesan <ArrowRight className="h-3.5 w-3.5" />
         </a>
       </div>
     </header>
@@ -60,23 +60,23 @@ function Nav() {
 function Hero() {
   return (
     <section id="top" className="relative h-screen min-h-[720px] w-full overflow-hidden">
-      <img src={heroVilla} alt="Villa Sekar Jawa at dusk" className="absolute inset-0 h-full w-full object-cover" />
+      <img src={heroVilla} alt="Villa Sekar Jawa di kala senja" className="absolute inset-0 h-full w-full object-cover" />
       <div className="absolute inset-0 bg-gradient-to-b from-primary/30 via-primary/20 to-primary/70" />
       <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
-        <span className="eyebrow text-gold mb-6">Sekar Jawa · Est. Heritage</span>
+        <span className="eyebrow text-gold mb-6">Marme Villa Jogja · Warisan Budaya</span>
         <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl text-ivory max-w-5xl text-balance leading-[1.05]">
-          Experience the Beauty of Javanese Heritage
+          Rasakan Keindahan Warisan Budaya Jawa
         </h1>
         <p className="mt-8 max-w-xl text-ivory/85 text-lg font-light leading-relaxed">
-          A luxury cultural villa blending tradition, tranquility, and modern comfort —
-          set among rice terraces in the heart of Central Java.
+          Sebuah villa budaya mewah yang memadukan tradisi, ketenangan, dan kenyamanan modern —
+          terletak di antara terasering sawah di jantung Jawa Tengah.
         </p>
         <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
-          <a href="#booking" className="px-8 py-4 bg-gold text-gold-foreground font-medium tracking-wide hover:bg-gold/90 transition-colors">
-            Book Your Stay
+          <a href="#booking" className="px-8 py-4 bg-gold text-gold-foreground font-medium tracking-wide hover:bg-gold/90 transition-colors rounded-full">
+            Pesan Liburan Anda
           </a>
-          <a href="#about" className="px-8 py-4 border border-ivory/60 text-ivory hover:bg-ivory/10 transition-colors tracking-wide">
-            Explore the Villa
+          <a href="#about" className="px-8 py-4 border border-ivory/60 text-ivory hover:bg-ivory/10 transition-colors tracking-wide rounded-full">
+            Jelajahi Villa
           </a>
         </div>
       </div>
@@ -95,7 +95,7 @@ function BookingWidget() {
   const navigate = useNavigate();
   return (
     <section id="booking" className="relative -mt-20 z-20 px-6">
-      <div className="max-w-6xl mx-auto bg-background shadow-luxe border border-border/60">
+      <div className="max-w-6xl mx-auto bg-background shadow-luxe border border-border/60 overflow-hidden rounded-2xl">
         <form
           onSubmit={(e) => {
             e.preventDefault();
@@ -103,17 +103,17 @@ function BookingWidget() {
           }}
           className="grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-border"
         >
-          <Field label="Check-in"><input type="date" className="w-full bg-transparent outline-none text-foreground" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} /></Field>
-          <Field label="Check-out"><input type="date" className="w-full bg-transparent outline-none text-foreground" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} /></Field>
-          <Field label="Guests">
+          <Field label="Tanggal Masuk"><input type="date" className="w-full bg-transparent outline-none text-foreground" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} /></Field>
+          <Field label="Tanggal Keluar"><input type="date" className="w-full bg-transparent outline-none text-foreground" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} /></Field>
+          <Field label="Tamu">
             <div className="flex items-center justify-between">
-              <button type="button" onClick={() => setGuests(Math.max(1, guests-1))} className="p-1 text-muted-foreground hover:text-primary"><Minus className="h-4 w-4" /></button>
-              <span className="font-medium">{guests} {guests === 1 ? "Guest" : "Guests"}</span>
-              <button type="button" onClick={() => setGuests(Math.min(10, guests+1))} className="p-1 text-muted-foreground hover:text-primary"><Plus className="h-4 w-4" /></button>
+              <button type="button" onClick={() => setGuests(Math.max(1, guests - 1))} className="p-1 text-muted-foreground hover:text-primary"><Minus className="h-4 w-4" /></button>
+              <span className="font-medium">{guests} Tamu</span>
+              <button type="button" onClick={() => setGuests(Math.min(10, guests + 1))} className="p-1 text-muted-foreground hover:text-primary"><Plus className="h-4 w-4" /></button>
             </div>
           </Field>
           <button type="submit" className="bg-primary text-primary-foreground font-medium tracking-wide hover:bg-primary/90 transition-colors py-6 md:py-0 px-8">
-            Search Availability
+            Cari Ketersediaan
           </button>
         </form>
       </div>
@@ -132,41 +132,37 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 /* ---------- About ---------- */
 function About() {
   const values = [
-    { t: "Hospitality", d: "Warmth rooted in Javanese tradition." },
-    { t: "Culture", d: "Living heritage in every detail." },
-    { t: "Serenity", d: "Quiet pavilions, open skies." },
-    { t: "Sustainability", d: "Local craft, mindful luxury." },
+    { v: "Keramahan", d: "Kehangatan yang berakar pada tradisi Jawa." },
+    { v: "Budaya", d: "Warisan hidup di setiap detail." },
+    { v: "Ketenangan", d: "Paviliun yang sunyi, langit yang terbuka." },
+    { v: "Keberlanjutan", d: "Kerajinan lokal, kemewahan yang ramah lingkungan." },
   ];
   return (
     <section id="about" className="py-32 px-6">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-        <div className="relative aspect-[3/4] overflow-hidden">
-          <img src={aboutDetail} alt="Carved Javanese teak detail" loading="lazy" className="h-full w-full object-cover" />
+        <div className="relative aspect-[3/4] overflow-hidden rounded-2xl">
+          <img src={aboutDetail} alt="Detail ukiran kayu jati Jawa" loading="lazy" className="h-full w-full object-cover" />
           <div className="absolute -bottom-6 -right-6 hidden md:block bg-gold text-gold-foreground p-8 max-w-[220px]">
             <div className="font-serif text-4xl">1923</div>
-            <div className="eyebrow mt-2 text-gold-foreground/80">Heritage Year</div>
+            <div className="eyebrow mt-2 text-gold-foreground/80">Tahun Warisan</div>
           </div>
         </div>
         <div>
-          <span className="eyebrow">Our Story</span>
+          <span className="eyebrow">Kisah Kami</span>
           <h2 className="font-serif text-4xl md:text-5xl mt-4 leading-tight text-balance">
-            A century-old Joglo, reimagined as a sanctuary of modern Javanese luxury.
+            Tempat perlindungan kemewahan Jawa modern.
           </h2>
           <p className="mt-8 text-muted-foreground leading-relaxed text-lg">
-            Hand-carved teak pillars, polished terrazzo floors, and the soft murmur of
-            water gardens — Villa Sekar Jawa is a restoration of a 1920s royal pavilion,
-            relocated stone by stone from the courts of Yogyakarta and reborn as an
-            intimate retreat for travellers seeking depth, beauty, and quiet.
+            Pilar-pilar jati berukir tangan, lantai teraso yang mengilap, dan gemericik air taman air yang lembut — Marme Villa Jogja merupakan restorasi paviliun kerajaan tahun 1920-an, dipindahkan batu demi batu dari keraton Yogyakarta dan dilahirkan kembali sebagai tempat peristirahatan intim bagi para pelancong yang mencari kedalaman makna, keindahan, dan ketenangan.
           </p>
           <p className="mt-4 text-muted-foreground leading-relaxed text-lg">
-            Every textile is woven on island, every dish prepared from heirloom recipes.
-            What was once the home of a noble family is now yours, for a while.
+            Setiap tekstil ditenun di pulau ini, setiap hidangan disiapkan dari resep warisan leluhur. Tempat yang dulunya merupakan rumah keluarga bangsawan kini menjadi milik Anda, untuk sementara waktu.
           </p>
           <div className="mt-12 grid grid-cols-2 gap-8">
-            {values.map((v) => (
-              <div key={v.t}>
-                <div className="font-serif text-xl text-primary">{v.t}</div>
-                <div className="mt-2 text-sm text-muted-foreground">{v.d}</div>
+            {values.map((val) => (
+              <div key={val.v}>
+                <div className="font-serif text-xl text-primary">{val.v}</div>
+                <div className="mt-2 text-sm text-muted-foreground">{val.d}</div>
               </div>
             ))}
           </div>
@@ -182,12 +178,12 @@ function Rooms() {
     <section id="rooms" className="py-32 px-6 bg-ivory/40">
       <div className="max-w-7xl mx-auto">
         <div className="max-w-2xl mb-16">
-          <span className="eyebrow">Accommodations</span>
-          <h2 className="font-serif text-4xl md:text-5xl mt-4 text-balance">Three pavilions. Each a private world.</h2>
+          <span className="eyebrow">Akomodasi</span>
+          <h2 className="font-serif text-4xl md:text-5xl mt-4 text-balance">Tiga paviliun. Masing-masing adalah dunia pribadi.</h2>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {rooms.map((r) => (
-            <article key={r.name} className="group bg-background border border-border/60 overflow-hidden flex flex-col">
+            <article key={r.name} className="group bg-background border border-border/60 overflow-hidden flex flex-col rounded-2xl">
               <Link to="/rooms/$slug" params={{ slug: r.slug }} className="aspect-[4/5] overflow-hidden block">
                 <img src={r.img} alt={r.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
               </Link>
@@ -197,15 +193,15 @@ function Rooms() {
                 </Link>
                 <p className="mt-3 text-sm text-muted-foreground leading-relaxed flex-1">{r.desc}</p>
                 <div className="mt-6 flex items-center gap-4 text-xs text-muted-foreground border-t border-border/60 pt-4">
-                  <span>{r.size}</span><span>·</span><span>{r.bed} bed</span><span>·</span><span>{r.guests} guests</span>
+                  <span>{r.size}</span><span>·</span><span>ranjang {r.bed}</span><span>·</span><span>{r.guests} tamu</span>
                 </div>
                 <div className="mt-6 flex items-end justify-between">
                   <div>
-                    <div className="font-serif text-2xl text-primary">{formatIDR(r.price)}</div>
-                    <div className="text-xs text-muted-foreground tracking-wide uppercase">per night</div>
+                    <div className="font-sans text-2xl font-semibold text-primary">{formatIDR(r.price)}</div>
+                    <div className="text-xs text-muted-foreground tracking-wide uppercase">per malam</div>
                   </div>
                   <Link to="/rooms/$slug" params={{ slug: r.slug }} className="text-sm tracking-wide text-gold hover:text-primary border-b border-gold pb-0.5">
-                    View Details
+                    Lihat Detail
                   </Link>
                 </div>
               </div>
@@ -219,10 +215,10 @@ function Rooms() {
 
 /* ---------- Experiences ---------- */
 const experiences = [
-  { img: expDinner, t: "Traditional Javanese Dinner", d: "A rijsttafel under the stars, prepared by our heritage chef." },
-  { img: expBatik, t: "Batik Workshop", d: "An afternoon learning the canting from a master artisan." },
-  { img: expGamelan, t: "Gamelan at Dusk", d: "An intimate ensemble performance in the central pendopo." },
-  { img: expYoga, t: "Sunrise Yoga", d: "Greet the day above the mist, on our wooden river deck." },
+  { img: expDinner, t: "Makan Malam Tradisional Jawa", d: "Sajian rijsttafel di bawah taburan bintang, disiapkan oleh koki warisan kuliner kami." },
+  { img: expBatik, t: "Lokakarya Batik", d: "Menghabiskan sore hari mempelajari teknik canting dari pengrajin ahli." },
+  { img: expGamelan, t: "Gamelan di Kala Senja", d: "Pertunjukan ansambel yang syahdu di pendopo utama." },
+  { img: expYoga, t: "Yoga Matahari Terbit", d: "Sambut pagi hari di atas kabut, di dek kayu tepi sungai kami." },
 ];
 function Experiences() {
   return (
@@ -230,13 +226,13 @@ function Experiences() {
       <div className="max-w-7xl mx-auto">
         <div className="flex items-end justify-between flex-wrap gap-6 mb-16">
           <div>
-            <span className="eyebrow">Curated Experiences</span>
-            <h2 className="font-serif text-4xl md:text-5xl mt-4 max-w-xl text-balance">Stories you'll bring home with you.</h2>
+            <span className="eyebrow">Pengalaman Terkurasi</span>
+            <h2 className="font-serif text-4xl md:text-5xl mt-4 max-w-xl text-balance">Kisah yang akan Anda bawa pulang.</h2>
           </div>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {experiences.map((e) => (
-            <article key={e.t} className="group relative aspect-[3/4] overflow-hidden">
+            <article key={e.t} className="group relative aspect-[3/4] overflow-hidden rounded-2xl">
               <img src={e.img} alt={e.t} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
               <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/30 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-6 text-ivory">
@@ -253,18 +249,18 @@ function Experiences() {
 
 /* ---------- Amenities ---------- */
 const amenities = [
-  { i: Waves, t: "Infinity Pool" }, { i: Wifi, t: "Free Wi-Fi" },
-  { i: Sparkles, t: "Spa & Wellness" }, { i: UtensilsCrossed, t: "Heritage Restaurant" },
-  { i: Car, t: "Private Parking" }, { i: Plane, t: "Airport Transfer" },
-  { i: Users, t: "Meeting Pavilion" }, { i: Trees, t: "Tropical Garden" },
+  { i: Waves, t: "Kolam Renang Infinity" }, { i: Wifi, t: "Wi-Fi Gratis" },
+  { i: Sparkles, t: "Spa & Kebugaran" }, { i: UtensilsCrossed, t: "Restoran Khas" },
+  { i: Car, t: "Parkir Pribadi" }, { i: Plane, t: "Antar Jemput Bandara" },
+  { i: Users, t: "Pendopo Pertemuan" }, { i: Trees, t: "Taman Tropis" },
 ];
 function Amenities() {
   return (
     <section className="py-32 px-6 bg-primary text-primary-foreground">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <span className="eyebrow">Amenities</span>
-          <h2 className="font-serif text-4xl md:text-5xl mt-4">Everything, considered.</h2>
+          <span className="eyebrow">Fasilitas</span>
+          <h2 className="font-serif text-4xl md:text-5xl mt-4">Segalanya untuk Kenyamanan Anda.</h2>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-y-12 gap-x-8 text-center">
           {amenities.map(({ i: Icon, t }) => (
@@ -282,21 +278,21 @@ function Amenities() {
 /* ---------- Gallery ---------- */
 function Gallery() {
   const imgs = [
-    { src: galleryPool, span: "md:row-span-2", alt: "Pool at twilight" },
-    { src: galleryGarden, span: "", alt: "Garden pavilion" },
-    { src: galleryRestaurant, span: "", alt: "Open-air restaurant" },
-    { src: roomPavilion, span: "md:col-span-2", alt: "Pavilion suite" },
+    { src: galleryPool, span: "md:row-span-2", alt: "Kolam renang di kala senja" },
+    { src: galleryGarden, span: "", alt: "Paviliun taman" },
+    { src: galleryRestaurant, span: "", alt: "Restoran luar ruangan" },
+    { src: roomPavilion, span: "md:col-span-2", alt: "Suite paviliun" },
   ];
   return (
     <section id="gallery" className="py-32 px-6 bg-ivory/40">
       <div className="max-w-7xl mx-auto">
         <div className="mb-16 max-w-2xl">
-          <span className="eyebrow">Gallery</span>
-          <h2 className="font-serif text-4xl md:text-5xl mt-4 text-balance">Glimpses of life at Sekar Jawa.</h2>
+          <span className="eyebrow">Galeri</span>
+          <h2 className="font-serif text-4xl md:text-5xl mt-4 text-balance">Sekilas tentang kehidupan di Marme Villa Jogja.</h2>
         </div>
         <div className="grid md:grid-cols-3 grid-rows-2 gap-4 auto-rows-[260px] md:auto-rows-[320px]">
           {imgs.map((im, idx) => (
-            <div key={idx} className={`overflow-hidden ${im.span}`}>
+            <div key={idx} className={`overflow-hidden ${im.span} rounded-2xl`}>
               <img src={im.src} alt={im.alt} loading="lazy" className="h-full w-full object-cover hover:scale-105 transition-transform duration-700" />
             </div>
           ))}
@@ -308,21 +304,21 @@ function Gallery() {
 
 /* ---------- Testimonials ---------- */
 const reviews = [
-  { n: "Amélie L.", p: "Paris", q: "The most poetic stay of our lives. Every detail whispered of old Java, yet nothing was missing for modern comfort.", r: 5 },
-  { n: "James & Mia", p: "Singapore", q: "We came for a weekend and stayed a week. The gamelan evenings will live in us forever.", r: 5 },
-  { n: "Putri Anggraini", p: "Jakarta", q: "A homecoming I didn't know I needed. The team treats you as family.", r: 5 },
+  { n: "Amélie L.", p: "Paris", q: "Pengalaman menginap paling puitis dalam hidup kami. Setiap detail membisikkan keindahan Jawa kuno, namun kenyamanan modern tetap terpenuhi secara sempurna.", r: 5 },
+  { n: "James & Mia", p: "Singapura", q: "Kami datang untuk akhir pekan dan akhirnya tinggal selama seminggu. Malam-malam syahdu dengan alunan gamelan akan selalu hidup dalam ingatan kami.", r: 5 },
+  { n: "Putri Anggraini", p: "Jakarta", q: "Sebuah kepulangan yang tidak saya sadari sangat saya butuhkan. Seluruh tim memperlakukan Anda layaknya keluarga sendiri.", r: 5 },
 ];
 function Testimonials() {
   return (
     <section className="py-32 px-6">
       <div className="max-w-7xl mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="eyebrow">Guest Stories</span>
-          <h2 className="font-serif text-4xl md:text-5xl mt-4">Whispers from our guests.</h2>
+          <span className="eyebrow">Cerita Tamu</span>
+          <h2 className="font-serif text-4xl md:text-5xl mt-4">Kesan dari para tamu kami.</h2>
         </div>
         <div className="grid md:grid-cols-3 gap-8">
           {reviews.map((r) => (
-            <figure key={r.n} className="bg-background border border-border/60 p-10 flex flex-col">
+            <figure key={r.n} className="bg-background border border-border/60 p-10 flex flex-col rounded-2xl">
               <div className="flex gap-1 text-gold mb-6">
                 {Array.from({ length: r.r }).map((_, i) => <Star key={i} className="h-4 w-4 fill-current" />)}
               </div>
@@ -344,21 +340,19 @@ function Testimonials() {
 /* ---------- Location ---------- */
 function Location() {
   const nearby = [
-    ["Borobudur Temple", "25 min"], ["Prambanan Temple", "40 min"],
-    ["Yogyakarta Old City", "30 min"], ["Adisutjipto Airport", "45 min"],
+    ["Candi Borobudur", "25 mnt"], ["Candi Prambanan", "40 mnt"],
+    ["Kota Tua Yogyakarta", "30 mnt"], ["Bandara Adisutjipto", "45 mnt"],
   ];
   return (
     <section id="location" className="py-32 px-6 bg-ivory/40">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
         <div>
-          <span className="eyebrow">Location</span>
+          <span className="eyebrow">Lokasi</span>
           <h2 className="font-serif text-4xl md:text-5xl mt-4 text-balance">
-            Among rice terraces and ancient temples of Central Java.
+            Di antara terasering sawah dan candi-candi kuno Jawa Tengah.
           </h2>
           <p className="mt-6 text-muted-foreground text-lg leading-relaxed">
-            Tucked into the foothills outside Yogyakarta, Villa Sekar Jawa is a private
-            world — yet a short drive from some of Indonesia's most extraordinary
-            cultural landmarks.
+            Tersembunyi di kaki bukit di luar Yogyakarta, Marme Villa Jogja adalah dunia pribadi — namun sangat dekat dari beberapa bangunan budaya paling luar biasa di Indonesia.
           </p>
           <ul className="mt-10 divide-y divide-border/60 border-t border-b border-border/60">
             {nearby.map(([place, time]) => (
@@ -369,9 +363,9 @@ function Location() {
             ))}
           </ul>
         </div>
-        <div className="aspect-[4/5] overflow-hidden border border-border/60">
+        <div className="aspect-[4/5] overflow-hidden border border-border/60 rounded-2xl">
           <iframe
-            title="Villa Sekar Jawa location"
+            title="Lokasi Marme Villa Jogja"
             src="https://www.openstreetmap.org/export/embed.html?bbox=110.2%2C-7.85%2C110.5%2C-7.65&layer=mapnik&marker=-7.75%2C110.35"
             className="h-full w-full grayscale-[20%]"
             loading="lazy"
@@ -384,11 +378,11 @@ function Location() {
 
 /* ---------- FAQ ---------- */
 const faqs = [
-  ["What is included in the room rate?", "Daily breakfast, welcome ritual, afternoon tea, evening canapés, and complimentary use of pools, gardens, and the wellness pavilion."],
-  ["Can you arrange airport transfers?", "Yes. Private transfers from Yogyakarta Adisutjipto Airport (YIA) can be arranged for an additional fee. Please request at booking."],
-  ["What is the cancellation policy?", "Complimentary cancellation up to 14 days before arrival. Within 14 days, the first night is charged. Special periods may differ."],
-  ["Do you accommodate dietary needs?", "Absolutely. Our chefs prepare vegetarian, vegan, halal, and gluten-free menus on request."],
-  ["Is the villa suitable for children?", "Children of all ages are warmly welcomed. We offer babysitting, children's amenities, and bespoke family experiences."],
+  ["Apa saja yang termasuk dalam harga kamar?", "Sarapan harian, ritual penyambutan, teh sore, canapés malam, serta penggunaan gratis kolam renang, taman, dan paviliun kebugaran."],
+  ["Apakah Anda menyediakan layanan antar-jemput bandara?", "Ya. Layanan antar-jemput pribadi dari Bandara Adisutjipto Yogyakarta (YIA) dapat diatur dengan biaya tambahan. Silakan ajukan saat pemesanan."],
+  ["Bagaimana kebijakan pembatalan pemesanan?", "Pembatalan gratis hingga 14 hari sebelum kedatangan. Dalam kurun waktu 14 hari, akan dikenakan biaya malam pertama. Kebijakan periode khusus mungkin berbeda."],
+  ["Apakah Anda mengakomodasi kebutuhan diet khusus?", "Tentu saja. Koki kami menyiapkan menu vegetarian, vegan, halal, dan bebas gluten berdasarkan permintaan."],
+  ["Apakah villa ini cocok untuk anak-anak?", "Anak-anak dari segala usia disambut dengan hangat. Kami menawarkan layanan pengasuhan anak, fasilitas anak-anak, dan pengalaman keluarga yang dirancang khusus."],
 ];
 function FAQ() {
   const [open, setOpen] = useState<number | null>(0);
@@ -396,8 +390,8 @@ function FAQ() {
     <section className="py-32 px-6">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-16">
-          <span className="eyebrow">Questions</span>
-          <h2 className="font-serif text-4xl md:text-5xl mt-4">Before you arrive.</h2>
+          <span className="eyebrow">Pertanyaan</span>
+          <h2 className="font-serif text-4xl md:text-5xl mt-4">Sebelum Anda Tiba.</h2>
         </div>
         <div className="border-t border-border/60">
           {faqs.map(([q, a], i) => (
@@ -423,11 +417,11 @@ function Contact() {
     <section id="contact" className="py-32 px-6 bg-primary text-primary-foreground">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16">
         <div>
-          <span className="eyebrow">Reservations</span>
-          <h2 className="font-serif text-4xl md:text-5xl mt-4 text-balance">We look forward to welcoming you.</h2>
+          <span className="eyebrow">Reservasi</span>
+          <h2 className="font-serif text-4xl md:text-5xl mt-4 text-balance">Kami menantikan kedatangan Anda.</h2>
           <p className="mt-6 text-primary-foreground/75 text-lg leading-relaxed">
-            Our reservations team responds personally within a few hours,
-            around the clock. Selamat datang.
+            Tim reservasi kami merespons secara pribadi dalam beberapa jam,
+            sepanjang waktu. Selamat datang.
           </p>
           <div className="mt-12 space-y-5 text-sm">
             <div className="flex items-center gap-4"><Phone className="h-4 w-4 text-gold" /> +62 274 555 0188</div>
@@ -436,18 +430,18 @@ function Contact() {
           </div>
         </div>
         <form
-          onSubmit={(e) => { e.preventDefault(); alert("Thank you — our team will be in touch shortly."); }}
+          onSubmit={(e) => { e.preventDefault(); alert("Terima kasih — tim kami akan segera menghubungi Anda."); }}
           className="space-y-6"
         >
-          <Input label="Full Name" type="text" required />
+          <Input label="Nama Lengkap" type="text" required />
           <Input label="Email" type="email" required />
-          <Input label="Phone" type="tel" />
+          <Input label="Telepon" type="tel" />
           <div>
-            <div className="eyebrow text-primary-foreground/60 mb-2">Message</div>
+            <div className="eyebrow text-primary-foreground/60 mb-2">Pesan</div>
             <textarea rows={5} required className="w-full bg-transparent border-b border-primary-foreground/30 focus:border-gold outline-none py-3 text-primary-foreground placeholder:text-primary-foreground/40" />
           </div>
-          <button type="submit" className="px-10 py-4 bg-gold text-gold-foreground font-medium tracking-wide hover:bg-gold/90 transition-colors">
-            Send Inquiry
+          <button type="submit" className="px-10 py-4 bg-gold text-gold-foreground font-medium tracking-wide hover:bg-gold/90 transition-colors rounded-full">
+            Kirim Pertanyaan
           </button>
         </form>
       </div>
@@ -468,8 +462,8 @@ function Footer() {
   return (
     <footer className="bg-background border-t border-border/60 py-12 px-6">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-muted-foreground">
-        <div className="font-serif text-lg text-primary">Villa Sekar Jawa</div>
-        <div>© {new Date().getFullYear()} Sekar Jawa Heritage. All rights reserved.</div>
+        <div className="font-serif text-lg text-primary">Marme Villa Jogja</div>
+        <div>© {new Date().getFullYear()} Marme Villa Jogja. Hak cipta dilindungi undang-undang.</div>
         <div className="flex gap-6">
           <a href="#" className="hover:text-gold">Instagram</a>
           <a href="#" className="hover:text-gold">Facebook</a>
@@ -487,7 +481,7 @@ function VillaHome() {
       <Nav />
       <main>
         <Hero />
-        <BookingWidget />
+        {/* <BookingWidget /> */}
         <About />
         <Rooms />
         <Experiences />

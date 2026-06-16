@@ -16,9 +16,9 @@ export const Route = createFileRoute("/availability")({
   validateSearch: zodValidator(searchSchema),
   head: () => ({
     meta: [
-      { title: "Search Availability — Villa Sekar Jawa" },
-      { name: "description", content: "Check live availability and rates across our three private heritage pavilions." },
-      { property: "og:title", content: "Search Availability — Villa Sekar Jawa" },
+      { title: "Cari Ketersediaan — Marme Villa Jogja" },
+      { name: "description", content: "Cari ketersediaan kamar secara langsung di tiga paviliun warisan budaya kami." },
+      { property: "og:title", content: "Cari Ketersediaan — Marme Villa Jogja" },
       { property: "og:description", content: "Find your dates and reserve a private heritage pavilion." },
     ],
   }),
@@ -59,11 +59,11 @@ function AvailabilityPage() {
       <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-background/80 border-b border-border/40">
         <div className="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between">
           <Link to="/" className="flex flex-col leading-none">
-            <span className="font-serif text-xl tracking-wide text-primary">Sekar Jawa</span>
-            <span className="text-[10px] tracking-[0.3em] text-muted-foreground mt-0.5">VILLA · JAVA</span>
+            <span className="font-serif text-[26px] tracking-[0.08em] font-normal text-primary">MARME</span>
+            <span className="font-sans text-[9.5px] tracking-[0.42em] font-light text-muted-foreground mt-1.5 ml-0.5 uppercase">VILLA JOGJA</span>
           </Link>
           <Link to="/" className="text-sm text-foreground/70 hover:text-gold inline-flex items-center gap-2">
-            <ArrowLeft className="h-4 w-4" /> Back to villa
+            <ArrowLeft className="h-4 w-4" /> Kembali ke villa
           </Link>
         </div>
       </header>
@@ -71,47 +71,47 @@ function AvailabilityPage() {
       {/* Hero */}
       <section className="pt-32 pb-12 px-6 bg-ivory/40 border-b border-border/60">
         <div className="max-w-5xl mx-auto text-center">
-          <span className="eyebrow">Reservations</span>
-          <h1 className="font-serif text-4xl md:text-5xl mt-4">Search Availability</h1>
+          <span className="eyebrow">Reservasi</span>
+          <h1 className="font-serif text-4xl md:text-5xl mt-4">Cari Ketersediaan</h1>
           <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
-            Choose your dates and party size. We'll show live rates across our three heritage pavilions.
+            Pilih tanggal dan jumlah tamu Anda. Kami akan menampilkan ketersediaan kamar dan harga terbaik untuk tiga paviliun warisan budaya kami.
           </p>
         </div>
       </section>
 
       {/* Search bar */}
       <section className="px-6 -mt-10">
-        <div className="max-w-5xl mx-auto bg-background shadow-luxe border border-border/60">
+        <div className="max-w-5xl mx-auto bg-background shadow-luxe border border-border/60 overflow-hidden rounded-2xl">
           <form
             onSubmit={(e) => { e.preventDefault(); setSearched(true); }}
             className="grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-border"
           >
             <label className="p-6 block">
               <div className="eyebrow text-muted-foreground mb-2 text-[10px] flex items-center gap-2">
-                <Calendar className="h-3 w-3" /> Check-in
+                <Calendar className="h-3 w-3" /> Tanggal Masuk
               </div>
               <input type="date" value={checkIn} min={today()} onChange={(e) => setCheckIn(e.target.value)}
                 className="w-full bg-transparent outline-none text-foreground" />
             </label>
             <label className="p-6 block">
               <div className="eyebrow text-muted-foreground mb-2 text-[10px] flex items-center gap-2">
-                <Calendar className="h-3 w-3" /> Check-out
+                <Calendar className="h-3 w-3" /> Tanggal Keluar
               </div>
               <input type="date" value={checkOut} min={addDays(checkIn || today(), 1)} onChange={(e) => setCheckOut(e.target.value)}
                 className="w-full bg-transparent outline-none text-foreground" />
             </label>
             <div className="p-6">
               <div className="eyebrow text-muted-foreground mb-2 text-[10px] flex items-center gap-2">
-                <Users className="h-3 w-3" /> Guests
+                <Users className="h-3 w-3" /> Tamu
               </div>
               <div className="flex items-center justify-between">
                 <button type="button" onClick={() => setGuests(Math.max(1, guests - 1))} className="p-1 text-muted-foreground hover:text-primary"><Minus className="h-4 w-4" /></button>
-                <span className="font-medium">{guests} {guests === 1 ? "Guest" : "Guests"}</span>
+                <span className="font-medium">{guests} Tamu</span>
                 <button type="button" onClick={() => setGuests(Math.min(10, guests + 1))} className="p-1 text-muted-foreground hover:text-primary"><Plus className="h-4 w-4" /></button>
               </div>
             </div>
             <button type="submit" className="bg-primary text-primary-foreground font-medium tracking-wide hover:bg-primary/90 transition-colors py-6 md:py-0 px-8 inline-flex items-center justify-center gap-2">
-              <Search className="h-4 w-4" /> Search
+              <Search className="h-4 w-4" /> Cari
             </button>
           </form>
         </div>
@@ -122,14 +122,14 @@ function AvailabilityPage() {
         <div className="max-w-5xl mx-auto">
           <div className="flex items-end justify-between flex-wrap gap-4 mb-10">
             <div>
-              <span className="eyebrow">Available Pavilions</span>
+              <span className="eyebrow">Paviliun Tersedia</span>
               <h2 className="font-serif text-3xl mt-2">
-                {nights > 0 ? `${nights} ${nights === 1 ? "night" : "nights"} · ${guests} ${guests === 1 ? "guest" : "guests"}` : "Choose your dates"}
+                {nights > 0 ? `${nights} malam · ${guests} tamu` : "Pilih tanggal Anda"}
               </h2>
             </div>
             {searched && (
               <div className="text-sm text-muted-foreground">
-                {available.filter((r) => r.isAvailable).length} of {rooms.length} pavilions available
+                {available.filter((r) => r.isAvailable).length} dari {rooms.length} paviliun tersedia
               </div>
             )}
           </div>
@@ -138,7 +138,7 @@ function AvailabilityPage() {
             {available.map((r) => {
               const total = r.price * Math.max(nights, 1);
               return (
-                <article key={r.slug} className={`grid md:grid-cols-[280px_1fr_auto] gap-6 bg-background border border-border/60 overflow-hidden ${!r.isAvailable ? "opacity-60" : ""}`}>
+                <article key={r.slug} className={`grid md:grid-cols-[280px_1fr_auto] gap-6 bg-background border border-border/60 overflow-hidden rounded-2xl ${!r.isAvailable ? "opacity-60" : ""}`}>
                   <Link to="/rooms/$slug" params={{ slug: r.slug }} className="aspect-[4/3] md:aspect-auto overflow-hidden">
                     <img src={r.img} alt={r.name} className="h-full w-full object-cover hover:scale-105 transition-transform duration-700" />
                   </Link>
@@ -149,20 +149,20 @@ function AvailabilityPage() {
                     <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{r.desc}</p>
                     <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
                       <span className="inline-flex items-center gap-1.5"><Maximize className="h-3.5 w-3.5 text-gold" />{r.size}</span>
-                      <span className="inline-flex items-center gap-1.5"><BedDouble className="h-3.5 w-3.5 text-gold" />{r.bed}</span>
-                      <span className="inline-flex items-center gap-1.5"><Users className="h-3.5 w-3.5 text-gold" />Up to {r.guests}</span>
+                      <span className="inline-flex items-center gap-1.5"><BedDouble className="h-3.5 w-3.5 text-gold" />Ranjang {r.bed}</span>
+                      <span className="inline-flex items-center gap-1.5"><Users className="h-3.5 w-3.5 text-gold" />Hingga {r.guests} tamu</span>
                       <span className="inline-flex items-center gap-1.5"><Eye className="h-3.5 w-3.5 text-gold" />{r.view}</span>
                     </div>
                     {r.isAvailable && (
                       <div className="mt-4 inline-flex items-center gap-2 text-xs text-gold">
-                        <Check className="h-3.5 w-3.5" /> {r.remaining} pavilion{r.remaining > 1 ? "s" : ""} left at this rate
+                        <Check className="h-3.5 w-3.5" /> Tersisa {r.remaining} paviliun dengan harga ini
                       </div>
                     )}
                   </div>
                   <div className="p-6 md:py-8 md:pr-8 md:text-right border-t md:border-t-0 md:border-l border-border/60 flex md:flex-col items-center md:items-end justify-between gap-4">
                     <div>
-                      <div className="font-serif text-2xl text-primary">{formatIDR(r.price)}</div>
-                      <div className="eyebrow text-muted-foreground mt-1">per night</div>
+                      <div className="font-sans text-2xl font-semibold text-primary">{formatIDR(r.price)}</div>
+                      <div className="eyebrow text-muted-foreground mt-1">per malam</div>
                       {nights > 0 && (
                         <div className="mt-3 text-xs text-muted-foreground">
                           Total: <span className="text-foreground font-medium">{formatIDR(total)}</span>
@@ -173,13 +173,13 @@ function AvailabilityPage() {
                       <Link
                         to="/booking/"
                         search={{ room: r.slug, checkIn, checkOut, guests }}
-                        className="px-6 py-3 bg-gold text-gold-foreground font-medium tracking-wide hover:bg-gold/90 transition-colors text-sm whitespace-nowrap"
+                        className="px-6 py-3 bg-gold text-gold-foreground font-medium tracking-wide hover:bg-gold/90 transition-colors text-sm whitespace-nowrap rounded-full"
                       >
-                        Reserve
+                        Pesan Sekarang
                       </Link>
                     ) : (
-                      <span className="px-6 py-3 border border-border text-muted-foreground text-sm whitespace-nowrap">
-                        Sold out
+                      <span className="px-6 py-3 border border-border text-muted-foreground text-sm whitespace-nowrap rounded-full">
+                        Habis dipesan
                       </span>
                     )}
                   </div>
@@ -189,13 +189,13 @@ function AvailabilityPage() {
           </div>
 
           <p className="mt-10 text-center text-xs text-muted-foreground">
-            Rates include daily breakfast, welcome ritual and afternoon tea. 11% service & government tax applies at checkout.
+            Harga sudah termasuk sarapan harian, ritual penyambutan, dan teh sore. Pajak pemerintah & pelayanan sebesar 11% dikenakan saat pembayaran.
           </p>
         </div>
       </section>
 
       <footer className="bg-background border-t border-border/60 py-10 px-6 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} Villa Sekar Jawa Heritage
+        © {new Date().getFullYear()} Marme Villa Jogja
       </footer>
     </div>
   );
