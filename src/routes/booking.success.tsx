@@ -8,7 +8,7 @@ const searchSchema = z.object({
   room: fallback(z.string(), "").default(""),
   checkIn: fallback(z.string(), "").default(""),
   checkOut: fallback(z.string(), "").default(""),
-  guests: fallback(z.number().int().min(1).max(10), 2).default(2),
+  guests: fallback(z.number().int().min(1), 2).default(2),
   name: fallback(z.string(), "Guest").default("Guest"),
   email: fallback(z.string(), "").default(""),
   total: fallback(z.number(), 0).default(0),
@@ -18,8 +18,8 @@ export const Route = createFileRoute("/booking/success")({
   validateSearch: zodValidator(searchSchema),
   head: () => ({
     meta: [
-      { title: "Booking Confirmed — Villa Sekar Jawa" },
-      { name: "description", content: "Your reservation at Villa Sekar Jawa has been confirmed." },
+      { title: "Reservasi Terkonfirmasi — Marme Villa Jogja" },
+      { name: "description", content: "Reservasi Anda di Marme Villa Jogja telah berhasil dikonfirmasi." },
     ],
   }),
   component: BookingSuccessPage,
@@ -54,13 +54,13 @@ function BookingSuccessPage() {
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gold/10 mb-6">
             <CheckCircle className="h-10 w-10 text-gold" strokeWidth={1.25} />
           </div>
-          <span className="eyebrow">Reservation Confirmed</span>
-          <h1 className="font-serif text-4xl md:text-5xl mt-3">Terima Kasih, {params.name.split(" ")[0]}!</h1>
+          <span className="eyebrow">Reservasi Terkonfirmasi</span>
+          <h1 className="text-4xl md:text-5xl mt-3">Terima Kasih, {params.name.split(" ")[0]}!</h1>
           <p className="mt-4 text-muted-foreground text-lg">
-            Your stay at Villa Sekar Jawa has been reserved.
+            Pesanan Anda di Marme Villa Jogja telah dikonfirmasi.
           </p>
           <div className="mt-6 inline-block bg-ivory/60 border border-border/60 px-6 py-3">
-            <span className="text-xs text-muted-foreground tracking-widest uppercase">Booking Reference</span>
+            <span className="text-xs text-muted-foreground tracking-widest uppercase">Nomor Pesanan</span>
             <div className="font-mono text-xl text-primary tracking-wider mt-1">{bookingRef}</div>
           </div>
         </div>
@@ -69,7 +69,7 @@ function BookingSuccessPage() {
       {/* Booking details */}
       <section className="px-6 pb-12">
         <div className="max-w-2xl mx-auto border border-border/60 bg-ivory/40 p-8">
-          <h2 className="font-serif text-2xl text-primary mb-6">Booking Summary</h2>
+          <h2 className="text-2xl text-primary mb-6">Ringkasan Pesanan</h2>
 
           {selectedRoom && (
             <div className="flex items-start gap-5 pb-6 border-b border-border/60 mb-6">
@@ -77,7 +77,7 @@ function BookingSuccessPage() {
                 <img src={selectedRoom.img} alt={selectedRoom.name} className="h-full w-full object-cover" />
               </div>
               <div>
-                <h3 className="font-serif text-xl text-primary">{selectedRoom.name}</h3>
+                <h3 className="text-xl text-primary">{selectedRoom.name}</h3>
                 <p className="text-sm text-muted-foreground mt-1">{selectedRoom.desc}</p>
               </div>
             </div>
@@ -120,8 +120,8 @@ function BookingSuccessPage() {
 
           {params.total > 0 && (
             <div className="mt-6 pt-6 border-t border-border/60 flex justify-between items-baseline">
-              <span className="font-serif text-lg text-primary">Total</span>
-              <span className="font-serif text-3xl text-primary">{formatIDR(params.total)}</span>
+              <span className="text-lg text-primary">Total</span>
+              <span className="text-3xl text-primary">{formatIDR(params.total)}</span>
             </div>
           )}
         </div>
@@ -130,34 +130,34 @@ function BookingSuccessPage() {
       {/* What's next */}
       <section className="px-6 pb-20">
         <div className="max-w-2xl mx-auto">
-          <h2 className="font-serif text-2xl text-primary mb-8 text-center">What's Next?</h2>
+          <h2 className="text-2xl text-primary mb-8 text-center">Langkah Selanjutnya</h2>
           <div className="grid sm:grid-cols-3 gap-6">
             <div className="border border-border/60 p-6 text-center">
-              <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary/5 mb-4 text-primary font-serif text-lg">1</div>
-              <h3 className="font-medium mb-2">Check Your Email</h3>
-              <p className="text-xs text-muted-foreground">We've sent a booking confirmation to <strong>{params.email || "your email"}</strong> with all the details.</p>
+              <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary/5 mb-4 text-primary text-lg">1</div>
+              <h3 className="font-medium mb-2">Cek Email Anda</h3>
+              <p className="text-xs text-muted-foreground">Kami telah mengirimkan konfirmasi pesanan ke <strong>{params.email || "email Anda"}</strong> beserta semua rinciannya.</p>
             </div>
             <div className="border border-border/60 p-6 text-center">
-              <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary/5 mb-4 text-primary font-serif text-lg">2</div>
-              <h3 className="font-medium mb-2">Prepare Your Stay</h3>
-              <p className="text-xs text-muted-foreground">Pack light, bring your camera, and get ready for an unforgettable Javanese heritage experience.</p>
+              <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary/5 mb-4 text-primary text-lg">2</div>
+              <h3 className="font-medium mb-2">Persiapkan Kunjungan</h3>
+              <p className="text-xs text-muted-foreground">Bawa barang secukupnya, jangan lupa kamera, dan bersiaplah untuk pengalaman budaya Jawa yang tak terlupakan.</p>
             </div>
             <div className="border border-border/60 p-6 text-center">
-              <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary/5 mb-4 text-primary font-serif text-lg">3</div>
-              <h3 className="font-medium mb-2">Arrive & Unwind</h3>
-              <p className="text-xs text-muted-foreground">Our team will welcome you with a traditional Javanese greeting and a welcome ritual.</p>
+              <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-primary/5 mb-4 text-primary text-lg">3</div>
+              <h3 className="font-medium mb-2">Tiba & Bersantai</h3>
+              <p className="text-xs text-muted-foreground">Tim kami akan menyambut Anda dengan sapaan tradisional Jawa dan ritual penyambutan.</p>
             </div>
           </div>
 
           <div className="mt-10 text-center space-y-4">
             <p className="text-sm text-muted-foreground">
-              Questions? <a href="mailto:stay@sekarjawa.com" className="text-gold hover:underline">stay@sekarjawa.com</a> · +62 361 1234 567
+              Ada pertanyaan? <a href="mailto:stay@marmevillajogja.com" className="text-gold hover:underline">stay@marmevillajogja.com</a> · +62 361 1234 567
             </p>
             <Link
               to="/"
               className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-3 font-medium tracking-wide hover:bg-primary/90 transition-colors"
             >
-              <Home className="h-4 w-4" /> Back to Home
+              <Home className="h-4 w-4" /> Kembali ke Beranda
             </Link>
           </div>
 

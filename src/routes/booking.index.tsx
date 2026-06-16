@@ -41,12 +41,12 @@ function BookingFormPage() {
   // Calculate price
   const basePricePerNight = selectedRoom ? selectedRoom.price : 0;
   const subtotalBase = basePricePerNight * Math.max(nights, 1);
-  
+
   const baseGuests = selectedRoom ? selectedRoom.baseGuests : 2;
   const extraGuests = Math.max(0, params.guests - baseGuests);
   const extraChargePerNight = 125000;
   const extraChargeTotal = extraGuests * extraChargePerNight * Math.max(nights, 1);
-  
+
   const subtotal = subtotalBase + extraChargeTotal;
   const total = subtotal;
 
@@ -72,7 +72,7 @@ function BookingFormPage() {
       <main className="pt-32 pb-16 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <span className="eyebrow">Reservasi</span>
-          <h1 className="font-serif text-4xl md:text-5xl mt-4">Pilih Paviliun</h1>
+          <h1 className="text-4xl md:text-5xl mt-4">Pilih Paviliun</h1>
           <p className="mt-4 text-muted-foreground max-w-xl mx-auto">
             Silakan pilih paviliun untuk memulai reservasi Anda.
           </p>
@@ -88,10 +88,10 @@ function BookingFormPage() {
                   <img src={r.img} alt={r.name} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
                 </div>
                 <div className="p-5">
-                  <h3 className="font-serif text-xl text-primary">{r.name}</h3>
+                  <h3 className="text-xl text-primary">{r.name}</h3>
                   <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{r.desc}</p>
                   <div className="mt-4 flex items-center justify-between">
-                    <span className="font-serif text-lg text-gold">{formatIDR(r.price)} <span className="text-xs text-muted-foreground font-sans">/malam</span></span>
+                    <span className="text-lg text-gold">{formatIDR(r.price)} <span className="text-xs text-muted-foreground font-sans">/malam</span></span>
                     <span className="text-gold text-sm group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">Pilih <ChevronRight className="h-3 w-3" /></span>
                   </div>
                 </div>
@@ -122,7 +122,7 @@ function BookingFormPage() {
       <section className="px-6 pb-8">
         <div className="max-w-6xl mx-auto">
           <span className="eyebrow">Reservasi</span>
-          <h1 className="font-serif text-4xl md:text-5xl mt-3">Selesaikan Reservasi Anda</h1>
+          <h1 className="text-4xl md:text-5xl mt-3">Selesaikan Reservasi Anda</h1>
           <p className="mt-2 text-muted-foreground">
             Tinggal selangkah lagi menuju pengalaman menginap yang tak terlupakan.
           </p>
@@ -134,14 +134,14 @@ function BookingFormPage() {
         <div className="max-w-6xl mx-auto grid lg:grid-cols-5 gap-10">
           {/* Left: Guest form */}
           <div className="lg:col-span-3">
-            <form onSubmit={handleConfirm} className="space-y-8">
+            <form id="booking-form" onSubmit={handleConfirm} className="space-y-8">
               {/* Room summary card */}
               <div className="border border-border/60 bg-ivory/40 p-6 flex items-start gap-5 rounded-2xl">
                 <div className="w-24 h-24 shrink-0 overflow-hidden rounded-xl">
                   <img src={selectedRoom.img} alt={selectedRoom.name} className="h-full w-full object-cover" />
                 </div>
                 <div className="min-w-0">
-                  <h2 className="font-serif text-xl text-primary">{selectedRoom.name}</h2>
+                  <h2 className="text-xl text-primary">{selectedRoom.name}</h2>
                   <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted-foreground">
                     <span className="inline-flex items-center gap-1.5"><Calendar className="h-3 w-3 text-gold" /> {params.checkIn || "—"} → {params.checkOut || "—"}</span>
                     <span className="inline-flex items-center gap-1.5"><BedDouble className="h-3 w-3 text-gold" /> {nights} {nights === 1 ? "malam" : "malam"}</span>
@@ -161,7 +161,7 @@ function BookingFormPage() {
               {/* Guest details */}
               <div className="border border-border/60 p-8 rounded-2xl">
                 <span className="eyebrow">Detail Tamu</span>
-                <h3 className="font-serif text-2xl mt-1">Siapa yang akan menginap?</h3>
+                <h3 className="text-2xl mt-1">Siapa yang akan menginap?</h3>
                 <div className="mt-6 space-y-5">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1.5 flex items-center gap-2">
@@ -217,25 +217,25 @@ function BookingFormPage() {
                 </div>
               </div>
 
-              {/* Submit */}
-              <button
-                type="submit"
-                disabled={!fullName || !email || !phone}
-                className="w-full rounded-full bg-primary text-primary-foreground py-4 font-medium tracking-wide hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed inline-flex items-center justify-center gap-3 text-lg"
-              >
-                Konfirmasi Pemesanan <ArrowRight className="h-5 w-5" />
-              </button>
+              {/* Submit (Desktop only) */}
+              <div className="hidden lg:block">
+                <button
+                  type="submit"
+                  disabled={!fullName || !email || !phone}
+                  className="w-full rounded-full bg-primary text-primary-foreground py-4 font-medium tracking-wide hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed inline-flex items-center justify-center gap-3 text-lg"
+                >
+                  Konfirmasi Pemesanan <ArrowRight className="h-5 w-5" />
+                </button>
 
-              <p className="text-center text-xs text-muted-foreground">
-                Ini adalah prototipe — tidak ada pembayaran sungguhan.
-              </p>
+
+              </div>
             </form>
           </div>
 
           {/* Right: Price breakdown */}
           <div className="lg:col-span-2">
             <div className="lg:sticky lg:top-28 border border-border/60 bg-ivory/40 p-8 space-y-6 rounded-2xl">
-              <h3 className="font-serif text-2xl text-primary">Booking Summary</h3>
+              <h3 className="text-2xl text-primary">Booking Summary</h3>
 
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
@@ -277,7 +277,7 @@ function BookingFormPage() {
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="text-muted-foreground">Harga (maks. {baseGuests} orang)</span>
+                    <span className="text-muted-foreground">Harga {extraGuests > 0 ? `(maks. ${baseGuests} orang)` : ""}</span>
                     <span className="text-[11px] text-muted-foreground/50">{nights} malam</span>
                   </div>
                   <span className="font-medium">{formatIDR(subtotalBase)}</span>
@@ -296,8 +296,8 @@ function BookingFormPage() {
               <hr className="border-border/60" />
 
               <div className="flex justify-between items-baseline">
-                <span className="font-serif text-xl text-primary font-medium">Total</span>
-                <span className="font-serif text-3xl text-primary">{formatIDR(total)}</span>
+                <span className="text-xl text-primary font-medium">Total</span>
+                <span className="text-3xl text-primary">{formatIDR(total)}</span>
               </div>
 
               <p className="text-[11px] text-muted-foreground mt-2">
@@ -313,6 +313,20 @@ function BookingFormPage() {
                   <Check className="h-4 w-4 text-gold mt-0.5 shrink-0" />
                   <span>Secure booking — no payment required for prototype</span>
                 </div>
+              </div>
+
+              {/* Submit (Mobile only) */}
+              <div className="lg:hidden pt-6 mt-6 border-t border-border/60">
+                <button
+                  type="submit"
+                  form="booking-form"
+                  disabled={!fullName || !email || !phone}
+                  className="w-full rounded-full bg-primary text-primary-foreground py-4 font-medium tracking-wide hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed inline-flex items-center justify-center gap-3 text-lg"
+                >
+                  Konfirmasi Pemesanan <ArrowRight className="h-5 w-5" />
+                </button>
+
+
               </div>
             </div>
           </div>

@@ -7,10 +7,11 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import logoMarme from "@/assets/logo-marme.png";
 
 function NotFoundComponent() {
   return (
@@ -115,11 +116,63 @@ function RootShell({ children }: { children: ReactNode }) {
   );
 }
 
+function SplashScreen() {
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setVisible(false);
+    }, 4500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (!visible) return null;
+
+  return (
+    <div className="fixed inset-0 z-[99999] bg-[#F5F6EB] flex items-center justify-center overflow-hidden animate-[splashFade_5s_ease_forwards]">
+      {/* Outer slow-expanding ring */}
+      <div className="absolute w-[480px] h-[480px] sm:w-[600px] sm:h-[600px] rounded-full border border-[#C9A96E]/20 animate-[ringExpand_4s_ease-out_0.5s_forwards] opacity-0 pointer-events-none" />
+      {/* Middle ring */}
+      <div className="absolute w-[360px] h-[360px] sm:w-[480px] sm:h-[480px] rounded-full border border-[#C9A96E]/30 animate-[ringExpand_4s_ease-out_1s_forwards] opacity-0 pointer-events-none" />
+      {/* Soft gold radial glow behind logo */}
+      <div className="absolute w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(201,169,110,0.18)_0%,transparent_70%)] animate-[breathe_3s_ease-in-out_0.8s_infinite_alternate] pointer-events-none" />
+      {/* Logo */}
+      <div className="relative w-[260px] sm:w-[360px] md:w-[440px] animate-[logoReveal_1.2s_cubic-bezier(0.22,1,0.36,1)_0.3s_both]">
+        <img src={logoMarme} alt="Marme Villa" className="w-full block mix-blend-multiply" />
+      </div>
+      <style dangerouslySetInnerHTML={{
+        __html: `
+        @keyframes splashFade {
+          0%   { opacity: 0; }
+          12%  { opacity: 1; }
+          78%  { opacity: 1; }
+          100% { opacity: 0; pointer-events: none; }
+        }
+        @keyframes logoReveal {
+          0%   { opacity: 0; transform: scale(0.88) translateY(8px); }
+          100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        @keyframes ringExpand {
+          0%   { opacity: 0; transform: scale(0.7); }
+          20%  { opacity: 1; }
+          80%  { opacity: 0.4; }
+          100% { opacity: 0; transform: scale(1.35); }
+        }
+        @keyframes breathe {
+          0%   { opacity: 0.5; transform: scale(0.92); }
+          100% { opacity: 1;   transform: scale(1.08); }
+        }
+      `}} />
+    </div>
+  );
+}
+
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
 
   return (
     <QueryClientProvider client={queryClient}>
+      <SplashScreen />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <Outlet />
     </QueryClientProvider>

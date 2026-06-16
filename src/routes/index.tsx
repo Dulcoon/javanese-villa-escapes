@@ -3,7 +3,14 @@ import { useState, useEffect } from "react";
 import {
   Wifi, Waves, UtensilsCrossed, Car, Plane, Users, Sparkles, Trees,
   MapPin, Phone, Mail, Star, ChevronDown, Minus, Plus, ArrowRight,
+  Calendar as CalendarIcon, Users as UsersIcon
 } from "lucide-react";
+
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { format, startOfToday, addDays } from "date-fns";
+import { id } from "date-fns/locale";
+import { DateRange } from "react-day-picker";
 
 import heroVilla from "@/assets/hero-villa.jpg";
 import expBatik from "@/assets/exp-batik.jpg";
@@ -19,6 +26,11 @@ import carousel1 from "@/assets/carousel1.jpg";
 import carousel2 from "@/assets/carousel2.jpg";
 import carousel3 from "@/assets/carousel3.jpg";
 import carousel4 from "@/assets/carousel4.jpg";
+
+import sekilas1 from "@/assets/sekilas1.jpg";
+import sekilas2 from "@/assets/sekilas2.jpg";
+import sekilas3 from "@/assets/sekilas3.jpg";
+import sekilas4 from "@/assets/sekilas4.jpg";
 
 import { rooms, formatIDR } from "@/lib/rooms";
 import {
@@ -57,9 +69,9 @@ function Nav() {
             <a key={h} href={h} className="text-foreground/80 hover:text-gold transition-colors">{l}</a>
           ))}
         </nav>
-        <a href="#booking" className="hidden md:inline-flex items-center gap-2 px-5 py-2.5 border border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors text-sm tracking-wide rounded-full">
-          Pesan <ArrowRight className="h-3.5 w-3.5" />
-        </a>
+        <Link to="/availability" className="hidden md:inline-flex items-center gap-2 px-5 py-2.5 border border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors text-sm tracking-wide rounded-full">
+          Cek Ketersediaan <ArrowRight className="h-3.5 w-3.5" />
+        </Link>
       </div>
     </header>
   );
@@ -100,9 +112,9 @@ function Hero() {
           Marme Villa Jogja lebih dari sekadar tempat menginap. Villa ini dirancang untuk menciptakan momen hangat yang berharga bersama keluarga dan orang terdekat
         </p>
         <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
-          <a href="#rooms" className="px-8 py-4 bg-gold text-gold-foreground font-medium tracking-wide hover:bg-gold/90 transition-colors rounded-full shadow-lg">
+          <Link to="/availability" className="px-8 py-4 bg-gold text-gold-foreground font-medium tracking-wide hover:bg-gold/90 transition-colors rounded-full shadow-lg">
             Pesan Liburan Anda
-          </a>
+          </Link>
           <a href="#about" className="px-8 py-4 border border-ivory/80 text-ivory hover:bg-ivory/20 transition-colors tracking-wide rounded-full shadow-lg backdrop-blur-sm">
             Tentang Kami
           </a>
@@ -165,8 +177,18 @@ function About() {
   return (
     <section id="about" className="py-32 px-6">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-        <div className="relative aspect-[3/4] overflow-hidden rounded-2xl">
-          <img src={aboutDetail} alt="Detail ukiran kayu jati Jawa" loading="lazy" className="h-full w-full object-cover" />
+        <div className="relative aspect-[3/4] overflow-hidden rounded-2xl group">
+          {/* Warm color overlay */}
+          <div className="absolute inset-0 bg-[#8c6b3e]/20 mix-blend-color pointer-events-none z-10" />
+          {/* Darkening gradient overlay for better depth */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none z-10" />
+          
+          <img 
+            src={aboutDetail} 
+            alt="Detail ukiran kayu jati Jawa" 
+            loading="lazy" 
+            className="h-full w-full object-cover hover:scale-105 transition-transform duration-700 sepia-[.25] saturate-[1.25] contrast-[1.05] brightness-[0.9]" 
+          />
           {/* <div className="absolute -bottom-6 -right-6 hidden md:block bg-gold text-gold-foreground p-8 max-w-[220px]">
             <div className="font-serif text-4xl">1923</div>
           </div> */}
@@ -295,7 +317,7 @@ function Amenities() {
           <span className="eyebrow">Fasilitas</span>
           <h2 className="font-serif text-4xl md:text-5xl mt-4">Segalanya untuk Kenyamanan Anda.</h2>
         </div>
-        
+
         {/* Top 3 rows (12 items) */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-y-12 gap-x-8 text-center">
           {amenitiesList.slice(0, 12).map(({ i: Icon, t }) => (
@@ -323,10 +345,10 @@ function Amenities() {
 /* ---------- Gallery ---------- */
 function Gallery() {
   const imgs = [
-    { src: galleryPool, span: "md:row-span-2", alt: "Kolam renang di kala senja" },
-    { src: galleryGarden, span: "", alt: "Paviliun taman" },
-    { src: galleryRestaurant, span: "", alt: "Restoran luar ruangan" },
-    { src: roomPavilion, span: "md:col-span-2", alt: "Suite paviliun" },
+    { src: sekilas1, span: "md:col-span-2 md:row-span-2", alt: "Sekilas kehidupan di villa 1" },
+    { src: sekilas2, span: "", alt: "Sekilas kehidupan di villa 2" },
+    { src: sekilas3, span: "", alt: "Sekilas kehidupan di villa 3" },
+    { src: sekilas4, span: "md:col-span-2", alt: "Sekilas kehidupan di villa 4" },
   ];
   return (
     <section id="gallery" className="py-32 px-6 bg-ivory/40">
@@ -335,10 +357,20 @@ function Gallery() {
           <span className="eyebrow">Galeri</span>
           <h2 className="font-serif text-4xl md:text-5xl mt-4 text-balance">Sekilas tentang kehidupan di Marme Villa Jogja.</h2>
         </div>
-        <div className="grid md:grid-cols-3 grid-rows-2 gap-4 auto-rows-[260px] md:auto-rows-[320px]">
+        <div className="grid md:grid-cols-4 gap-4 auto-rows-[260px] md:auto-rows-[380px]">
           {imgs.map((im, idx) => (
-            <div key={idx} className={`overflow-hidden ${im.span} rounded-2xl`}>
-              <img src={im.src} alt={im.alt} loading="lazy" className="h-full w-full object-cover hover:scale-105 transition-transform duration-700" />
+            <div key={idx} className={`relative overflow-hidden ${im.span} rounded-2xl group`}>
+              {/* Warm color overlay */}
+              <div className="absolute inset-0 bg-[#8c6b3e]/20 mix-blend-color pointer-events-none z-10" />
+              {/* Darkening gradient overlay for better depth */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none z-10" />
+              
+              <img 
+                src={im.src} 
+                alt={im.alt} 
+                loading="lazy" 
+                className="h-full w-full object-cover hover:scale-105 transition-transform duration-700 sepia-[.25] saturate-[1.25] contrast-[1.05] brightness-[0.9]" 
+              />
             </div>
           ))}
         </div>

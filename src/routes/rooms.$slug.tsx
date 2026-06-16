@@ -179,7 +179,7 @@ function RoomDetail() {
             <div className="border border-border/60 bg-ivory/40 p-8 rounded-2xl">
               <div className="font-sans text-3xl font-semibold text-primary">{formatIDR(room.price)}</div>
               <div className="eyebrow text-muted-foreground mt-1">per malam</div>
-              
+
               <div className="mt-6 space-y-4">
                 {/* Date Picker */}
                 <div>
@@ -238,18 +238,18 @@ function RoomDetail() {
                             <div className="text-xs text-muted-foreground">Usia 13+</div>
                           </div>
                           <div className="flex items-center gap-4">
-                            <button 
+                            <button
                               type="button"
-                              disabled={adults <= 1} 
-                              onClick={() => setAdults(a => a - 1)} 
+                              disabled={adults <= 1}
+                              onClick={() => setAdults(a => a - 1)}
                               className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
                             >
                               <Minus className="h-3 w-3" />
                             </button>
                             <span className="w-4 text-center text-sm font-medium text-foreground">{adults}</span>
-                            <button 
+                            <button
                               type="button"
-                              onClick={() => setAdults(a => a + 1)} 
+                              onClick={() => setAdults(a => a + 1)}
                               className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
                             >
                               <Plus className="h-3 w-3" />
@@ -264,18 +264,18 @@ function RoomDetail() {
                             <div className="text-xs text-muted-foreground">Usia 2-12</div>
                           </div>
                           <div className="flex items-center gap-4">
-                            <button 
+                            <button
                               type="button"
-                              disabled={children <= 0} 
-                              onClick={() => setChildren(a => a - 1)} 
+                              disabled={children <= 0}
+                              onClick={() => setChildren(a => a - 1)}
                               className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
                             >
                               <Minus className="h-3 w-3" />
                             </button>
                             <span className="w-4 text-center text-sm font-medium text-foreground">{children}</span>
-                            <button 
+                            <button
                               type="button"
-                              onClick={() => setChildren(a => a + 1)} 
+                              onClick={() => setChildren(a => a + 1)}
                               className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
                             >
                               <Plus className="h-3 w-3" />
@@ -290,19 +290,19 @@ function RoomDetail() {
                             <div className="text-xs text-muted-foreground">Di bawah 2 tahun</div>
                           </div>
                           <div className="flex items-center gap-4">
-                            <button 
+                            <button
                               type="button"
-                              disabled={infants <= 0} 
-                              onClick={() => setInfants(a => a - 1)} 
+                              disabled={infants <= 0}
+                              onClick={() => setInfants(a => a - 1)}
                               className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
                             >
                               <Minus className="h-3 w-3" />
                             </button>
                             <span className="w-4 text-center text-sm font-medium text-foreground">{infants}</span>
-                            <button 
+                            <button
                               type="button"
-                              disabled={infants >= 5} 
-                              onClick={() => setInfants(a => a + 1)} 
+                              disabled={infants >= 5}
+                              onClick={() => setInfants(a => a + 1)}
                               className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
                             >
                               <Plus className="h-3 w-3" />
@@ -321,11 +321,11 @@ function RoomDetail() {
 
               <Link
                 to="/booking"
-                search={{ 
-                  room: room.slug, 
+                search={{
+                  room: room.slug,
                   checkIn: date?.from ? format(date.from, "yyyy-MM-dd") : "",
                   checkOut: date?.to ? format(date.to, "yyyy-MM-dd") : "",
-                  guests: totalGuests 
+                  guests: totalGuests
                 }}
                 disabled={!date?.from || !date?.to}
                 className="mt-8 block text-center bg-gold text-gold-foreground py-4 font-medium tracking-wide hover:bg-gold/90 transition-colors rounded-full data-[disabled]:opacity-50 data-[disabled]:pointer-events-none"

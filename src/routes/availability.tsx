@@ -8,7 +8,7 @@ import { rooms, formatIDR } from "@/lib/rooms";
 const searchSchema = z.object({
   checkIn: fallback(z.string(), "").default(""),
   checkOut: fallback(z.string(), "").default(""),
-  guests: fallback(z.number().int().min(1).max(10), 2).default(2),
+  guests: fallback(z.number().int().min(1), 2).default(2),
   room: fallback(z.string(), "").default(""),
 });
 
