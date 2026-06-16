@@ -171,8 +171,8 @@ function AvailabilityPage() {
                     </div>
                     {r.isAvailable ? (
                       <Link
-                        to="/rooms/$slug"
-                        params={{ slug: r.slug }}
+                        to="/booking/"
+                        search={{ room: r.slug, checkIn, checkOut, guests }}
                         className="px-6 py-3 bg-gold text-gold-foreground font-medium tracking-wide hover:bg-gold/90 transition-colors text-sm whitespace-nowrap"
                       >
                         Reserve

@@ -9,10 +9,18 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as BookingRouteImport } from './routes/booking'
 import { Route as AvailabilityRouteImport } from './routes/availability'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as BookingIndexRouteImport } from './routes/booking.index'
 import { Route as RoomsSlugRouteImport } from './routes/rooms.$slug'
+import { Route as BookingSuccessRouteImport } from './routes/booking.success'
 
+const BookingRoute = BookingRouteImport.update({
+  id: '/booking',
+  path: '/booking',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AvailabilityRoute = AvailabilityRouteImport.update({
   id: '/availability',
   path: '/availability',
@@ -23,44 +31,83 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BookingIndexRoute = BookingIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => BookingRoute,
+} as any)
 const RoomsSlugRoute = RoomsSlugRouteImport.update({
   id: '/rooms/$slug',
   path: '/rooms/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BookingSuccessRoute = BookingSuccessRouteImport.update({
+  id: '/success',
+  path: '/success',
+  getParentRoute: () => BookingRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/availability': typeof AvailabilityRoute
+  '/booking': typeof BookingRouteWithChildren
+  '/booking/success': typeof BookingSuccessRoute
   '/rooms/$slug': typeof RoomsSlugRoute
+  '/booking/': typeof BookingIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/availability': typeof AvailabilityRoute
+  '/booking/success': typeof BookingSuccessRoute
   '/rooms/$slug': typeof RoomsSlugRoute
+  '/booking': typeof BookingIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/availability': typeof AvailabilityRoute
+  '/booking': typeof BookingRouteWithChildren
+  '/booking/success': typeof BookingSuccessRoute
   '/rooms/$slug': typeof RoomsSlugRoute
+  '/booking/': typeof BookingIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/availability' | '/rooms/$slug'
+  fullPaths:
+    | '/'
+    | '/availability'
+    | '/booking'
+    | '/booking/success'
+    | '/rooms/$slug'
+    | '/booking/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/availability' | '/rooms/$slug'
-  id: '__root__' | '/' | '/availability' | '/rooms/$slug'
+  to: '/' | '/availability' | '/booking/success' | '/rooms/$slug' | '/booking'
+  id:
+    | '__root__'
+    | '/'
+    | '/availability'
+    | '/booking'
+    | '/booking/success'
+    | '/rooms/$slug'
+    | '/booking/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AvailabilityRoute: typeof AvailabilityRoute
+  BookingRoute: typeof BookingRouteWithChildren
   RoomsSlugRoute: typeof RoomsSlugRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/booking': {
+      id: '/booking'
+      path: '/booking'
+      fullPath: '/booking'
+      preLoaderRoute: typeof BookingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/availability': {
       id: '/availability'
       path: '/availability'
@@ -75,6 +122,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/booking/': {
+      id: '/booking/'
+      path: '/'
+      fullPath: '/booking/'
+      preLoaderRoute: typeof BookingIndexRouteImport
+      parentRoute: typeof BookingRoute
+    }
     '/rooms/$slug': {
       id: '/rooms/$slug'
       path: '/rooms/$slug'
@@ -82,14 +136,45 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RoomsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/booking/success': {
+      id: '/booking/success'
+      path: '/success'
+      fullPath: '/booking/success'
+      preLoaderRoute: typeof BookingSuccessRouteImport
+      parentRoute: typeof BookingRoute
+    }
   }
 }
+
+interface BookingRouteChildren {
+  BookingSuccessRoute: typeof BookingSuccessRoute
+  BookingIndexRoute: typeof BookingIndexRoute
+}
+
+const BookingRouteChildren: BookingRouteChildren = {
+  BookingSuccessRoute: BookingSuccessRoute,
+  BookingIndexRoute: BookingIndexRoute,
+}
+
+const BookingRouteWithChildren =
+  BookingRoute._addFileChildren(BookingRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AvailabilityRoute: AvailabilityRoute,
+  BookingRoute: BookingRouteWithChildren,
   RoomsSlugRoute: RoomsSlugRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
