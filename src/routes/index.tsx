@@ -193,7 +193,7 @@ function Rooms() {
                 </Link>
                 <p className="mt-3 text-sm text-muted-foreground leading-relaxed flex-1">{r.desc}</p>
                 <div className="mt-6 flex items-center gap-4 text-xs text-muted-foreground border-t border-border/60 pt-4">
-                  <span>{r.size}</span><span>·</span><span>ranjang {r.bed}</span><span>·</span><span>{r.guests} tamu</span>
+                  <span>{r.size}</span><span>·</span><span>ranjang {r.bed}</span><span>·</span><span>maks {r.maxGuests} tamu</span>
                 </div>
                 <div className="mt-6 flex items-end justify-between">
                   <div>

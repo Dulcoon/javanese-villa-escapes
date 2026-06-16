@@ -1,5 +1,11 @@
+import * as React from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, BedDouble, Bath, Users, Maximize, Eye, Check, ChevronRight } from "lucide-react";
+import { ArrowLeft, BedDouble, Bath, Users, Maximize, Eye, Check, ChevronRight, Minus, Plus, Calendar as CalendarIcon, Users as UsersIcon } from "lucide-react";
+import { format, addDays, startOfToday } from "date-fns";
+import { id } from "date-fns/locale";
+import { DateRange } from "react-day-picker";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { getRoom, rooms, formatIDR, type Room } from "@/lib/rooms";
 
 export const Route = createFileRoute("/rooms/$slug")({
@@ -34,9 +40,26 @@ function RoomDetail() {
   const stats = [
     { icon: Maximize, label: room.size },
     { icon: BedDouble, label: `Ranjang ${room.bed}` },
-    { icon: Users, label: `${room.guests} tamu` },
+    { icon: Users, label: `Kapasitas dasar ${room.baseGuests} tamu (Maksimal ${room.maxGuests})` },
     { icon: Bath, label: `${room.bathrooms} kamar mandi` },
     { icon: Eye, label: room.view },
+  ];
+
+  const [date, setDate] = React.useState<DateRange | undefined>({
+    from: startOfToday(),
+    to: addDays(startOfToday(), 1),
+  });
+
+  const [adults, setAdults] = React.useState(2);
+  const [children, setChildren] = React.useState(0);
+  const [infants, setInfants] = React.useState(0);
+
+  const totalGuests = adults + children;
+
+  const disabledDates = [
+    addDays(startOfToday(), 3),
+    addDays(startOfToday(), 4),
+    addDays(startOfToday(), 5),
   ];
 
   return (
@@ -141,22 +164,160 @@ function RoomDetail() {
             <div className="border border-border/60 bg-ivory/40 p-8 rounded-2xl">
               <div className="font-sans text-3xl font-semibold text-primary">{formatIDR(room.price)}</div>
               <div className="eyebrow text-muted-foreground mt-1">per malam</div>
-              <div className="mt-6 space-y-4 text-sm">
-                <label className="block">
-                  <span className="eyebrow text-muted-foreground">Tanggal Masuk</span>
-                  <input type="date" className="w-full mt-2 bg-transparent border-b border-border py-2 outline-none focus:border-gold" />
-                </label>
-                <label className="block">
-                  <span className="eyebrow text-muted-foreground">Tanggal Keluar</span>
-                  <input type="date" className="w-full mt-2 bg-transparent border-b border-border py-2 outline-none focus:border-gold" />
-                </label>
+              
+              <div className="mt-6 space-y-4">
+                {/* Date Picker */}
+                <div>
+                  <span className="eyebrow text-muted-foreground block mb-2">Pilih Tanggal</span>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button className="w-full flex items-center gap-3 p-3 bg-transparent border border-border/60 rounded-xl outline-none focus:border-gold hover:bg-black/5 text-left transition-colors">
+                        <CalendarIcon className="h-4 w-4 text-gold" />
+                        <span className="flex-1 text-sm text-foreground font-medium">
+                          {date?.from ? (
+                            date.to ? (
+                              <>{format(date.from, "d MMM yyyy", { locale: id })} - {format(date.to, "d MMM yyyy", { locale: id })}</>
+                            ) : (
+                              format(date.from, "d MMM yyyy", { locale: id })
+                            )
+                          ) : (
+                            <span className="text-muted-foreground font-normal">Check-in - Check-out</span>
+                          )}
+                        </span>
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 rounded-2xl" align="start">
+                      <Calendar
+                        mode="range"
+                        defaultMonth={date?.from}
+                        selected={date}
+                        onSelect={setDate}
+                        numberOfMonths={2}
+                        disabled={[
+                          { before: startOfToday() },
+                          ...disabledDates
+                        ]}
+                      />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+
+                {/* Guest Picker */}
+                <div>
+                  <span className="eyebrow text-muted-foreground block mb-2">Tamu</span>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button className="w-full flex items-center gap-3 p-3 bg-transparent border border-border/60 rounded-xl outline-none focus:border-gold hover:bg-black/5 text-left transition-colors">
+                        <UsersIcon className="h-4 w-4 text-gold" />
+                        <span className="flex-1 text-sm text-foreground font-medium">
+                          {totalGuests} Tamu{infants > 0 ? `, ${infants} Balita` : ''}
+                        </span>
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-80 p-6 rounded-2xl" align="start">
+                      <div className="space-y-6">
+                        {/* Adults */}
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="text-sm font-medium text-foreground">Dewasa</div>
+                            <div className="text-xs text-muted-foreground">Usia 13+</div>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <button 
+                              type="button"
+                              disabled={adults <= 1} 
+                              onClick={() => setAdults(a => a - 1)} 
+                              className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
+                            >
+                              <Minus className="h-3 w-3" />
+                            </button>
+                            <span className="w-4 text-center text-sm font-medium text-foreground">{adults}</span>
+                            <button 
+                              type="button"
+                              disabled={totalGuests >= room.maxGuests} 
+                              onClick={() => setAdults(a => a + 1)} 
+                              className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
+                            >
+                              <Plus className="h-3 w-3" />
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Children */}
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="text-sm font-medium text-foreground">Anak-anak</div>
+                            <div className="text-xs text-muted-foreground">Usia 2-12</div>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <button 
+                              type="button"
+                              disabled={children <= 0} 
+                              onClick={() => setChildren(a => a - 1)} 
+                              className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
+                            >
+                              <Minus className="h-3 w-3" />
+                            </button>
+                            <span className="w-4 text-center text-sm font-medium text-foreground">{children}</span>
+                            <button 
+                              type="button"
+                              disabled={totalGuests >= room.maxGuests} 
+                              onClick={() => setChildren(a => a + 1)} 
+                              className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
+                            >
+                              <Plus className="h-3 w-3" />
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Infants */}
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <div className="text-sm font-medium text-foreground">Balita</div>
+                            <div className="text-xs text-muted-foreground">Di bawah 2 tahun</div>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <button 
+                              type="button"
+                              disabled={infants <= 0} 
+                              onClick={() => setInfants(a => a - 1)} 
+                              className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
+                            >
+                              <Minus className="h-3 w-3" />
+                            </button>
+                            <span className="w-4 text-center text-sm font-medium text-foreground">{infants}</span>
+                            <button 
+                              type="button"
+                              disabled={infants >= 5} 
+                              onClick={() => setInfants(a => a + 1)} 
+                              className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
+                            >
+                              <Plus className="h-3 w-3" />
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="text-xs text-muted-foreground pt-4 border-t border-border/60">
+                          Maksimal {room.maxGuests} tamu (Dewasa + Anak-anak). Kapasitas dasar {room.baseGuests} tamu, lebih dari itu dikenakan biaya tambahan Rp 125.000/malam. Balita tidak dihitung dalam kuota.
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                </div>
               </div>
+
               <Link
-                to="/availability"
-                search={{ room: room.slug, guests: room.guests }}
-                className="mt-8 block text-center bg-primary text-primary-foreground py-4 font-medium tracking-wide hover:bg-primary/90 transition-colors rounded-full"
+                to="/booking"
+                search={{ 
+                  room: room.slug, 
+                  checkIn: date?.from ? format(date.from, "yyyy-MM-dd") : "",
+                  checkOut: date?.to ? format(date.to, "yyyy-MM-dd") : "",
+                  guests: totalGuests 
+                }}
+                disabled={!date?.from || !date?.to}
+                className="mt-8 block text-center bg-gold text-gold-foreground py-4 font-medium tracking-wide hover:bg-gold/90 transition-colors rounded-full data-[disabled]:opacity-50 data-[disabled]:pointer-events-none"
               >
-                Cari Ketersediaan
+                Pesan Sekarang
               </Link>
               <a
                 href="mailto:stay@sekarjawa.com"

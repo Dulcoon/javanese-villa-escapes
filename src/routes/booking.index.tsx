@@ -1,5 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
+import { format, differenceInDays } from "date-fns";
 import { z } from "zod";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { Calendar, Users, BedDouble, Check, ChevronRight, Mail, Phone, User, MessageSquare, ArrowRight } from "lucide-react";
@@ -38,7 +39,15 @@ function BookingFormPage() {
   const [requests, setRequests] = useState("");
 
   // Calculate price
-  const subtotal = selectedRoom ? selectedRoom.price * Math.max(nights, 1) : 0;
+  const basePricePerNight = selectedRoom ? selectedRoom.price : 0;
+  const subtotalBase = basePricePerNight * Math.max(nights, 1);
+  
+  const baseGuests = selectedRoom ? selectedRoom.baseGuests : 2;
+  const extraGuests = Math.max(0, params.guests - baseGuests);
+  const extraChargePerNight = 125000;
+  const extraChargeTotal = extraGuests * extraChargePerNight * Math.max(nights, 1);
+  
+  const subtotal = subtotalBase + extraChargeTotal;
   const tax = Math.round(subtotal * 0.11);
   const total = subtotal + tax;
 
@@ -251,11 +260,44 @@ function BookingFormPage() {
                 </div>
               </div>
 
+              {extraGuests > 0 && (
+                <div className="bg-[#EFE5D5] p-4 rounded-xl flex gap-3 text-sm">
+                  <div className="shrink-0 mt-0.5">
+                    <div className="w-4 h-4 bg-black text-[#EFE5D5] rounded-full flex items-center justify-center font-bold text-[10px]">!</div>
+                  </div>
+                  <div>
+                    <div className="font-medium text-foreground">Anda melebihi batas kapasitas villa</div>
+                    <div className="text-muted-foreground mt-0.5 leading-snug">Maksimal kapasitas villa adalah {baseGuests} orang, tamu tambahan akan dikenakan charge</div>
+                  </div>
+                </div>
+              )}
+
               <hr className="border-border/60" />
 
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">{formatIDR(selectedRoom.price)} × {nights} {nights === 1 ? "night" : "nights"}</span>
+                  <div>
+                    <span className="text-muted-foreground block">Harga (maks. {baseGuests} orang)</span>
+                    <span className="text-xs text-muted-foreground/70">{nights} {nights === 1 ? "malam" : "malam"}</span>
+                  </div>
+                  <span className="font-medium">{formatIDR(subtotalBase)}</span>
+                </div>
+                {extraGuests > 0 && (
+                  <div className="flex justify-between">
+                    <div>
+                      <span className="text-muted-foreground block">Charge tamu tambahan</span>
+                      <span className="text-xs text-muted-foreground/70">{extraGuests} orang x {formatIDR(extraChargePerNight)}</span>
+                    </div>
+                    <span className="font-medium">{formatIDR(extraChargeTotal)}</span>
+                  </div>
+                )}
+              </div>
+
+              <hr className="border-border/60" />
+
+              <div className="space-y-3 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Subtotal</span>
                   <span className="font-medium">{formatIDR(subtotal)}</span>
                 </div>
                 <div className="flex justify-between">

@@ -15,7 +15,8 @@ export type Room = {
   longDesc: string[];
   size: string;
   bed: string;
-  guests: number;
+  baseGuests: number;
+  maxGuests: number;
   bathrooms: number;
   view: string;
   price: number; // IDR per night
@@ -37,7 +38,8 @@ export const rooms: Room[] = [
     ],
     size: "65 m²",
     bed: "King",
-    guests: 2,
+    baseGuests: 2,
+    maxGuests: 12,
     bathrooms: 1,
     view: "Kolam Koi & Taman",
     price: 3500000,
@@ -57,7 +59,8 @@ export const rooms: Room[] = [
     ],
     size: "85 m²",
     bed: "King",
-    guests: 2,
+    baseGuests: 2,
+    maxGuests: 12,
     bathrooms: 1,
     view: "Taman Pribadi & Kolam Rendam",
     price: 5400000,
@@ -77,7 +80,8 @@ export const rooms: Room[] = [
     ],
     size: "180 m²",
     bed: "2 King",
-    guests: 4,
+    baseGuests: 4,
+    maxGuests: 12,
     bathrooms: 2,
     view: "Sawah & Gunung Merapi",
     price: 7600000,
