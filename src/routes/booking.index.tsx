@@ -45,7 +45,7 @@ function BookingFormPage() {
   const handleConfirm = (e: React.FormEvent) => {
     e.preventDefault();
     navigate({
-      to: "/booking/success" as any,
+      to: "/booking/success",
       search: {
         room: params.room,
         checkIn: params.checkIn,
@@ -72,7 +72,7 @@ function BookingFormPage() {
             {rooms.map((r) => (
               <Link
                 key={r.slug}
-                to="/booking/"
+                to="/booking"
                 search={{ room: r.slug, checkIn: params.checkIn, checkOut: params.checkOut, guests: params.guests }}
                 className="group bg-background border border-border/60 overflow-hidden hover:shadow-luxe transition-shadow"
               >
