@@ -3,14 +3,7 @@ import { useState, useEffect } from "react";
 import {
   Wifi, Waves, UtensilsCrossed, Car, Plane, Users, Sparkles, Trees,
   MapPin, Phone, Mail, Star, ChevronDown, Minus, Plus, ArrowRight,
-  Calendar as CalendarIcon, Users as UsersIcon
 } from "lucide-react";
-
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar } from "@/components/ui/calendar";
-import { format, startOfToday, addDays } from "date-fns";
-import { id } from "date-fns/locale";
-import { DateRange } from "react-day-picker";
 
 import heroVilla from "@/assets/hero-villa.jpg";
 import expBatik from "@/assets/exp-batik.jpg";
@@ -112,9 +105,9 @@ function Hero() {
           Marme Villa Jogja lebih dari sekadar tempat menginap. Villa ini dirancang untuk menciptakan momen hangat yang berharga bersama keluarga dan orang terdekat
         </p>
         <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
-          <Link to="/availability" className="px-8 py-4 bg-gold text-gold-foreground font-medium tracking-wide hover:bg-gold/90 transition-colors rounded-full shadow-lg">
+          <a href="#rooms" className="px-8 py-4 bg-gold text-gold-foreground font-medium tracking-wide hover:bg-gold/90 transition-colors rounded-full shadow-lg">
             Pesan Liburan Anda
-          </Link>
+          </a>
           <a href="#about" className="px-8 py-4 border border-ivory/80 text-ivory hover:bg-ivory/20 transition-colors tracking-wide rounded-full shadow-lg backdrop-blur-sm">
             Tentang Kami
           </a>
