@@ -32,6 +32,15 @@ export const Route = createFileRoute("/rooms/$slug")({
       { property: "og:description", content: loaderData?.room.desc },
       { property: "og:image", content: loaderData?.room.img },
     ],
+    links: [
+      { rel: "preload", as: "image", href: loaderData?.room.gallery[0], fetchPriority: "high" },
+      ...(loaderData?.room.gallery[1]
+        ? [{ rel: "preload", as: "image", href: loaderData.room.gallery[1] }]
+        : []),
+      ...(loaderData?.room.gallery[2]
+        ? [{ rel: "preload", as: "image", href: loaderData.room.gallery[2] }]
+        : []),
+    ],
   }),
   component: RoomDetail,
   notFoundComponent: () => (
@@ -119,11 +128,11 @@ function RoomDetail() {
       {/* Gallery */}
       <section className="px-6">
         <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-4 auto-rows-[260px] md:auto-rows-[360px]">
-          <div className="md:col-span-2 md:row-span-2 overflow-hidden rounded-2xl">
-            <img src={room.gallery[0]} alt={room.name} className="h-full w-full object-cover" />
+          <div className="md:col-span-2 md:row-span-2 overflow-hidden rounded-2xl bg-[#8B7355]/20">
+            <img src={room.gallery[0]} alt={room.name} fetchPriority="high" decoding="sync" className="h-full w-full object-cover" />
           </div>
           {room.gallery.slice(1, 3).map((g, i) => (
-            <div key={i} className="overflow-hidden rounded-2xl">
+            <div key={i} className="overflow-hidden rounded-2xl bg-[#8B7355]/20">
               <img src={g} alt={`${room.name} ${i + 2}`} className="h-full w-full object-cover" loading="lazy" />
             </div>
           ))}

@@ -172,7 +172,7 @@ function About() {
   return (
     <section id="about" className="py-32 px-6">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
-        <div className="relative aspect-[3/4] overflow-hidden rounded-2xl group">
+        <div className="relative aspect-[3/4] overflow-hidden rounded-2xl group bg-[#8B7355]/20">
           {/* Warm color overlay */}
           <div className="absolute inset-0 bg-[#8c6b3e]/20 mix-blend-color pointer-events-none z-10" />
           {/* Darkening gradient overlay for better depth */}
@@ -223,7 +223,7 @@ function Rooms() {
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
           {rooms.map((r) => (
             <article key={r.name} className="group bg-background border border-border/60 overflow-hidden flex flex-col rounded-2xl">
-              <Link to="/rooms/$slug" params={{ slug: r.slug }} className="aspect-[4/5] overflow-hidden block">
+              <Link to="/rooms/$slug" params={{ slug: r.slug }} className="aspect-[4/5] overflow-hidden block bg-[#8B7355]/20">
                 <img src={r.img} alt={r.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
               </Link>
               <div className="p-8 flex-1 flex flex-col">
@@ -271,7 +271,7 @@ function Experiences() {
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {experiences.map((e) => (
-            <article key={e.t} className="group relative aspect-[3/4] overflow-hidden rounded-2xl">
+            <article key={e.t} className="group relative aspect-[3/4] overflow-hidden rounded-2xl bg-[#8B7355]/20">
               <img src={e.img} alt={e.t} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
               <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/30 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-6 text-ivory">
@@ -347,7 +347,7 @@ function Gallery() {
         </div>
         <div className="grid md:grid-cols-4 gap-4 auto-rows-[260px] md:auto-rows-[380px]">
           {imgs.map((im, idx) => (
-            <div key={idx} className={`relative overflow-hidden ${im.span} rounded-2xl group`}>
+            <div key={idx} className={`relative overflow-hidden ${im.span} rounded-2xl group bg-[#8B7355]/20`}>
               {/* Warm color overlay */}
               <div className="absolute inset-0 bg-[#8c6b3e]/20 mix-blend-color pointer-events-none z-10" />
               {/* Darkening gradient overlay for better depth */}
