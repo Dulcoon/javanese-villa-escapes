@@ -235,7 +235,7 @@ function RoomDetail() {
                         <div className="flex items-center justify-between">
                           <div>
                             <div className="text-sm font-medium text-foreground">Dewasa</div>
-                            <div className="text-xs text-muted-foreground">Usia 13+</div>
+                            <div className="text-xs text-muted-foreground">Usia 17+</div>
                           </div>
                           <div className="flex items-center gap-4">
                             <button
@@ -261,7 +261,7 @@ function RoomDetail() {
                         <div className="flex items-center justify-between">
                           <div>
                             <div className="text-sm font-medium text-foreground">Anak-anak</div>
-                            <div className="text-xs text-muted-foreground">Usia 2-12</div>
+                            <div className="text-xs text-muted-foreground">Usia 5+</div>
                           </div>
                           <div className="flex items-center gap-4">
                             <button
@@ -287,7 +287,7 @@ function RoomDetail() {
                         <div className="flex items-center justify-between">
                           <div>
                             <div className="text-sm font-medium text-foreground">Balita</div>
-                            <div className="text-xs text-muted-foreground">Di bawah 2 tahun</div>
+                            <div className="text-xs text-muted-foreground">Di bawah 5 tahun</div>
                           </div>
                           <div className="flex items-center gap-4">
                             <button
@@ -311,7 +311,7 @@ function RoomDetail() {
                         </div>
 
                         <div className="text-xs text-muted-foreground pt-4 border-t border-border/60">
-                          Kapasitas villa adalah {room.baseGuests} tamu, lebih dari itu dikenakan biaya tambahan Rp 125.000/orang/malam. Balita tidak dihitung.
+                          Kapasitas villa adalah {room.baseGuests} tamu, lebih dari itu dikenakan biaya tambahan Rp 125.000/orang. Balita tidak dihitung.
                         </div>
                       </div>
                     </PopoverContent>
@@ -332,12 +332,6 @@ function RoomDetail() {
               >
                 Pesan Sekarang
               </Link>
-              <a
-                href="mailto:stay@sekarjawa.com"
-                className="mt-3 block text-center border border-primary text-primary py-4 hover:bg-primary hover:text-primary-foreground transition-colors text-sm tracking-wide rounded-full"
-              >
-                Hubungi via Email
-              </a>
             </div>
           </aside>
         </div>

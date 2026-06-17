@@ -5,25 +5,25 @@ import {
   MapPin, Phone, Mail, Star, ChevronDown, Minus, Plus, ArrowRight,
 } from "lucide-react";
 
-import heroVilla from "@/assets/hero-villa.jpg";
-import expBatik from "@/assets/exp-batik.jpg";
-import expGamelan from "@/assets/exp-gamelan.jpg";
-import expDinner from "@/assets/exp-dinner.jpg";
-import expYoga from "@/assets/exp-yoga.jpg";
-import aboutDetail from "@/assets/about-detail.jpg";
-import galleryPool from "@/assets/gallery-pool.jpg";
-import galleryGarden from "@/assets/gallery-garden.jpg";
-import galleryRestaurant from "@/assets/gallery-restaurant.jpg";
-import roomPavilion from "@/assets/room-pavilion.jpg";
-import carousel1 from "@/assets/carousel1.jpg";
-import carousel2 from "@/assets/carousel2.jpg";
-import carousel3 from "@/assets/carousel3.jpg";
-import carousel4 from "@/assets/carousel4.jpg";
+import heroVilla from "@/assets/hero-villa.webp";
+import expBatik from "@/assets/exp-batik.webp";
+import expGamelan from "@/assets/exp-gamelan.webp";
+import expDinner from "@/assets/exp-dinner.webp";
+import expYoga from "@/assets/exp-yoga.webp";
+import aboutDetail from "@/assets/about-detail.webp";
+import galleryPool from "@/assets/gallery-pool.webp";
+import galleryGarden from "@/assets/gallery-garden.webp";
+import galleryRestaurant from "@/assets/gallery-restaurant.webp";
+import roomPavilion from "@/assets/room-pavilion.webp";
+import carousel1 from "@/assets/carousel1.webp";
+import carousel2 from "@/assets/carousel2.webp";
+import carousel3 from "@/assets/carousel3.webp";
+import carousel4 from "@/assets/carousel4.webp";
 
-import sekilas1 from "@/assets/sekilas1.jpg";
-import sekilas2 from "@/assets/sekilas2.jpg";
-import sekilas3 from "@/assets/sekilas3.jpg";
-import sekilas4 from "@/assets/sekilas4.jpg";
+import sekilas1 from "@/assets/sekilas1.webp";
+import sekilas2 from "@/assets/sekilas2.webp";
+import sekilas3 from "@/assets/sekilas3.webp";
+import sekilas4 from "@/assets/sekilas4.webp";
 
 import { rooms, formatIDR } from "@/lib/rooms";
 import {
@@ -97,7 +97,6 @@ function Hero() {
       ))}
       <div className="absolute inset-0 bg-black/40 bg-gradient-to-b from-primary/60 via-primary/30 to-primary/80 backdrop-blur-[1px]" />
       <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
-        <span className="eyebrow text-gold mb-6 drop-shadow-md">Marme Villa Jogja · Warisan Budaya</span>
         <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl text-ivory max-w-5xl text-balance leading-[1.05] drop-shadow-xl">
           Exceptional Service, Memorable Stays
         </h1>
@@ -106,7 +105,7 @@ function Hero() {
         </p>
         <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
           <a href="#rooms" className="px-8 py-4 bg-gold text-gold-foreground font-medium tracking-wide hover:bg-gold/90 transition-colors rounded-full shadow-lg">
-            Pesan Liburan Anda
+            Reservasi Sekarang
           </a>
           <a href="#about" className="px-8 py-4 border border-ivory/80 text-ivory hover:bg-ivory/20 transition-colors tracking-wide rounded-full shadow-lg backdrop-blur-sm">
             Tentang Kami
@@ -175,12 +174,12 @@ function About() {
           <div className="absolute inset-0 bg-[#8c6b3e]/20 mix-blend-color pointer-events-none z-10" />
           {/* Darkening gradient overlay for better depth */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none z-10" />
-          
-          <img 
-            src={aboutDetail} 
-            alt="Detail ukiran kayu jati Jawa" 
-            loading="lazy" 
-            className="h-full w-full object-cover hover:scale-105 transition-transform duration-700 sepia-[.25] saturate-[1.25] contrast-[1.05] brightness-[0.9]" 
+
+          <img
+            src={aboutDetail}
+            alt="Detail ukiran kayu jati Jawa"
+            loading="lazy"
+            className="h-full w-full object-cover hover:scale-105 transition-transform duration-700 sepia-[.25] saturate-[1.25] contrast-[1.05] brightness-[0.9]"
           />
           {/* <div className="absolute -bottom-6 -right-6 hidden md:block bg-gold text-gold-foreground p-8 max-w-[220px]">
             <div className="font-serif text-4xl">1923</div>
@@ -311,20 +310,13 @@ function Amenities() {
           <h2 className="font-serif text-4xl md:text-5xl mt-4">Segalanya untuk Kenyamanan Anda.</h2>
         </div>
 
-        {/* Top 3 rows (12 items) */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-y-12 gap-x-8 text-center">
-          {amenitiesList.slice(0, 12).map(({ i: Icon, t }) => (
-            <div key={t} className="flex flex-col items-center justify-start">
-              <Icon className="h-10 w-10 text-gold mb-4" strokeWidth={1.25} />
-              <div className="text-sm tracking-wide">{t}</div>
-            </div>
-          ))}
-        </div>
-
-        {/* Bottom row (2 items, centered) */}
-        <div className="grid grid-cols-2 gap-x-8 max-w-sm mx-auto mt-12 text-center">
-          {amenitiesList.slice(12).map(({ i: Icon, t }) => (
-            <div key={t} className="flex flex-col items-center justify-start">
+          {amenitiesList.map(({ i: Icon, t }, idx) => (
+            <div
+              key={t}
+              className={`flex flex-col items-center justify-start ${idx === 12 ? "md:col-start-2" : ""
+                }`}
+            >
               <Icon className="h-10 w-10 text-gold mb-4" strokeWidth={1.25} />
               <div className="text-sm tracking-wide">{t}</div>
             </div>
@@ -357,12 +349,12 @@ function Gallery() {
               <div className="absolute inset-0 bg-[#8c6b3e]/20 mix-blend-color pointer-events-none z-10" />
               {/* Darkening gradient overlay for better depth */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none z-10" />
-              
-              <img 
-                src={im.src} 
-                alt={im.alt} 
-                loading="lazy" 
-                className="h-full w-full object-cover hover:scale-105 transition-transform duration-700 sepia-[.25] saturate-[1.25] contrast-[1.05] brightness-[0.9]" 
+
+              <img
+                src={im.src}
+                alt={im.alt}
+                loading="lazy"
+                className="h-full w-full object-cover hover:scale-105 transition-transform duration-700 sepia-[.25] saturate-[1.25] contrast-[1.05] brightness-[0.9]"
               />
             </div>
           ))}

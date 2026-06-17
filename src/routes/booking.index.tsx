@@ -44,8 +44,8 @@ function BookingFormPage() {
 
   const baseGuests = selectedRoom ? selectedRoom.baseGuests : 2;
   const extraGuests = Math.max(0, params.guests - baseGuests);
-  const extraChargePerNight = 125000;
-  const extraChargeTotal = extraGuests * extraChargePerNight * Math.max(nights, 1);
+  const extraChargePerPerson = 125000;
+  const extraChargeTotal = extraGuests * extraChargePerPerson;
 
   const subtotal = subtotalBase + extraChargeTotal;
   const total = subtotal;
@@ -286,7 +286,7 @@ function BookingFormPage() {
                   <div className="flex justify-between items-start mt-1">
                     <div>
                       <span className="text-muted-foreground block">Charge tamu tambahan</span>
-                      <span className="text-[11px] text-muted-foreground/50 mt-1 block">{extraGuests} orang x {formatIDR(extraChargePerNight)} x {nights} malam</span>
+                      <span className="text-[11px] text-muted-foreground/50 mt-1 block">{extraGuests} orang x {formatIDR(extraChargePerPerson)}</span>
                     </div>
                     <span className="font-medium">{formatIDR(extraChargeTotal)}</span>
                   </div>
@@ -300,20 +300,8 @@ function BookingFormPage() {
                 <span className="text-3xl text-primary">{formatIDR(total)}</span>
               </div>
 
-              <p className="text-[11px] text-muted-foreground mt-2">
-                Includes daily breakfast, welcome ritual and afternoon tea.
-              </p>
 
-              <div className="pt-4 border-t border-border/60">
-                <div className="flex items-start gap-3 text-xs text-muted-foreground">
-                  <Check className="h-4 w-4 text-gold mt-0.5 shrink-0" />
-                  <span>Free cancellation up to 7 days before check-in</span>
-                </div>
-                <div className="flex items-start gap-3 text-xs text-muted-foreground mt-2">
-                  <Check className="h-4 w-4 text-gold mt-0.5 shrink-0" />
-                  <span>Secure booking — no payment required for prototype</span>
-                </div>
-              </div>
+
 
               {/* Submit (Mobile only) */}
               <div className="lg:hidden pt-6 mt-6 border-t border-border/60">

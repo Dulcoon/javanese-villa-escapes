@@ -1,9 +1,9 @@
-import roomJoglo from "@/assets/room-joglo.jpg";
-import roomPavilion from "@/assets/room-pavilion.jpg";
-import roomRoyal from "@/assets/room-royal.jpg";
-import galleryPool from "@/assets/gallery-pool.jpg";
-import galleryGarden from "@/assets/gallery-garden.jpg";
-import galleryRestaurant from "@/assets/gallery-restaurant.jpg";
+import roomJoglo from "@/assets/room-joglo.webp";
+import roomPavilion from "@/assets/room-pavilion.webp";
+import roomRoyal from "@/assets/room-royal.webp";
+import galleryPool from "@/assets/gallery-pool.webp";
+import galleryGarden from "@/assets/gallery-garden.webp";
+import galleryRestaurant from "@/assets/gallery-restaurant.webp";
 
 export type Room = {
   slug: string;

@@ -38,7 +38,7 @@ function nightsBetween(a: string, b: string) {
 
 function AvailabilityPage() {
   const params = Route.useSearch();
-  
+
   const initialFrom = params.checkIn ? new Date(params.checkIn) : startOfToday();
   const initialTo = params.checkOut ? new Date(params.checkOut) : addDays(startOfToday(), 3);
 
@@ -53,7 +53,7 @@ function AvailabilityPage() {
   const [searched, setSearched] = useState(false);
 
   const totalGuests = adults + children;
-  
+
   const checkInStr = date?.from ? format(date.from, "yyyy-MM-dd") : "";
   const checkOutStr = date?.to ? format(date.to, "yyyy-MM-dd") : "";
   const nights = nightsBetween(checkInStr, checkOutStr);
@@ -160,7 +160,7 @@ function AvailabilityPage() {
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="text-sm font-medium text-foreground">Dewasa</div>
-                        <div className="text-xs text-muted-foreground">Usia 13+</div>
+                        <div className="text-xs text-muted-foreground">Usia 17+</div>
                       </div>
                       <div className="flex items-center gap-4">
                         <button
@@ -186,7 +186,7 @@ function AvailabilityPage() {
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="text-sm font-medium text-foreground">Anak-anak</div>
-                        <div className="text-xs text-muted-foreground">Usia 2-12</div>
+                        <div className="text-xs text-muted-foreground">Usia 5+</div>
                       </div>
                       <div className="flex items-center gap-4">
                         <button
@@ -212,7 +212,7 @@ function AvailabilityPage() {
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="text-sm font-medium text-foreground">Balita</div>
-                        <div className="text-xs text-muted-foreground">Di bawah 2 tahun</div>
+                        <div className="text-xs text-muted-foreground">Di bawah 5 tahun</div>
                       </div>
                       <div className="flex items-center gap-4">
                         <button

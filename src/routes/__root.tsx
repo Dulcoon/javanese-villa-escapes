@@ -11,7 +11,7 @@ import { useEffect, useState, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import logoMarme from "@/assets/logo-marme.png";
+import logoMarme from "@/assets/logo-marme.webp";
 
 function NotFoundComponent() {
   return (
@@ -143,8 +143,7 @@ function SplashScreen() {
       <style dangerouslySetInnerHTML={{
         __html: `
         @keyframes splashFade {
-          0%   { opacity: 0; }
-          12%  { opacity: 1; }
+          0%   { opacity: 1; }
           78%  { opacity: 1; }
           100% { opacity: 0; pointer-events: none; }
         }
