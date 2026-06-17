@@ -40,6 +40,12 @@ export const Route = createFileRoute("/")({
       { property: "og:description", content: "Villa budaya mewah di Jawa Tengah." },
       { property: "og:image", content: heroVilla },
     ],
+    links: [
+      { rel: "preload", as: "image", href: carousel1, fetchPriority: "high" },
+      { rel: "preload", as: "image", href: carousel2 },
+      { rel: "preload", as: "image", href: carousel3 },
+      { rel: "preload", as: "image", href: carousel4 },
+    ],
   }),
   component: VillaHome,
 });
