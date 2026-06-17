@@ -90,7 +90,10 @@ function Hero() {
           src={img}
           alt={`Marme Villa Carousel ${idx + 1}`}
           loading={idx === 0 ? "eager" : "lazy"}
+          fetchPriority={idx === 0 ? "high" : "low"}
           decoding={idx === 0 ? "sync" : "async"}
+          width="1920"
+          height="1080"
           className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms] ease-in-out ${idx === currentIdx ? "opacity-100" : "opacity-0"
             }`}
         />
@@ -217,7 +220,7 @@ function Rooms() {
           <span className="eyebrow">Akomodasi</span>
           <h2 className="text-3xl md:text-5xl mt-4 text-balance">Dua paviliun. Masing-masing adalah dunia pribadi.</h2>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
           {rooms.map((r) => (
             <article key={r.name} className="group bg-background border border-border/60 overflow-hidden flex flex-col rounded-2xl">
               <Link to="/rooms/$slug" params={{ slug: r.slug }} className="aspect-[4/5] overflow-hidden block">
