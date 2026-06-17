@@ -108,7 +108,7 @@ function Hero() {
       <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
         <h1 className="text-4xl md:text-7xl lg:text-8xl text-ivory max-w-5xl text-balance leading-[1.05] drop-shadow-xl font-bold">
           Exceptional Service,<br />
-          <span className="text-gold">Memorable Stays</span>
+          <span className="">Memorable Stays</span>
         </h1>
         <p className="mt-8 max-w-xl text-ivory text-base md:text-lg font-light leading-relaxed drop-shadow-md">
           Marme Villa Jogja lebih dari sekadar tempat menginap. Villa ini dirancang untuk menciptakan momen hangat yang berharga bersama keluarga dan orang terdekat
@@ -197,7 +197,7 @@ function About() {
         </div>
         <div>
           <span className="eyebrow">Our Story</span>
-          <h2 className="text-3xl md:text-5xl mt-4 leading-tight text-balance">
+          <h2 className="text-3xl md:text-5xl mt-4 leading-tight text-balance font-bold">
             Where Comfort Meets Timeless Mediterranean Charm
           </h2>
           <p className="mt-8 text-muted-foreground leading-relaxed text-base md:text-lg text-justify">
@@ -225,7 +225,7 @@ function Rooms() {
       <div className="max-w-7xl mx-auto">
         <div className="max-w-2xl mb-16">
           <span className="eyebrow">Akomodasi</span>
-          <h2 className="text-3xl md:text-5xl mt-4 text-balance">Dua paviliun. Masing-masing adalah dunia pribadi.</h2>
+          <h2 className="text-3xl md:text-5xl mt-4 text-balance font-bold">Dua paviliun. Masing-masing adalah dunia pribadi.</h2>
         </div>
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
           {rooms.map((r) => (
@@ -273,7 +273,7 @@ function Experiences() {
         <div className="flex items-end justify-between flex-wrap gap-6 mb-16">
           <div>
             <span className="eyebrow">Pengalaman Terkurasi</span>
-            <h2 className="text-3xl md:text-5xl mt-4 max-w-xl text-balance">Kisah yang akan Anda bawa pulang.</h2>
+            <h2 className="text-3xl md:text-5xl mt-4 max-w-xl text-balance font-bold">Kisah yang akan Anda bawa pulang.</h2>
           </div>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -317,7 +317,7 @@ function Amenities() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <span className="eyebrow">Fasilitas</span>
-          <h2 className="text-3xl md:text-5xl mt-4">Segalanya untuk Kenyamanan Anda.</h2>
+          <h2 className="text-3xl md:text-5xl mt-4 font-bold">Segalanya untuk Kenyamanan Anda.</h2>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-y-12 gap-x-8 text-center">
@@ -350,7 +350,7 @@ function Gallery() {
       <div className="max-w-7xl mx-auto">
         <div className="mb-16 max-w-2xl">
           <span className="eyebrow">Galeri</span>
-          <h2 className="text-3xl md:text-5xl mt-4 text-balance">Sekilas tentang kehidupan di Marme Villa Jogja.</h2>
+          <h2 className="text-3xl md:text-5xl mt-4 text-balance font-bold">Sekilas tentang kehidupan di Marme Villa Jogja.</h2>
         </div>
         <div className="grid md:grid-cols-4 gap-4 auto-rows-[260px] md:auto-rows-[380px]">
           {imgs.map((im, idx) => (
@@ -386,7 +386,7 @@ function Testimonials() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="eyebrow">Cerita Tamu</span>
-          <h2 className="text-3xl md:text-5xl mt-4">Kesan dari para tamu kami.</h2>
+          <h2 className="text-3xl md:text-5xl mt-4 font-bold">Kesan dari para tamu kami.</h2>
         </div>
         <div className="grid md:grid-cols-3 gap-8">
           {reviews.map((r) => (
@@ -420,7 +420,7 @@ function Location() {
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
         <div>
           <span className="eyebrow">Lokasi</span>
-          <h2 className="text-3xl md:text-5xl mt-4 text-balance">
+          <h2 className="text-3xl md:text-5xl mt-4 text-balance font-bold">
             Di antara terasering sawah dan candi-candi kuno Jawa Tengah.
           </h2>
           <p className="mt-6 text-muted-foreground text-base md:text-lg leading-relaxed">
@@ -463,7 +463,7 @@ function FAQ() {
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-16">
           <span className="eyebrow">Pertanyaan</span>
-          <h2 className="text-3xl md:text-5xl mt-4">Sebelum Anda Tiba.</h2>
+          <h2 className="text-3xl md:text-5xl mt-4 font-bold">Sebelum Anda Tiba.</h2>
         </div>
         <div className="border-t border-border/60">
           {faqs.map(([q, a], i) => (
@@ -490,7 +490,7 @@ function Contact() {
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16">
         <div>
           <span className="eyebrow">Reservasi</span>
-          <h2 className="text-3xl md:text-5xl mt-4 text-balance">Kami menantikan kedatangan Anda.</h2>
+          <h2 className="text-3xl md:text-5xl mt-4 text-balance font-bold">Kami menantikan kedatangan Anda.</h2>
           <p className="mt-6 text-primary-foreground/75 text-base md:text-lg leading-relaxed">
             Tim reservasi kami merespons secara pribadi dalam beberapa jam,
             sepanjang waktu. Selamat datang.
