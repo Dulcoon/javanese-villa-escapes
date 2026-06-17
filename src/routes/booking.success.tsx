@@ -51,10 +51,10 @@ function BookingSuccessPage() {
       {/* Confirmation hero */}
       <section className="pt-16 pb-12 px-6 text-center">
         <div className="max-w-2xl mx-auto">
-          <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gold/10 mb-6">
+          <div className="flex mx-auto items-center justify-center w-20 h-20 rounded-full bg-gold/10 mb-6">
             <CheckCircle className="h-10 w-10 text-gold" strokeWidth={1.25} />
           </div>
-          <span className="eyebrow">Reservasi Terkonfirmasi</span>
+          <div className="eyebrow">Reservasi Terkonfirmasi</div>
           <h1 className="text-4xl md:text-5xl mt-3">Terima Kasih, {params.name.split(" ")[0]}!</h1>
           <p className="mt-4 text-muted-foreground text-lg">
             Pesanan Anda di Marme Villa Jogja telah dikonfirmasi.
@@ -157,7 +157,7 @@ function BookingSuccessPage() {
               to="/"
               className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-3 font-medium tracking-wide hover:bg-primary/90 transition-colors"
             >
-              <Home className="h-4 w-4" /> Kembali ke Beranda
+              <Home className="h-4 w-4" /> Kembali ke beranda
             </Link>
           </div>
 

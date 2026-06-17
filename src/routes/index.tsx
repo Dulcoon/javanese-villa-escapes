@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import {
   Wifi, Waves, UtensilsCrossed, Car, Plane, Users, Sparkles, Trees,
-  MapPin, Phone, Mail, Star, ChevronDown, Minus, Plus, ArrowRight,
+  MapPin, Phone, Mail, Star, ChevronDown, Minus, Plus, ArrowRight, Menu, X,
 } from "lucide-react";
 
 import heroVilla from "@/assets/hero-villa.webp";
@@ -50,31 +50,10 @@ export const Route = createFileRoute("/")({
   component: VillaHome,
 });
 
+import { Navbar } from "@/components/Navbar";
+
 /* ---------- Nav ---------- */
-function Nav() {
-  const links = [
-    ["Tentang Kami", "#about"], ["Kamar", "#rooms"], ["Pengalaman", "#experiences"],
-    ["Galeri", "#gallery"], ["Lokasi", "#location"], ["Kontak", "#contact"],
-  ];
-  return (
-    <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-background/70 border-b border-border/40">
-      <div className="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between">
-        <a href="#top" className="flex flex-col leading-none">
-          <span className="font-serif text-[26px] tracking-[0.08em] font-normal text-primary">MARME</span>
-          <span className="font-sans text-[9.5px] tracking-[0.42em] font-light text-muted-foreground mt-1.5 ml-0.5 uppercase">VILLA JOGJA</span>
-        </a>
-        <nav className="hidden lg:flex items-center gap-10 text-sm">
-          {links.map(([l, h]) => (
-            <a key={h} href={h} className="text-foreground/80 hover:text-gold transition-colors">{l}</a>
-          ))}
-        </nav>
-        <Link to="/availability" className="hidden md:inline-flex items-center gap-2 px-5 py-2.5 border border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors text-sm tracking-wide rounded-full">
-          Cek Ketersediaan <ArrowRight className="h-3.5 w-3.5" />
-        </Link>
-      </div>
-    </header>
-  );
-}
+// Removed inline Nav, now using imported Navbar
 
 /* ---------- Hero ---------- */
 function Hero() {
@@ -550,7 +529,7 @@ function Footer() {
 function VillaHome() {
   return (
     <div className="bg-background text-foreground">
-      <Nav />
+      <Navbar />
       <main>
         <Hero />
         {/* <BookingWidget /> */}

@@ -37,6 +37,8 @@ function BookingFormPage() {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [requests, setRequests] = useState("");
+  const [promoCode, setPromoCode] = useState("");
+  const [isPromoApplied, setIsPromoApplied] = useState(false);
 
   // Calculate price
   const basePricePerNight = selectedRoom ? selectedRoom.price : 0;
@@ -47,8 +49,9 @@ function BookingFormPage() {
   const extraChargePerPerson = 125000;
   const extraChargeTotal = extraGuests * extraChargePerPerson;
 
+  const discount = isPromoApplied ? 150000 : 0;
   const subtotal = subtotalBase + extraChargeTotal;
-  const total = subtotal;
+  const total = Math.max(0, subtotal - discount);
 
   const handleConfirm = (e: React.FormEvent) => {
     e.preventDefault();
@@ -161,7 +164,7 @@ function BookingFormPage() {
               {/* Guest details */}
               <div className="border border-border/60 p-8 rounded-2xl">
                 <span className="eyebrow">Detail Tamu</span>
-                <h3 className="text-2xl mt-1">Siapa yang akan menginap?</h3>
+                <h3 className="text-2xl mt-1 font-bold">Siapa yang akan menginap?</h3>
                 <div className="mt-6 space-y-5">
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-1.5 flex items-center gap-2">
@@ -235,7 +238,7 @@ function BookingFormPage() {
           {/* Right: Price breakdown */}
           <div className="lg:col-span-2">
             <div className="lg:sticky lg:top-28 border border-border/60 bg-ivory/40 p-8 space-y-6 rounded-2xl">
-              <h3 className="text-2xl text-primary">Ringkasan Pemesanan</h3>
+              <h3 className="text-2xl text-primary font-bold">Ringkasan Pemesanan</h3>
 
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
@@ -289,6 +292,37 @@ function BookingFormPage() {
                       <span className="text-[11px] text-muted-foreground/50 mt-1 block">{extraGuests} orang x {formatIDR(extraChargePerPerson)}</span>
                     </div>
                     <span className="font-medium">{formatIDR(extraChargeTotal)}</span>
+                  </div>
+                )}
+              </div>
+
+              <hr className="border-border/60" />
+
+              <div className="space-y-3">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={promoCode}
+                    onChange={(e) => setPromoCode(e.target.value)}
+                    placeholder="Kode Promo"
+                    className="w-full bg-transparent border border-border px-3 py-2 outline-none focus:border-gold text-foreground placeholder:text-muted-foreground/50 transition-colors rounded-xl text-sm"
+                    disabled={isPromoApplied}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (promoCode) setIsPromoApplied(true);
+                    }}
+                    disabled={isPromoApplied || !promoCode}
+                    className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:bg-primary/90 disabled:opacity-40 transition-colors"
+                  >
+                    {isPromoApplied ? "Terpakai" : "Pakai"}
+                  </button>
+                </div>
+                {isPromoApplied && (
+                  <div className="flex justify-between items-center text-sm text-green-600">
+                    <span>Diskon (Promo: {promoCode})</span>
+                    <span>-{formatIDR(150000)}</span>
                   </div>
                 )}
               </div>

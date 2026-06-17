@@ -7,6 +7,7 @@ import { DateRange } from "react-day-picker";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { getRoom, rooms, formatIDR, type Room } from "@/lib/rooms";
+import { Navbar } from "@/components/Navbar";
 
 import { z } from "zod";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
@@ -89,17 +90,7 @@ function RoomDetail() {
   return (
     <div className="bg-background text-foreground">
       {/* Top bar */}
-      <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-background/80 border-b border-border/40">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between">
-          <Link to="/" className="flex flex-col leading-none">
-            <span className="font-serif text-[26px] tracking-[0.08em] font-normal text-primary">MARME</span>
-            <span className="font-sans text-[9.5px] tracking-[0.42em] font-light text-muted-foreground mt-1.5 ml-0.5 uppercase">VILLA JOGJA</span>
-          </Link>
-          <Link to="/" className="text-sm text-foreground/70 hover:text-gold inline-flex items-center gap-2">
-            <ArrowLeft className="h-4 w-4" /> Kembali ke villa
-          </Link>
-        </div>
-      </header>
+      <Navbar variant="back" backTo="/" backText="Kembali ke beranda" />
 
       {/* Hero */}
       <section className="pt-32 pb-12 px-6">

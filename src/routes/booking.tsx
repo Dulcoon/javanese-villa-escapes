@@ -1,5 +1,6 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
+import { Navbar } from "@/components/Navbar";
 
 export const Route = createFileRoute("/booking")({
   head: () => ({
@@ -15,17 +16,7 @@ function BookingLayout() {
   return (
     <div className="bg-background text-foreground min-h-screen">
       {/* Header */}
-      <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-background/80 border-b border-border/40">
-        <div className="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between">
-          <Link to="/" className="flex flex-col leading-none">
-            <span className="font-manrope text-xl tracking-wide text-primary">Marme Villa</span>
-            <span className="text-[10px] tracking-[0.3em] text-muted-foreground mt-0.5">VILLA · JOGJA</span>
-          </Link>
-          <Link to="/" className="text-sm text-foreground/70 hover:text-gold inline-flex items-center gap-2">
-            <ArrowLeft className="h-4 w-4" /> Back to villa
-          </Link>
-        </div>
-      </header>
+      <Navbar variant="back" backTo="/" backText="Kembali ke beranda" />
 
       {/* Page content — child route renders here */}
       <Outlet />
