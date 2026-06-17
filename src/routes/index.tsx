@@ -106,8 +106,9 @@ function Hero() {
       ))}
       <div className="absolute inset-0 bg-black/40 bg-gradient-to-b from-primary/60 via-primary/30 to-primary/80 backdrop-blur-[1px]" />
       <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
-        <h1 className="text-4xl md:text-7xl lg:text-8xl text-ivory max-w-5xl text-balance leading-[1.05] drop-shadow-xl">
-          Exceptional Service, Memorable Stays
+        <h1 className="text-4xl md:text-7xl lg:text-8xl text-ivory max-w-5xl text-balance leading-[1.05] drop-shadow-xl font-bold">
+          Exceptional Service,<br />
+          <span className="text-gold">Memorable Stays</span>
         </h1>
         <p className="mt-8 max-w-xl text-ivory text-base md:text-lg font-light leading-relaxed drop-shadow-md">
           Marme Villa Jogja lebih dari sekadar tempat menginap. Villa ini dirancang untuk menciptakan momen hangat yang berharga bersama keluarga dan orang terdekat
