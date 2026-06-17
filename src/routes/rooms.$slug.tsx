@@ -92,7 +92,7 @@ function RoomDetail() {
       <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-background/80 border-b border-border/40">
         <div className="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between">
           <Link to="/" className="flex flex-col leading-none">
-            <span className="font-manrope text-[26px] tracking-[0.08em] font-normal text-primary">MARME</span>
+            <span className="font-serif text-[26px] tracking-[0.08em] font-normal text-primary">MARME</span>
             <span className="font-sans text-[9.5px] tracking-[0.42em] font-light text-muted-foreground mt-1.5 ml-0.5 uppercase">VILLA JOGJA</span>
           </Link>
           <Link to="/" className="text-sm text-foreground/70 hover:text-gold inline-flex items-center gap-2">
