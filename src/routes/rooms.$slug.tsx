@@ -37,7 +37,7 @@ export const Route = createFileRoute("/rooms/$slug")({
   notFoundComponent: () => (
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">
-        <h1 className="font-serif text-3xl text-primary">Villa tidak ditemukan</h1>
+        <h1 className="text-3xl text-primary">Villa tidak ditemukan</h1>
         <Link to="/" className="mt-6 inline-block text-gold underline">Kembali ke beranda</Link>
       </div>
     </div>
@@ -49,7 +49,7 @@ function RoomDetail() {
   const { room } = Route.useLoaderData() as { room: Room };
   const stats = [
     { icon: Maximize, label: room.size },
-    { icon: BedDouble, label: `Ranjang ${room.bed}` },
+    { icon: BedDouble, label: `${room.bed} kamar tidur` },
     { icon: Users, label: `${room.baseGuests} tamu` },
     { icon: Bath, label: `${room.bathrooms} kamar mandi` },
     { icon: Eye, label: room.view },
@@ -83,7 +83,7 @@ function RoomDetail() {
       <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-background/80 border-b border-border/40">
         <div className="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between">
           <Link to="/" className="flex flex-col leading-none">
-            <span className="font-serif text-[26px] tracking-[0.08em] font-normal text-primary">MARME</span>
+            <span className="font-manrope text-[26px] tracking-[0.08em] font-normal text-primary">MARME</span>
             <span className="font-sans text-[9.5px] tracking-[0.42em] font-light text-muted-foreground mt-1.5 ml-0.5 uppercase">VILLA JOGJA</span>
           </Link>
           <Link to="/" className="text-sm text-foreground/70 hover:text-gold inline-flex items-center gap-2">
@@ -105,8 +105,8 @@ function RoomDetail() {
           <div className="grid lg:grid-cols-2 gap-10 items-end">
             <div>
               <span className="eyebrow">Paviliun Pribadi</span>
-              <h1 className="font-serif text-4xl md:text-6xl mt-4 leading-tight text-balance">{room.name}</h1>
-              <p className="mt-6 text-lg text-muted-foreground italic">{room.tagline}</p>
+              <h1 className="text-4xl md:text-6xl font-semibold mt-4 leading-tight text-balance">{room.name}</h1>
+              <p className="mt-6 text-base md:text-lg text-muted-foreground italic">{room.tagline}</p>
             </div>
             <div className="lg:text-right">
               <div className="font-sans text-4xl font-semibold text-primary">{formatIDR(room.price)}</div>
@@ -145,9 +145,9 @@ function RoomDetail() {
 
             <div>
               <span className="eyebrow">Suite</span>
-              <h2 className="font-serif text-3xl md:text-4xl mt-3">Dunia yang intim, diukir dengan tangan.</h2>
+              <h2 className="text-3xl md:text-4xl mt-3">Dunia yang intim, diukir dengan tangan.</h2>
               {room.longDesc.map((p, i) => (
-                <p key={i} className="mt-6 text-muted-foreground leading-relaxed text-lg">{p}</p>
+                <p key={i} className="mt-6 text-muted-foreground leading-relaxed text-base md:text-lg">{p}</p>
               ))}
             </div>
 
@@ -342,7 +342,7 @@ function RoomDetail() {
         <div className="max-w-7xl mx-auto">
           <div className="mb-12">
             <span className="eyebrow">Paviliun Lainnya</span>
-            <h2 className="font-serif text-3xl md:text-4xl mt-3">Jelajahi dunia pribadi kami yang lain.</h2>
+            <h2 className="text-3xl md:text-4xl mt-3">Jelajahi dunia pribadi kami yang lain.</h2>
           </div>
           <div className="grid md:grid-cols-2 gap-8">
             {rooms.filter((r) => r.slug !== room.slug).map((r) => (
@@ -356,7 +356,7 @@ function RoomDetail() {
                   <img src={r.img} alt={r.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
                 </div>
                 <div className="p-6 flex flex-col justify-center">
-                  <h3 className="font-serif text-xl text-primary">{r.name}</h3>
+                  <h3 className="font-manrope text-xl font-semibold text-primary">{r.name}</h3>
                   <p className="mt-2 text-sm text-muted-foreground line-clamp-3">{r.desc}</p>
                   <div className="mt-4 text-sm text-gold tracking-wide">{formatIDR(r.price)} / malam</div>
                 </div>

@@ -54,7 +54,7 @@ function Nav() {
     <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-background/70 border-b border-border/40">
       <div className="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between">
         <a href="#top" className="flex flex-col leading-none">
-          <span className="font-serif text-[26px] tracking-[0.08em] font-normal text-primary">MARME</span>
+          <span className="font-manrope text-[26px] tracking-[0.08em] font-normal text-primary">MARME</span>
           <span className="font-sans text-[9.5px] tracking-[0.42em] font-light text-muted-foreground mt-1.5 ml-0.5 uppercase">VILLA JOGJA</span>
         </a>
         <nav className="hidden lg:flex items-center gap-10 text-sm">
@@ -97,17 +97,17 @@ function Hero() {
       ))}
       <div className="absolute inset-0 bg-black/40 bg-gradient-to-b from-primary/60 via-primary/30 to-primary/80 backdrop-blur-[1px]" />
       <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
-        <h1 className="font-serif text-5xl md:text-7xl lg:text-8xl text-ivory max-w-5xl text-balance leading-[1.05] drop-shadow-xl">
+        <h1 className="text-4xl md:text-7xl lg:text-8xl text-ivory max-w-5xl text-balance leading-[1.05] drop-shadow-xl">
           Exceptional Service, Memorable Stays
         </h1>
-        <p className="mt-8 max-w-xl text-ivory text-lg font-light leading-relaxed drop-shadow-md">
+        <p className="mt-8 max-w-xl text-ivory text-base md:text-lg font-light leading-relaxed drop-shadow-md">
           Marme Villa Jogja lebih dari sekadar tempat menginap. Villa ini dirancang untuk menciptakan momen hangat yang berharga bersama keluarga dan orang terdekat
         </p>
         <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
-          <a href="#rooms" className="px-8 py-4 bg-gold text-gold-foreground font-medium tracking-wide hover:bg-gold/90 transition-colors rounded-full shadow-lg">
+          <a href="#rooms" className="px-6 py-3 md:px-8 md:py-4 text-sm md:text-base bg-gold text-gold-foreground font-medium tracking-wide hover:bg-gold/90 transition-colors rounded-full shadow-lg">
             Reservasi Sekarang
           </a>
-          <a href="#about" className="px-8 py-4 border border-ivory/80 text-ivory hover:bg-ivory/20 transition-colors tracking-wide rounded-full shadow-lg backdrop-blur-sm">
+          <a href="#about" className="px-6 py-3 md:px-8 md:py-4 text-sm md:text-base border border-ivory/80 text-ivory hover:bg-ivory/20 transition-colors tracking-wide rounded-full shadow-lg backdrop-blur-sm">
             Tentang Kami
           </a>
         </div>
@@ -182,22 +182,22 @@ function About() {
             className="h-full w-full object-cover hover:scale-105 transition-transform duration-700 sepia-[.25] saturate-[1.25] contrast-[1.05] brightness-[0.9]"
           />
           {/* <div className="absolute -bottom-6 -right-6 hidden md:block bg-gold text-gold-foreground p-8 max-w-[220px]">
-            <div className="font-serif text-4xl">1923</div>
+            <div className="font-manrope text-4xl">1923</div>
           </div> */}
         </div>
         <div>
           <span className="eyebrow">Our Story</span>
-          <h2 className="font-serif text-4xl md:text-5xl mt-4 leading-tight text-balance">
+          <h2 className="text-3xl md:text-5xl mt-4 leading-tight text-balance">
             Where Comfort Meets Timeless Mediterranean Charm
           </h2>
-          <p className="mt-8 text-muted-foreground leading-relaxed text-lg">
+          <p className="mt-8 text-muted-foreground leading-relaxed text-base md:text-lg text-justify">
             Marme Villa Jogja hadir dengan desain elegan khas Mediterania. Sudut lengkung, guci, batu alam, dan tumbuhan tropis akan membuatmu seperti di dalam keajaiban labirin Mediterania Tropical yang sesungguhnya. </p>
-          <p className="mt-4 text-muted-foreground leading-relaxed text-lg">
+          <p className="mt-4 text-muted-foreground leading-relaxed text-base md:text-lg text-justify">
             Villa ini menawarkan suasana santai di pedesaan yang jauh dari kesibukan kota. Ruang yang luas, pemandangan indah, dan fasilitas lengkap akan memberikan pengalaman menginap yang nyaman. Dengan perpaduan kenyamanan modern dan pesona khas Mediterania, setiap kunjungan disini akan terasa istimewa dan penuh kehangatan.</p>
           <div className="mt-12 grid grid-cols-2 gap-8">
             {values.map((val) => (
               <div key={val.v}>
-                <div className="font-serif text-xl text-primary">{val.v}</div>
+                <div className="font-manrope text-xl text-primary">{val.v}</div>
                 <div className="mt-2 text-sm text-muted-foreground">{val.d}</div>
               </div>
             ))}
@@ -215,7 +215,7 @@ function Rooms() {
       <div className="max-w-7xl mx-auto">
         <div className="max-w-2xl mb-16">
           <span className="eyebrow">Akomodasi</span>
-          <h2 className="font-serif text-4xl md:text-5xl mt-4 text-balance">Tiga paviliun. Masing-masing adalah dunia pribadi.</h2>
+          <h2 className="text-3xl md:text-5xl mt-4 text-balance">Dua paviliun. Masing-masing adalah dunia pribadi.</h2>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
           {rooms.map((r) => (
@@ -225,11 +225,11 @@ function Rooms() {
               </Link>
               <div className="p-8 flex-1 flex flex-col">
                 <Link to="/rooms/$slug" params={{ slug: r.slug }}>
-                  <h3 className="font-serif text-2xl text-primary hover:text-gold transition-colors">{r.name}</h3>
+                  <h3 className="font-manrope text-2xl font-semibold text-primary hover:text-gold transition-colors">{r.name}</h3>
                 </Link>
                 <p className="mt-3 text-sm text-muted-foreground leading-relaxed flex-1">{r.desc}</p>
                 <div className="mt-6 flex items-center gap-4 text-xs text-muted-foreground border-t border-border/60 pt-4">
-                  <span>{r.size}</span><span>·</span><span>ranjang {r.bed}</span><span>·</span><span>{r.baseGuests} tamu</span>
+                  <span>{r.size}</span><span>·</span><span>{r.bed} kamar tidur</span><span>·</span><span>{r.baseGuests} tamu</span>
                 </div>
                 <div className="mt-6 flex items-end justify-between">
                   <div>
@@ -263,7 +263,7 @@ function Experiences() {
         <div className="flex items-end justify-between flex-wrap gap-6 mb-16">
           <div>
             <span className="eyebrow">Pengalaman Terkurasi</span>
-            <h2 className="font-serif text-4xl md:text-5xl mt-4 max-w-xl text-balance">Kisah yang akan Anda bawa pulang.</h2>
+            <h2 className="text-3xl md:text-5xl mt-4 max-w-xl text-balance">Kisah yang akan Anda bawa pulang.</h2>
           </div>
         </div>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -272,7 +272,7 @@ function Experiences() {
               <img src={e.img} alt={e.t} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
               <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/30 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-6 text-ivory">
-                <h3 className="font-serif text-2xl">{e.t}</h3>
+                <h3 className="font-manrope text-2xl">{e.t}</h3>
                 <p className="mt-2 text-sm text-ivory/80 leading-relaxed">{e.d}</p>
               </div>
             </article>
@@ -307,7 +307,7 @@ function Amenities() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <span className="eyebrow">Fasilitas</span>
-          <h2 className="font-serif text-4xl md:text-5xl mt-4">Segalanya untuk Kenyamanan Anda.</h2>
+          <h2 className="text-3xl md:text-5xl mt-4">Segalanya untuk Kenyamanan Anda.</h2>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-y-12 gap-x-8 text-center">
@@ -340,7 +340,7 @@ function Gallery() {
       <div className="max-w-7xl mx-auto">
         <div className="mb-16 max-w-2xl">
           <span className="eyebrow">Galeri</span>
-          <h2 className="font-serif text-4xl md:text-5xl mt-4 text-balance">Sekilas tentang kehidupan di Marme Villa Jogja.</h2>
+          <h2 className="text-3xl md:text-5xl mt-4 text-balance">Sekilas tentang kehidupan di Marme Villa Jogja.</h2>
         </div>
         <div className="grid md:grid-cols-4 gap-4 auto-rows-[260px] md:auto-rows-[380px]">
           {imgs.map((im, idx) => (
@@ -376,7 +376,7 @@ function Testimonials() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="eyebrow">Cerita Tamu</span>
-          <h2 className="font-serif text-4xl md:text-5xl mt-4">Kesan dari para tamu kami.</h2>
+          <h2 className="text-3xl md:text-5xl mt-4">Kesan dari para tamu kami.</h2>
         </div>
         <div className="grid md:grid-cols-3 gap-8">
           {reviews.map((r) => (
@@ -384,7 +384,7 @@ function Testimonials() {
               <div className="flex gap-1 text-gold mb-6">
                 {Array.from({ length: r.r }).map((_, i) => <Star key={i} className="h-4 w-4 fill-current" />)}
               </div>
-              <blockquote className="font-serif text-xl leading-relaxed text-foreground/90 flex-1">
+              <blockquote className="font-manrope text-xl leading-relaxed text-foreground/90 flex-1">
                 "{r.q}"
               </blockquote>
               <figcaption className="mt-8 pt-6 border-t border-border/60">
@@ -410,10 +410,10 @@ function Location() {
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
         <div>
           <span className="eyebrow">Lokasi</span>
-          <h2 className="font-serif text-4xl md:text-5xl mt-4 text-balance">
+          <h2 className="text-3xl md:text-5xl mt-4 text-balance">
             Di antara terasering sawah dan candi-candi kuno Jawa Tengah.
           </h2>
-          <p className="mt-6 text-muted-foreground text-lg leading-relaxed">
+          <p className="mt-6 text-muted-foreground text-base md:text-lg leading-relaxed">
             Tersembunyi di kaki bukit di luar Yogyakarta, Marme Villa Jogja adalah dunia pribadi — namun sangat dekat dari beberapa bangunan budaya paling luar biasa di Indonesia.
           </p>
           <ul className="mt-10 divide-y divide-border/60 border-t border-b border-border/60">
@@ -453,13 +453,13 @@ function FAQ() {
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-16">
           <span className="eyebrow">Pertanyaan</span>
-          <h2 className="font-serif text-4xl md:text-5xl mt-4">Sebelum Anda Tiba.</h2>
+          <h2 className="text-3xl md:text-5xl mt-4">Sebelum Anda Tiba.</h2>
         </div>
         <div className="border-t border-border/60">
           {faqs.map(([q, a], i) => (
             <div key={i} className="border-b border-border/60">
               <button onClick={() => setOpen(open === i ? null : i)} className="w-full py-6 flex items-center justify-between text-left">
-                <span className="font-serif text-xl text-primary pr-8">{q}</span>
+                <span className="font-manrope text-xl text-primary pr-8">{q}</span>
                 <ChevronDown className={`h-5 w-5 text-gold shrink-0 transition-transform ${open === i ? "rotate-180" : ""}`} />
               </button>
               {open === i && (
@@ -480,8 +480,8 @@ function Contact() {
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16">
         <div>
           <span className="eyebrow">Reservasi</span>
-          <h2 className="font-serif text-4xl md:text-5xl mt-4 text-balance">Kami menantikan kedatangan Anda.</h2>
-          <p className="mt-6 text-primary-foreground/75 text-lg leading-relaxed">
+          <h2 className="text-3xl md:text-5xl mt-4 text-balance">Kami menantikan kedatangan Anda.</h2>
+          <p className="mt-6 text-primary-foreground/75 text-base md:text-lg leading-relaxed">
             Tim reservasi kami merespons secara pribadi dalam beberapa jam,
             sepanjang waktu. Selamat datang.
           </p>
@@ -524,7 +524,7 @@ function Footer() {
   return (
     <footer className="bg-background border-t border-border/60 py-12 px-6">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-muted-foreground">
-        <div className="font-serif text-lg text-primary">Marme Villa Jogja</div>
+        <div className="font-manrope text-lg text-primary">Marme Villa Jogja</div>
         <div>© {new Date().getFullYear()} Marme Villa Jogja. Hak cipta dilindungi undang-undang.</div>
         <div className="flex gap-6">
           <a href="#" className="hover:text-gold">Instagram</a>

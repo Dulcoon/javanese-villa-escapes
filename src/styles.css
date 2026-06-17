@@ -36,6 +36,7 @@
 
   --font-serif: "Playfair Display", "Cormorant Garamond", Georgia, serif;
   --font-sans: "Inter", system-ui, sans-serif;
+  --font-manrope: "Manrope", system-ui, sans-serif;
 
   --shadow-luxe: 0 30px 80px -30px color-mix(in oklab, var(--primary) 35%, transparent);
   --shadow-soft: 0 10px 40px -20px color-mix(in oklab, var(--primary) 25%, transparent);
@@ -126,8 +127,8 @@
     font-feature-settings: "ss01", "cv11";
     -webkit-font-smoothing: antialiased;
   }
-  h1, h2, h3, h4, .font-serif {
-    font-family: var(--font-serif);
+  h1, h2, h3, h4, .font-manrope {
+    font-family: var(--font-manrope);
     font-weight: 500;
     letter-spacing: -0.01em;
   }

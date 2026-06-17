@@ -79,7 +79,7 @@ function AvailabilityPage() {
       <header className="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-background/80 border-b border-border/40">
         <div className="max-w-7xl mx-auto px-6 lg:px-10 h-20 flex items-center justify-between">
           <Link to="/" className="flex flex-col leading-none">
-            <span className="font-serif text-[26px] tracking-[0.08em] font-normal text-primary">MARME</span>
+            <span className="font-manrope text-[26px] tracking-[0.08em] font-normal text-primary">MARME</span>
             <span className="font-sans text-[9.5px] tracking-[0.42em] font-light text-muted-foreground mt-1.5 ml-0.5 uppercase">VILLA JOGJA</span>
           </Link>
           <Link to="/" className="text-sm text-foreground/70 hover:text-gold inline-flex items-center gap-2">
@@ -92,7 +92,7 @@ function AvailabilityPage() {
       <section className="pt-32 pb-12 px-6 bg-ivory/40 border-b border-border/60">
         <div className="max-w-5xl mx-auto text-center">
           <span className="eyebrow">Reservasi</span>
-          <h1 className="font-serif text-4xl md:text-5xl mt-4">Cari Ketersediaan</h1>
+          <h1 className="text-4xl md:text-5xl mt-4">Cari Ketersediaan</h1>
           <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
             Pilih tanggal dan jumlah tamu Anda. Kami akan menampilkan ketersediaan kamar dan harga terbaik untuk tiga paviliun warisan budaya kami.
           </p>
@@ -252,7 +252,7 @@ function AvailabilityPage() {
           <div className="flex items-end justify-between flex-wrap gap-4 mb-10">
             <div>
               <span className="eyebrow">Paviliun Tersedia</span>
-              <h2 className="font-serif text-3xl mt-2">
+              <h2 className="text-3xl mt-2">
                 {nights > 0 ? `${nights} malam · ${totalGuests} tamu` : "Pilih tanggal Anda"}
               </h2>
             </div>
@@ -273,7 +273,7 @@ function AvailabilityPage() {
                   </Link>
                   <div className="p-6 md:py-8">
                     <Link to="/rooms/$slug" params={{ slug: r.slug }}>
-                      <h3 className="font-serif text-2xl text-primary hover:text-gold transition-colors">{r.name}</h3>
+                      <h3 className="font-manrope text-2xl font-semibold text-primary hover:text-gold transition-colors">{r.name}</h3>
                     </Link>
                     <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{r.desc}</p>
                     <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
