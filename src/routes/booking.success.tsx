@@ -27,7 +27,7 @@ export const Route = createFileRoute("/booking/success")({
 
 function generateRef() {
   const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  let ref = "SKJ-";
+  let ref = "MAR-";
   for (let i = 0; i < 8; i++) {
     ref += chars[Math.floor(Math.random() * chars.length)];
   }
