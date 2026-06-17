@@ -235,11 +235,11 @@ function BookingFormPage() {
           {/* Right: Price breakdown */}
           <div className="lg:col-span-2">
             <div className="lg:sticky lg:top-28 border border-border/60 bg-ivory/40 p-8 space-y-6 rounded-2xl">
-              <h3 className="text-2xl text-primary">Booking Summary</h3>
+              <h3 className="text-2xl text-primary">Ringkasan Pemesanan</h3>
 
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Pavilion</span>
+                  <span className="text-muted-foreground">Paviliun</span>
                   <span className="font-medium text-right">{selectedRoom.name}</span>
                 </div>
                 <div className="flex justify-between">
@@ -251,11 +251,11 @@ function BookingFormPage() {
                   <span className="font-medium">{params.checkOut || "—"}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Nights</span>
+                  <span className="text-muted-foreground">Malam</span>
                   <span className="font-medium">{nights}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Guests</span>
+                  <span className="text-muted-foreground">Tamu</span>
                   <span className="font-medium">{params.guests}</span>
                 </div>
               </div>
