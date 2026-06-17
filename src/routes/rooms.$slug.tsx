@@ -114,7 +114,7 @@ function RoomDetail() {
           <div className="grid lg:grid-cols-2 gap-10 items-end">
             <div>
               <span className="eyebrow">Paviliun Pribadi</span>
-              <h1 className="text-4xl md:text-6xl font-semibold mt-4 leading-tight text-balance">{room.name}</h1>
+              <h1 className="text-4xl md:text-6xl font-bold mt-4 leading-tight text-balance">{room.name}</h1>
               <p className="mt-6 text-base md:text-lg text-muted-foreground italic">{room.tagline}</p>
             </div>
             <div className="lg:text-right">
@@ -154,7 +154,7 @@ function RoomDetail() {
 
             <div>
               <span className="eyebrow">Suite</span>
-              <h2 className="text-3xl md:text-4xl mt-3">Dunia yang intim, diukir dengan tangan.</h2>
+              <h2 className="text-3xl md:text-4xl mt-3 font-bold">Dunia yang intim, diukir dengan tangan.</h2>
               {room.longDesc.map((p, i) => (
                 <p key={i} className="mt-6 text-muted-foreground leading-relaxed text-base md:text-lg">{p}</p>
               ))}
