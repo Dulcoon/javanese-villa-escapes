@@ -203,7 +203,7 @@ function Rooms() {
       <div className="max-w-7xl mx-auto">
         <div className="max-w-2xl mb-16">
           <span className="eyebrow">Akomodasi</span>
-          <h2 className="text-3xl md:text-5xl mt-4 text-balance font-bold">Dua paviliun. Masing-masing adalah dunia pribadi.</h2>
+          <h2 className="text-3xl md:text-5xl mt-4 text-balance font-bold">Beberapa Pilihan Tipe & Unit Marme Villa Management.</h2>
         </div>
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
           {rooms.map((r) => (
@@ -256,18 +256,18 @@ function Experiences() {
               <h2 className="text-3xl md:text-5xl mt-4 max-w-xl text-balance font-bold">Layanan tambahan yang terbaik untuk tamu kami.</h2>
             </div>
           </div>
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {experiences.map((e) => (
-              <article 
-                key={e.t} 
+              <article
+                key={e.t}
                 className="group relative aspect-[3/4] overflow-hidden rounded-2xl bg-[#8B7355]/20 cursor-pointer"
                 onClick={() => setSelectedImg(e.img)}
               >
                 <img src={e.img} alt={e.t} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                
+
                 {/* Gradient Overlay for text */}
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/30 to-transparent transition-opacity duration-300 group-hover:opacity-40" />
-                
+
                 {/* Hover Cue */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40 backdrop-blur-[2px]">
                   <div className="bg-white/20 p-3 rounded-full backdrop-blur-md mb-3 border border-white/30">
@@ -289,20 +289,20 @@ function Experiences() {
 
       {/* Lightbox Modal */}
       {selectedImg && (
-        <div 
+        <div
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4 sm:p-8 backdrop-blur-md transition-opacity"
           onClick={() => setSelectedImg(null)}
         >
-          <button 
+          <button
             className="absolute top-6 right-6 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 p-2 rounded-full transition-all"
             onClick={() => setSelectedImg(null)}
           >
             <X className="w-6 h-6" />
           </button>
-          <img 
-            src={selectedImg} 
-            alt="Full screen preview" 
-            className="max-w-full max-h-full object-contain rounded-lg shadow-2xl animate-in zoom-in-95 duration-200" 
+          <img
+            src={selectedImg}
+            alt="Full screen preview"
+            className="max-w-full max-h-full object-contain rounded-lg shadow-2xl animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           />
         </div>
