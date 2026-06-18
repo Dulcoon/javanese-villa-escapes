@@ -149,10 +149,10 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 /* ---------- About ---------- */
 function About() {
   const values = [
-    { v: "Keramahan", d: "Kehangatan yang berakar pada tradisi Jawa." },
-    { v: "Budaya", d: "Warisan hidup di setiap detail." },
-    { v: "Ketenangan", d: "Paviliun yang sunyi, langit yang terbuka." },
-    { v: "Keberlanjutan", d: "Kerajinan lokal, kemewahan yang ramah lingkungan." },
+    { v: "Keramahan", d: "Pelayanan yang hangat dari semua staff Marme Villa Management." },
+    { v: "Garansi", d: "Tanggungjawab atas semua kesalahan yang terjadi." },
+    { v: "Ketenangan", d: "Lokasi pedesaan dengan keindahan alam yang menakjubkan." },
+    { v: "Keberlanjutan", d: "Dilengkapi dengan beberap servis tambahan." },
   ];
   return (
     <section id="about" className="py-32 px-6">
@@ -514,9 +514,9 @@ function Contact() {
             sepanjang waktu. Selamat datang.
           </p>
           <div className="mt-12 space-y-5 text-sm">
-            <div className="flex items-center gap-4"><Phone className="h-4 w-4 text-gold" /> +62 274 555 0188</div>
-            <div className="flex items-center gap-4"><Mail className="h-4 w-4 text-gold" /> stay@sekarjawa.com</div>
-            <div className="flex items-center gap-4"><MapPin className="h-4 w-4 text-gold" /> Jl. Heritage No. 8, Sleman, Yogyakarta</div>
+            <div className="flex items-center gap-4"><Phone className="h-4 w-4 text-gold" /> +62 851 9008 3940</div>
+            <div className="flex items-center gap-4"><Mail className="h-4 w-4 text-gold" /> marmevillajogja@gmail.com</div>
+            <div className="flex items-center gap-4"><MapPin className="h-4 w-4 text-gold" /> Serayu, RT 01, Bantul, Bantul, Bantul, Yogyakarta, 55711</div>
           </div>
         </div>
         <form
