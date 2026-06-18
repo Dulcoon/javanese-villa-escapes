@@ -6,10 +6,9 @@ import {
 } from "lucide-react";
 
 import heroVilla from "@/assets/hero-villa.webp";
-import expBatik from "@/assets/exp-batik.webp";
-import expGamelan from "@/assets/exp-gamelan.webp";
-import expDinner from "@/assets/exp-dinner.webp";
-import expYoga from "@/assets/exp-yoga.webp";
+import addon1 from "@/assets/addon1.webp";
+import addon2 from "@/assets/addon2.webp";
+import addon3 from "@/assets/addon3.webp";
 import aboutDetail from "@/assets/about-detail.webp";
 import galleryPool from "@/assets/gallery-pool.webp";
 import galleryGarden from "@/assets/gallery-garden.webp";
@@ -240,42 +239,82 @@ function Rooms() {
 
 /* ---------- Experiences ---------- */
 const experiences = [
-  { img: expDinner, t: "Makan Malam Tradisional Jawa", d: "Sajian rijsttafel di bawah taburan bintang, disiapkan oleh koki warisan kuliner kami." },
-  { img: expBatik, t: "Lokakarya Batik", d: "Menghabiskan sore hari mempelajari teknik canting dari pengrajin ahli." },
-  { img: expGamelan, t: "Gamelan di Kala Senja", d: "Pertunjukan ansambel yang syahdu di pendopo utama." },
-  { img: expYoga, t: "Yoga Matahari Terbit", d: "Sambut pagi hari di atas kabut, di dek kayu tepi sungai kami." },
+  { img: addon1, t: "BBQ Grill Package", d: "Daging segar, bumbu, dan rempah pilihan menjadikan menu ini sangat istimewa." },
+  { img: addon2, t: "Laundry Kilat", d: "Kamu gaperlu khawatir sama baju kotormu. Hanya 4 jam saja semua udah beres." },
+  { img: addon3, t: "Extrabed", d: "Untuk menunjang kenyamanan tamu, kami menyediakan paket extrabed lengkap." },
 ];
 function Experiences() {
+  const [selectedImg, setSelectedImg] = useState<string | null>(null);
+
   return (
-    <section id="experiences" className="py-32 px-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="flex items-end justify-between flex-wrap gap-6 mb-16">
-          <div>
-            <span className="eyebrow">Pengalaman Terkurasi</span>
-            <h2 className="text-3xl md:text-5xl mt-4 max-w-xl text-balance font-bold">Kisah yang akan Anda bawa pulang.</h2>
+    <>
+      <section id="experiences" className="py-32 px-6">
+        <div className="max-w-7xl mx-auto">
+          <div className="flex items-end justify-between flex-wrap gap-6 mb-16">
+            <div>
+              <span className="eyebrow">Aditional Service</span>
+              <h2 className="text-3xl md:text-5xl mt-4 max-w-xl text-balance font-bold">Layanan tambahan yang terbaik untuk tamu kami.</h2>
+            </div>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {experiences.map((e) => (
+              <article 
+                key={e.t} 
+                className="group relative aspect-[3/4] overflow-hidden rounded-2xl bg-[#8B7355]/20 cursor-pointer"
+                onClick={() => setSelectedImg(e.img)}
+              >
+                <img src={e.img} alt={e.t} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                
+                {/* Gradient Overlay for text */}
+                <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/30 to-transparent transition-opacity duration-300 group-hover:opacity-40" />
+                
+                {/* Hover Cue */}
+                <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40 backdrop-blur-[2px]">
+                  <div className="bg-white/20 p-3 rounded-full backdrop-blur-md mb-3 border border-white/30">
+                    <Sparkles className="w-6 h-6 text-white" />
+                  </div>
+                  <span className="text-white font-medium tracking-wide">Lihat Gambar</span>
+                </div>
+
+                {/* Text Content */}
+                <div className="absolute inset-x-0 bottom-0 p-6 text-ivory transition-transform duration-300 group-hover:translate-y-4 group-hover:opacity-0">
+                  <h3 className="font-manrope text-2xl">{e.t}</h3>
+                  <p className="mt-2 text-sm text-ivory/80 leading-relaxed">{e.d}</p>
+                </div>
+              </article>
+            ))}
           </div>
         </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {experiences.map((e) => (
-            <article key={e.t} className="group relative aspect-[3/4] overflow-hidden rounded-2xl bg-[#8B7355]/20">
-              <img src={e.img} alt={e.t} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/30 to-transparent" />
-              <div className="absolute inset-x-0 bottom-0 p-6 text-ivory">
-                <h3 className="font-manrope text-2xl">{e.t}</h3>
-                <p className="mt-2 text-sm text-ivory/80 leading-relaxed">{e.d}</p>
-              </div>
-            </article>
-          ))}
+      </section>
+
+      {/* Lightbox Modal */}
+      {selectedImg && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4 sm:p-8 backdrop-blur-md transition-opacity"
+          onClick={() => setSelectedImg(null)}
+        >
+          <button 
+            className="absolute top-6 right-6 text-white/70 hover:text-white bg-white/10 hover:bg-white/20 p-2 rounded-full transition-all"
+            onClick={() => setSelectedImg(null)}
+          >
+            <X className="w-6 h-6" />
+          </button>
+          <img 
+            src={selectedImg} 
+            alt="Full screen preview" 
+            className="max-w-full max-h-full object-contain rounded-lg shadow-2xl animate-in zoom-in-95 duration-200" 
+            onClick={(e) => e.stopPropagation()}
+          />
         </div>
-      </div>
-    </section>
+      )}
+    </>
   );
 }
 
 /* ---------- Amenities ---------- */
 const amenitiesList = [
-  { i: Icon5Bed, t: "5 Bed room" },
-  { i: Icon5Bath, t: "5 Bath room" },
+  { i: Icon5Bed, t: "Bed room" },
+  { i: Icon5Bath, t: "Bath room" },
   { i: IconKitchen, t: "Kitchen" },
   { i: IconPool, t: "Private pool" },
   { i: IconFridge, t: "Kulkas" },
