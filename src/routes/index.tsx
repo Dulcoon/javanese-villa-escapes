@@ -469,9 +469,9 @@ function Location() {
 /* ---------- FAQ ---------- */
 const faqs = [
   ["Apa saja yang termasuk dalam harga kamar?", "Sarapan harian, ritual penyambutan, teh sore, canapés malam, serta penggunaan gratis kolam renang, taman, dan paviliun kebugaran."],
-  ["Apakah Anda menyediakan layanan antar-jemput bandara?", "Ya. Layanan antar-jemput pribadi dari Bandara Adisutjipto Yogyakarta (YIA) dapat diatur dengan biaya tambahan. Silakan ajukan saat pemesanan."],
-  ["Bagaimana kebijakan pembatalan pemesanan?", "Pembatalan gratis hingga 14 hari sebelum kedatangan. Dalam kurun waktu 14 hari, akan dikenakan biaya malam pertama. Kebijakan periode khusus mungkin berbeda."],
-  ["Apakah Anda mengakomodasi kebutuhan diet khusus?", "Tentu saja. Koki kami menyiapkan menu vegetarian, vegan, halal, dan bebas gluten berdasarkan permintaan."],
+  ["Kapan waktu untuk check in dan check out?", "Waktu check in pukul 15.00 WIB dan waktu check out pukul 12.00 WIB. Apabila ingin early check in atau late check out akan dikenakan biaya 200.000/jam (Ketentuan ini berlaku apabila villa tidak full tamu)"],
+  ["Bagaimana kebijakan pembatalan pemesanan?", "Pembatalan gratis hingga 30 hari sebelum kedatangan. Dalam kurun waktu 30 hari, akan dikenakan biaya malam pertama. Kebijakan periode khusus mungkin berbeda."],
+  ["Siapa yang akan melayani saya saat check in dan check out?", "Dikarenakan lokasi villa yang berbeda-beda maka petugas villa hanya akan datang hanya pada waktu chek in dan check out saja. Anda bisa meminta bantuan langsung kepada petugas sebelum pulang atau menghubungi nomer admin. Jam operasional admin mulai dari pukul 08.00-22.00 WIB."],
   ["Apakah villa ini cocok untuk anak-anak?", "Anak-anak dari segala usia disambut dengan hangat. Kami menawarkan layanan pengasuhan anak, fasilitas anak-anak, dan pengalaman keluarga yang dirancang khusus."],
 ];
 function FAQ() {
