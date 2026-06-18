@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, BedDouble, Bath, Users, Maximize, Eye, Check, ChevronRight, Minus, Plus, Calendar as CalendarIcon, Users as UsersIcon } from "lucide-react";
+import { ArrowLeft, BedDouble, Bath, Users, Maximize, Eye, Check, ChevronRight, Minus, Plus, Calendar as CalendarIcon, Users as UsersIcon, MapPin } from "lucide-react";
 import { format, addDays, startOfToday } from "date-fns";
 import { id } from "date-fns/locale";
 import { DateRange } from "react-day-picker";
@@ -107,6 +107,18 @@ function RoomDetail() {
               <span className="eyebrow">Paviliun Pribadi</span>
               <h1 className="text-4xl md:text-6xl font-bold mt-4 leading-tight text-balance">{room.name}</h1>
               <p className="mt-6 text-base md:text-lg text-muted-foreground italic">{room.tagline}</p>
+              
+              <div className="mt-6">
+                <a 
+                  href="https://maps.google.com/?q=Marme+Villa+Jogja,+Serayu,+Bantul,+Yogyakarta" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-gold/30 bg-gold/5 hover:bg-gold/15 text-gold hover:text-gold-hover text-sm font-medium transition-all duration-300"
+                >
+                  <MapPin className="w-4 h-4" />
+                  Lihat Lokasi di Google Maps
+                </a>
+              </div>
             </div>
             <div className="lg:text-right">
               <div className="font-sans text-4xl font-semibold text-primary">{formatIDR(room.price)}</div>
