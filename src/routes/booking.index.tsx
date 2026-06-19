@@ -3,8 +3,10 @@ import { useState } from "react";
 import { format, differenceInDays } from "date-fns";
 import { z } from "zod";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
-import { Calendar, Users, BedDouble, Check, ChevronRight, Mail, Phone, User, MessageSquare, ArrowRight } from "lucide-react";
+import { Calendar, Users, BedDouble, Check, ChevronRight, Mail, Phone, User, MessageSquare, ArrowRight, Loader2 } from "lucide-react";
 import { getRoom, rooms, formatIDR } from "@/lib/rooms";
+import { api } from "@/lib/api";
+import { toast } from "sonner";
 
 const searchSchema = z.object({
   room: fallback(z.string(), "").default(""),
@@ -39,6 +41,7 @@ function BookingFormPage() {
   const [requests, setRequests] = useState("");
   const [promoCode, setPromoCode] = useState("");
   const [isPromoApplied, setIsPromoApplied] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Calculate price
   const basePricePerNight = selectedRoom ? selectedRoom.price : 0;
@@ -53,20 +56,58 @@ function BookingFormPage() {
   const subtotal = subtotalBase + extraChargeTotal;
   const total = Math.max(0, subtotal - discount);
 
-  const handleConfirm = (e: React.FormEvent) => {
+  const handleConfirm = async (e: React.FormEvent) => {
     e.preventDefault();
-    navigate({
-      to: "/booking/success",
-      search: {
-        room: params.room,
-        checkIn: params.checkIn,
-        checkOut: params.checkOut,
-        guests: params.guests,
-        name: fullName,
-        email,
-        total,
-      },
-    });
+    setIsLoading(true);
+
+    try {
+      const response = await api.submitBooking({
+        villa_slug: params.room,
+        check_in: params.checkIn,
+        check_out: params.checkOut,
+        guest_count: params.guests,
+        guest_name: fullName,
+        guest_email: email,
+        guest_phone: phone,
+        special_requests: requests,
+        voucher_code: isPromoApplied ? promoCode : undefined,
+      });
+
+      if (response.status === 'success' && response.data.snap_token) {
+        // @ts-ignore
+        window.snap.pay(response.data.snap_token, {
+          onSuccess: function (result: any) {
+            navigate({
+              to: "/booking/success",
+              search: {
+                room: params.room,
+                checkIn: params.checkIn,
+                checkOut: params.checkOut,
+                guests: params.guests,
+                name: fullName,
+                email,
+                total,
+              },
+            });
+          },
+          onPending: function (result: any) {
+            toast.info("Menunggu pembayaran...");
+            // Redirect to a pending page or show message
+          },
+          onError: function (result: any) {
+            toast.error("Pembayaran gagal!");
+            setIsLoading(false);
+          },
+          onClose: function () {
+            toast.error("Pembayaran dibatalkan");
+            setIsLoading(false);
+          }
+        });
+      }
+    } catch (error: any) {
+      toast.error(error.message || "Gagal membuat pesanan");
+      setIsLoading(false);
+    }
   };
 
   // If no room selected, show picker
@@ -224,10 +265,10 @@ function BookingFormPage() {
               <div className="hidden lg:block">
                 <button
                   type="submit"
-                  disabled={!fullName || !email || !phone}
+                  disabled={!fullName || !email || !phone || isLoading}
                   className="w-full rounded-full bg-primary text-primary-foreground py-4 font-medium tracking-wide hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed inline-flex items-center justify-center gap-3 text-lg"
                 >
-                  Konfirmasi Pemesanan <ArrowRight className="h-5 w-5" />
+                  {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Konfirmasi Pemesanan <ArrowRight className="h-5 w-5" /></>}
                 </button>
 
 
@@ -342,10 +383,10 @@ function BookingFormPage() {
                 <button
                   type="submit"
                   form="booking-form"
-                  disabled={!fullName || !email || !phone}
+                  disabled={!fullName || !email || !phone || isLoading}
                   className="w-full rounded-full bg-primary text-primary-foreground py-4 font-medium tracking-wide hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed inline-flex items-center justify-center gap-3 text-lg"
                 >
-                  Konfirmasi Pemesanan <ArrowRight className="h-5 w-5" />
+                  {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Konfirmasi Pemesanan <ArrowRight className="h-5 w-5" /></>}
                 </button>
 
 
