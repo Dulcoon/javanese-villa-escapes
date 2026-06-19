@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import {
   Wifi, Waves, UtensilsCrossed, Car, Plane, Users, Sparkles, Trees,
   MapPin, Phone, Mail, Star, ChevronDown, Minus, Plus, ArrowRight, Menu, X,
-  Instagram, Facebook
+  Instagram, Facebook, Loader2
 } from "lucide-react";
 
 import heroVilla from "@/assets/hero-villa.webp";
@@ -24,7 +24,8 @@ import sekilas2 from "@/assets/sekilas2.webp";
 import sekilas3 from "@/assets/sekilas3.webp";
 import sekilas4 from "@/assets/sekilas4.webp";
 
-import { rooms, formatIDR } from "@/lib/rooms";
+import { formatIDR } from "@/lib/utils";
+import { api, Villa, IMAGE_BASE_URL } from "@/lib/api";
 import {
   Icon5Bed, Icon5Bath, IconKitchen, IconPool, IconFridge, IconAC, IconWifi,
   IconWaterHeater, IconDispenser, IconTV, IconAmenities, IconParking, IconSnack, IconWelcomeDrink
@@ -197,6 +198,31 @@ function About() {
 
 /* ---------- Rooms ---------- */
 function Rooms() {
+  const [villas, setVillas] = useState<Villa[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    api.getVillas().then(res => {
+      if (res.status === 'success') {
+        setVillas(res.data);
+      }
+    }).catch(err => {
+      console.error(err);
+    }).finally(() => {
+      setIsLoading(false);
+    });
+  }, []);
+
+  if (isLoading) {
+    return (
+      <section id="rooms" className="py-32 px-6 bg-ivory/40">
+        <div className="max-w-7xl mx-auto flex items-center justify-center">
+          <Loader2 className="w-10 h-10 animate-spin text-gold" />
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="rooms" className="py-32 px-6 bg-ivory/40">
       <div className="max-w-7xl mx-auto">
@@ -205,31 +231,36 @@ function Rooms() {
           <h2 className="text-3xl md:text-5xl mt-4 text-balance font-bold">Beberapa Pilihan Tipe & Unit Marme Villa Management.</h2>
         </div>
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
-          {rooms.map((r) => (
-            <article key={r.name} className="group bg-background border border-border/60 overflow-hidden flex flex-col rounded-2xl">
-              <Link to="/rooms/$slug" params={{ slug: r.slug }} className="aspect-[4/5] overflow-hidden block bg-[#8B7355]/20">
-                <img src={r.img} alt={r.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              </Link>
-              <div className="p-8 flex-1 flex flex-col">
-                <Link to="/rooms/$slug" params={{ slug: r.slug }}>
-                  <h3 className="font-manrope text-2xl font-semibold text-primary hover:text-gold transition-colors">{r.name}</h3>
+          {villas.map((r) => {
+            const primaryImage = r.images.find(img => img.is_primary) || r.images[0];
+            const imageUrl = primaryImage ? `${IMAGE_BASE_URL}${primaryImage.image_url}` : '';
+
+            return (
+              <article key={r.slug} className="group bg-background border border-border/60 overflow-hidden flex flex-col rounded-2xl">
+                <Link to="/rooms/$slug" params={{ slug: r.slug }} className="aspect-[4/5] overflow-hidden block bg-[#8B7355]/20">
+                  <img src={imageUrl} alt={r.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
                 </Link>
-                <p className="mt-3 text-sm text-muted-foreground leading-relaxed flex-1">{r.desc}</p>
-                <div className="mt-6 flex items-center gap-4 text-xs text-muted-foreground border-t border-border/60 pt-4">
-                  <span>{r.size}</span><span>·</span><span>{r.bed} kamar tidur</span><span>·</span><span>{r.baseGuests} tamu</span>
-                </div>
-                <div className="mt-6 flex items-end justify-between">
-                  <div>
-                    <div className="font-sans text-2xl font-semibold text-primary">{formatIDR(r.price)}</div>
-                    <div className="text-xs text-muted-foreground tracking-wide uppercase">per malam</div>
-                  </div>
-                  <Link to="/rooms/$slug" params={{ slug: r.slug }} className="text-sm tracking-wide text-gold hover:text-primary border-b border-gold pb-0.5">
-                    Lihat Detail
+                <div className="p-8 flex-1 flex flex-col">
+                  <Link to="/rooms/$slug" params={{ slug: r.slug }}>
+                    <h3 className="font-manrope text-2xl font-semibold text-primary hover:text-gold transition-colors">{r.name}</h3>
                   </Link>
+                  <p className="mt-3 text-sm text-muted-foreground leading-relaxed flex-1 line-clamp-3">{r.description}</p>
+                  <div className="mt-6 flex items-center gap-4 text-xs text-muted-foreground border-t border-border/60 pt-4">
+                    <span>{r.size}</span><span>·</span><span>{r.bed_count} kamar tidur</span><span>·</span><span>{r.capacity} tamu</span>
+                  </div>
+                  <div className="mt-6 flex items-end justify-between">
+                    <div>
+                      <div className="font-sans text-2xl font-semibold text-primary">{formatIDR(r.base_price)}</div>
+                      <div className="text-xs text-muted-foreground tracking-wide uppercase">per malam</div>
+                    </div>
+                    <Link to="/rooms/$slug" params={{ slug: r.slug }} className="text-sm tracking-wide text-gold hover:text-primary border-b border-gold pb-0.5">
+                      Lihat Detail
+                    </Link>
+                  </div>
                 </div>
-              </div>
-            </article>
-          ))}
+              </article>
+            );
+          })}
         </div>
       </div>
     </section>

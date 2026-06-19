@@ -2,8 +2,9 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { z } from "zod";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { CheckCircle, Calendar, Users, BedDouble, Mail, Home } from "lucide-react";
-import { getRoom, formatIDR } from "@/lib/rooms";
-
+import { formatIDR } from "@/lib/utils";
+import { api, Villa, IMAGE_BASE_URL } from "@/lib/api";
+import { useEffect, useState } from "react";
 const searchSchema = z.object({
   room: fallback(z.string(), "").default(""),
   checkIn: fallback(z.string(), "").default(""),
@@ -11,6 +12,7 @@ const searchSchema = z.object({
   guests: fallback(z.number().int().min(1), 2).default(2),
   name: fallback(z.string(), "Guest").default("Guest"),
   email: fallback(z.string(), "").default(""),
+  bookingCode: fallback(z.string(), "").default(""),
   total: fallback(z.number(), 0).default(0),
 });
 
@@ -25,14 +27,6 @@ export const Route = createFileRoute("/booking/success")({
   component: BookingSuccessPage,
 });
 
-function generateRef() {
-  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
-  let ref = "MAR-";
-  for (let i = 0; i < 8; i++) {
-    ref += chars[Math.floor(Math.random() * chars.length)];
-  }
-  return ref;
-}
 
 function nightsBetween(a: string, b: string) {
   if (!a || !b) return 0;
@@ -42,9 +36,29 @@ function nightsBetween(a: string, b: string) {
 
 function BookingSuccessPage() {
   const params = Route.useSearch();
-  const selectedRoom = params.room ? getRoom(params.room) : null;
+  const [selectedRoom, setSelectedRoom] = useState<Villa | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (params.room) {
+      api.getVilla(params.room).then(res => {
+        if (res.status === 'success') {
+          setSelectedRoom(res.data);
+        }
+      }).finally(() => {
+        setIsLoading(false);
+      });
+    } else {
+      setIsLoading(false);
+    }
+  }, [params.room]);
+
   const nights = nightsBetween(params.checkIn, params.checkOut);
-  const bookingRef = generateRef();
+  // Use the real booking code from the server; fallback to a display placeholder
+  const bookingRef = params.bookingCode || '—';
+
+  const primaryImage = selectedRoom?.images?.find(img => img.is_primary) || selectedRoom?.images?.[0];
+  const imageUrl = primaryImage ? `${IMAGE_BASE_URL}${primaryImage.image_url}` : '';
 
   return (
     <main className="pt-20">
@@ -73,12 +87,12 @@ function BookingSuccessPage() {
 
           {selectedRoom && (
             <div className="flex items-start gap-5 pb-6 border-b border-border/60 mb-6">
-              <div className="w-20 h-20 shrink-0 overflow-hidden">
-                <img src={selectedRoom.img} alt={selectedRoom.name} className="h-full w-full object-cover" />
+              <div className="w-20 h-20 shrink-0 overflow-hidden bg-[#8B7355]/20">
+                <img src={imageUrl} alt={selectedRoom.name} className="h-full w-full object-cover" />
               </div>
               <div>
                 <h3 className="text-xl text-primary">{selectedRoom.name}</h3>
-                <p className="text-sm text-muted-foreground mt-1">{selectedRoom.desc}</p>
+                <p className="text-sm text-muted-foreground mt-1 line-clamp-1">{selectedRoom.description}</p>
               </div>
             </div>
           )}
@@ -161,10 +175,7 @@ function BookingSuccessPage() {
             </Link>
           </div>
 
-          {/* Prototype notice */}
-          <p className="mt-8 text-center text-xs text-muted-foreground">
-            ⚡ This is a prototype demonstration. No actual booking has been stored or emailed.
-          </p>
+          {/* Note: booking is real and stored in system */}
         </div>
       </section>
     </main>

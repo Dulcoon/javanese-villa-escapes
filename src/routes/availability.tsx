@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { z } from "zod";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { ArrowLeft, Calendar as CalendarIcon, Users as UsersIcon, Minus, Plus, Check, Search, BedDouble, Maximize, Eye } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
-import { rooms, formatIDR } from "@/lib/rooms";
-import { format, addDays, startOfToday } from "date-fns";
+import { formatIDR } from "@/lib/utils";
+import { api, Villa, IMAGE_BASE_URL } from "@/lib/api";
+import { format, startOfToday } from "date-fns";
 import { id } from "date-fns/locale";
 import { DateRange } from "react-day-picker";
 import { Calendar } from "@/components/ui/calendar";
@@ -40,13 +41,15 @@ function nightsBetween(a: string, b: string) {
 function AvailabilityPage() {
   const params = Route.useSearch();
 
-  const initialFrom = params.checkIn ? new Date(params.checkIn) : startOfToday();
-  const initialTo = params.checkOut ? new Date(params.checkOut) : addDays(startOfToday(), 3);
+  const initialFrom = params.checkIn ? new Date(params.checkIn) : undefined;
+  const initialTo = params.checkOut ? new Date(params.checkOut) : undefined;
 
-  const [date, setDate] = useState<DateRange | undefined>({
-    from: initialFrom,
-    to: initialTo,
-  });
+  const [date, setDate] = useState<DateRange | undefined>(
+    initialFrom || initialTo ? {
+      from: initialFrom,
+      to: initialTo,
+    } : undefined
+  );
 
   const [adults, setAdults] = useState(params.guests);
   const [children, setChildren] = useState(0);
@@ -59,21 +62,50 @@ function AvailabilityPage() {
   const checkOutStr = date?.to ? format(date.to, "yyyy-MM-dd") : "";
   const nights = nightsBetween(checkInStr, checkOutStr);
 
-  const disabledDates = [
-    addDays(startOfToday(), 3),
-    addDays(startOfToday(), 4),
-    addDays(startOfToday(), 5),
-  ];
+  const [villas, setVillas] = useState<Villa[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [availabilityResults, setAvailabilityResults] = useState<Record<string, boolean>>({});
+  const [isChecking, setIsChecking] = useState(false);
 
-  // Mock availability — deterministic based on date
-  const available = rooms.map((r) => {
-    const seed = date?.from ? (date.from.getDate() + r.slug.length) % 5 : 0;
-    return {
-      ...r,
-      isAvailable: seed !== 0,
-      remaining: Math.max(1, 3 - (seed % 3)),
-    };
-  });
+  // Fetch villas
+  useEffect(() => {
+    api.getVillas().then(res => {
+      if (res.status === 'success') setVillas(res.data);
+    }).finally(() => {
+      setIsLoading(false);
+    });
+  }, []);
+
+  // Check real availability when search is submitted
+  const checkAllAvailability = async () => {
+    if (!checkInStr || !checkOutStr || villas.length === 0) return;
+    setIsChecking(true);
+    const results: Record<string, boolean> = {};
+    await Promise.all(
+      villas.map(async (villa) => {
+        try {
+          const res = await api.checkAvailability({
+            villa_slug: villa.slug,
+            check_in: checkInStr,
+            check_out: checkOutStr,
+            guests: totalGuests,
+          });
+          results[villa.slug] = res?.data?.available ?? false;
+        } catch {
+          results[villa.slug] = false;
+        }
+      })
+    );
+    setAvailabilityResults(results);
+    setIsChecking(false);
+    setSearched(true);
+  };
+
+  // Map villas with real availability
+  const available = villas.map((r) => ({
+    ...r,
+    isAvailable: !searched ? true : (availabilityResults[r.slug] ?? true),
+  }));
 
   return (
     <div className="bg-background text-foreground min-h-screen">
@@ -94,7 +126,7 @@ function AvailabilityPage() {
       <section className="px-6 -mt-10 relative z-20">
         <div className="max-w-5xl mx-auto bg-background shadow-luxe border border-border/60 overflow-visible rounded-2xl">
           <form
-            onSubmit={(e) => { e.preventDefault(); setSearched(true); }}
+            onSubmit={(e) => { e.preventDefault(); checkAllAvailability(); }}
             className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-border"
           >
             {/* Date Picker */}
@@ -124,10 +156,7 @@ function AvailabilityPage() {
                     selected={date}
                     onSelect={setDate}
                     numberOfMonths={2}
-                    disabled={[
-                      { before: startOfToday() },
-                      ...disabledDates
-                    ]}
+                    disabled={[{ before: startOfToday() }]}
                   />
                 </PopoverContent>
               </Popover>
@@ -230,8 +259,8 @@ function AvailabilityPage() {
               </Popover>
             </div>
 
-            <button type="submit" disabled={!date?.from || !date?.to} className="bg-primary text-primary-foreground font-medium tracking-wide hover:bg-primary/90 transition-colors py-6 md:py-0 px-8 flex items-center justify-center gap-2 data-[disabled]:opacity-50 data-[disabled]:pointer-events-none rounded-b-2xl md:rounded-b-none md:rounded-r-2xl">
-              <Search className="h-4 w-4" /> Cari
+            <button type="submit" disabled={!date?.from || !date?.to || isChecking} className="bg-primary text-primary-foreground font-medium tracking-wide hover:bg-primary/90 transition-colors py-6 md:py-0 px-8 flex items-center justify-center gap-2 disabled:opacity-50 disabled:pointer-events-none rounded-b-2xl md:rounded-b-none md:rounded-r-2xl">
+              {isChecking ? <><span className="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full" />Mengecek...</> : <><Search className="h-4 w-4" /> Cari</>}
             </button>
           </form>
         </div>
@@ -249,29 +278,32 @@ function AvailabilityPage() {
             </div>
             {searched && (
               <div className="text-sm text-muted-foreground">
-                {available.filter((r) => r.isAvailable).length} dari {rooms.length} paviliun tersedia
+                {available.filter((r) => r.isAvailable).length} dari {villas.length} paviliun tersedia
               </div>
             )}
           </div>
 
           <div className="space-y-6">
             {available.map((r) => {
-              const total = r.price * Math.max(nights, 1);
+              const total = r.base_price * Math.max(nights, 1);
+              const primaryImage = r.images?.find(img => img.is_primary) || r.images?.[0];
+              const imageUrl = primaryImage ? `${IMAGE_BASE_URL}${primaryImage.image_url}` : '';
+
               return (
                 <article key={r.slug} className={`grid md:grid-cols-[280px_1fr_auto] gap-6 bg-background border border-border/60 overflow-hidden rounded-2xl ${!r.isAvailable ? "opacity-60" : ""}`}>
-                  <Link to="/rooms/$slug" params={{ slug: r.slug }} className="aspect-[4/3] md:aspect-auto overflow-hidden">
-                    <img src={r.img} alt={r.name} className="h-full w-full object-cover hover:scale-105 transition-transform duration-700" />
+                  <Link to="/rooms/$slug" params={{ slug: r.slug }} className="aspect-[4/3] md:aspect-auto overflow-hidden bg-[#8B7355]/20">
+                    <img src={imageUrl} alt={r.name} className="h-full w-full object-cover hover:scale-105 transition-transform duration-700" />
                   </Link>
                   <div className="p-6 md:py-8">
                     <Link to="/rooms/$slug" params={{ slug: r.slug }}>
                       <h3 className="font-manrope text-2xl font-semibold text-primary hover:text-gold transition-colors">{r.name}</h3>
                     </Link>
-                    <p className="mt-2 text-sm text-muted-foreground leading-relaxed">{r.desc}</p>
+                    <p className="mt-2 text-sm text-muted-foreground leading-relaxed line-clamp-2">{r.description}</p>
                     <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground">
                       <span className="inline-flex items-center gap-1.5"><Maximize className="h-3.5 w-3.5 text-gold" />{r.size}</span>
-                      <span className="inline-flex items-center gap-1.5"><BedDouble className="h-3.5 w-3.5 text-gold" />Ranjang {r.bed}</span>
-                      <span className="inline-flex items-center gap-1.5"><UsersIcon className="h-3.5 w-3.5 text-gold" />Hingga {r.baseGuests} tamu</span>
-                      <span className="inline-flex items-center gap-1.5"><Eye className="h-3.5 w-3.5 text-gold" />{r.view}</span>
+                      <span className="inline-flex items-center gap-1.5"><BedDouble className="h-3.5 w-3.5 text-gold" />Ranjang {r.bed_count}</span>
+                      <span className="inline-flex items-center gap-1.5"><UsersIcon className="h-3.5 w-3.5 text-gold" />Hingga {r.capacity} tamu</span>
+                      <span className="inline-flex items-center gap-1.5"><Eye className="h-3.5 w-3.5 text-gold" />{r.view_description}</span>
                     </div>
                     {r.isAvailable && (
                       <div className="mt-4 inline-flex items-center gap-2 text-xs text-gold">
@@ -281,7 +313,7 @@ function AvailabilityPage() {
                   </div>
                   <div className="p-6 md:py-8 md:pr-8 md:text-right border-t md:border-t-0 md:border-l border-border/60 flex md:flex-col items-center md:items-end justify-between gap-4">
                     <div>
-                      <div className="font-sans text-2xl font-semibold text-primary">{formatIDR(r.price)}</div>
+                      <div className="font-sans text-2xl font-semibold text-primary">{formatIDR(r.base_price)}</div>
                       <div className="eyebrow text-muted-foreground mt-1">per malam</div>
                       {nights > 0 && (
                         <div className="mt-3 text-xs text-muted-foreground">

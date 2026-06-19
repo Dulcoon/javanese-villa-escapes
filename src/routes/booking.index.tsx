@@ -1,11 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { format, differenceInDays } from "date-fns";
 import { z } from "zod";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { Calendar, Users, BedDouble, Check, ChevronRight, Mail, Phone, User, MessageSquare, ArrowRight, Loader2 } from "lucide-react";
-import { getRoom, rooms, formatIDR } from "@/lib/rooms";
-import { api } from "@/lib/api";
+import { formatIDR } from "@/lib/utils";
+import { api, Villa, IMAGE_BASE_URL } from "@/lib/api";
 import { toast } from "sonner";
 
 const searchSchema = z.object({
@@ -20,19 +20,17 @@ export const Route = createFileRoute("/booking/")({
   component: BookingFormPage,
 });
 
-function nightsBetween(a: string, b: string) {
-  if (!a || !b) return 0;
-  const ms = new Date(b).getTime() - new Date(a).getTime();
-  return Math.max(0, Math.round(ms / 86400000));
-}
-
 function BookingFormPage() {
   const params = Route.useSearch();
   const navigate = useNavigate();
-  const nights = nightsBetween(params.checkIn, params.checkOut);
 
-  // Find the selected room
-  const selectedRoom = params.room ? getRoom(params.room) : null;
+  // Data fetching state
+  const [villas, setVillas] = useState<Villa[]>([]);
+  const [selectedRoomData, setSelectedRoomData] = useState<Villa | null>(null);
+  // pricing holds the unwrapped data object: { available, pricing, discount, grand_total, voucher_id }
+  const [availData, setAvailData] = useState<any>(null);
+  const [isPricingLoading, setIsPricingLoading] = useState(false);
+  const [availabilityError, setAvailabilityError] = useState<string | null>(null);
 
   // Guest form state
   const [fullName, setFullName] = useState("");
@@ -41,23 +39,78 @@ function BookingFormPage() {
   const [requests, setRequests] = useState("");
   const [promoCode, setPromoCode] = useState("");
   const [isPromoApplied, setIsPromoApplied] = useState(false);
+  const [isValidatingPromo, setIsValidatingPromo] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Calculate price
-  const basePricePerNight = selectedRoom ? selectedRoom.price : 0;
-  const subtotalBase = basePricePerNight * Math.max(nights, 1);
+  useEffect(() => {
+    if (!params.room) {
+      api.getVillas().then(res => {
+        if (res.status === 'success') setVillas(res.data);
+      });
+    }
+  }, [params.room]);
 
-  const baseGuests = selectedRoom ? selectedRoom.baseGuests : 2;
-  const extraGuests = Math.max(0, params.guests - baseGuests);
-  const extraChargePerPerson = 125000;
-  const extraChargeTotal = extraGuests * extraChargePerPerson;
+  const fetchPricing = async (voucherToTest?: string) => {
+    if (!params.room || !params.checkIn || !params.checkOut) return null;
+    setIsPricingLoading(true);
+    setAvailabilityError(null);
+    try {
+      const response = await api.checkAvailability({
+        villa_slug: params.room,
+        check_in: params.checkIn,
+        check_out: params.checkOut,
+        guests: params.guests,
+        voucher_code: voucherToTest !== undefined ? voucherToTest : (isPromoApplied ? promoCode : undefined)
+      });
+      // API returns { status, data: { available, pricing, discount, grand_total } }
+      const unwrapped = response?.data ?? response;
+      setAvailData(unwrapped);
+      return unwrapped;
+    } catch (error: any) {
+      setAvailabilityError(error.message || "Maaf, paviliun ini tidak tersedia pada tanggal yang dipilih.");
+      toast.error(error.message || "Ketersediaan tidak dapat dicek.");
+      throw error;
+    } finally {
+      setIsPricingLoading(false);
+    }
+  };
 
-  const discount = isPromoApplied ? 150000 : 0;
-  const subtotal = subtotalBase + extraChargeTotal;
-  const total = Math.max(0, subtotal - discount);
+  useEffect(() => {
+    if (params.room) {
+      api.getVilla(params.room).then(res => {
+        if (res.status === 'success') setSelectedRoomData(res.data);
+      });
+      fetchPricing();
+    }
+  }, [params.room, params.checkIn, params.checkOut, params.guests]);
+
+  const handleApplyPromo = async () => {
+    if (!promoCode) return;
+    setIsValidatingPromo(true);
+    try {
+      const unwrapped = await fetchPricing(promoCode);
+      if (unwrapped && unwrapped.discount > 0) {
+        setIsPromoApplied(true);
+        toast.success("Kode promo berhasil digunakan!");
+      } else {
+        setIsPromoApplied(false);
+        toast.error("Kode promo tidak valid atau kadaluarsa.");
+      }
+    } catch (error) {
+      setIsPromoApplied(false);
+    } finally {
+      setIsValidatingPromo(false);
+    }
+  };
+
+  const pricing = availData?.pricing ?? null;
 
   const handleConfirm = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isPricingLoading || !availData) {
+      toast.error("Tunggu hingga harga selesai dihitung");
+      return;
+    }
     setIsLoading(true);
 
     try {
@@ -65,7 +118,7 @@ function BookingFormPage() {
         villa_slug: params.room,
         check_in: params.checkIn,
         check_out: params.checkOut,
-        guest_count: params.guests,
+        guests: params.guests,
         guest_name: fullName,
         guest_email: email,
         guest_phone: phone,
@@ -86,13 +139,13 @@ function BookingFormPage() {
                 guests: params.guests,
                 name: fullName,
                 email,
-                total,
+                bookingCode: response.data.booking?.booking_code ?? '',
+                total: availData.grand_total ?? 0,
               },
             });
           },
           onPending: function (result: any) {
             toast.info("Menunggu pembayaran...");
-            // Redirect to a pending page or show message
           },
           onError: function (result: any) {
             toast.error("Pembayaran gagal!");
@@ -111,7 +164,7 @@ function BookingFormPage() {
   };
 
   // If no room selected, show picker
-  if (!selectedRoom) {
+  if (!params.room) {
     return (
       <main className="pt-32 pb-16 px-6">
         <div className="max-w-4xl mx-auto text-center">
@@ -121,31 +174,46 @@ function BookingFormPage() {
             Silakan pilih paviliun untuk memulai reservasi Anda.
           </p>
           <div className="mt-12 grid md:grid-cols-3 gap-6 text-left">
-            {rooms.map((r) => (
-              <Link
-                key={r.slug}
-                to="/booking"
-                search={{ room: r.slug, checkIn: params.checkIn, checkOut: params.checkOut, guests: params.guests }}
-                className="group bg-background border border-border/60 overflow-hidden hover:shadow-luxe transition-shadow rounded-2xl"
-              >
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img src={r.img} alt={r.name} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                </div>
-                <div className="p-5">
-                  <h3 className="text-xl text-primary">{r.name}</h3>
-                  <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{r.desc}</p>
-                  <div className="mt-4 flex items-center justify-between">
-                    <span className="text-lg text-gold">{formatIDR(r.price)} <span className="text-xs text-muted-foreground font-sans">/malam</span></span>
-                    <span className="text-gold text-sm group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">Pilih <ChevronRight className="h-3 w-3" /></span>
+            {villas.map((r) => {
+              const primaryImage = r.images?.find(img => img.is_primary) || r.images?.[0];
+              const imageUrl = primaryImage ? `${IMAGE_BASE_URL}${primaryImage.image_url}` : '';
+              return (
+                <Link
+                  key={r.slug}
+                  to="/booking"
+                  search={{ room: r.slug, checkIn: params.checkIn, checkOut: params.checkOut, guests: params.guests }}
+                  className="group bg-background border border-border/60 overflow-hidden hover:shadow-luxe transition-shadow rounded-2xl"
+                >
+                  <div className="aspect-[4/3] overflow-hidden">
+                    <img src={imageUrl} alt={r.name} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
                   </div>
-                </div>
-              </Link>
-            ))}
+                  <div className="p-5">
+                    <h3 className="text-xl text-primary">{r.name}</h3>
+                    <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{r.description}</p>
+                    <div className="mt-4 flex items-center justify-between">
+                      <span className="text-lg text-gold">{formatIDR(r.base_price)} <span className="text-xs text-muted-foreground font-sans">/malam</span></span>
+                      <span className="text-gold text-sm group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">Pilih <ChevronRight className="h-3 w-3" /></span>
+                    </div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </main>
     );
   }
+
+  if (!selectedRoomData) {
+    return (
+      <main className="pt-32 pb-16 px-6 flex justify-center">
+        <Loader2 className="w-10 h-10 animate-spin text-gold" />
+      </main>
+    );
+  }
+
+  const primaryImage = selectedRoomData.images?.find(img => img.is_primary) || selectedRoomData.images?.[0];
+  const imageUrl = primaryImage ? `${IMAGE_BASE_URL}${primaryImage.image_url}` : '';
 
   return (
     <main className="pt-20">
@@ -181,19 +249,20 @@ function BookingFormPage() {
             <form id="booking-form" onSubmit={handleConfirm} className="space-y-8">
               {/* Room summary card */}
               <div className="border border-border/60 bg-ivory/40 p-6 flex items-start gap-5 rounded-2xl">
-                <div className="w-24 h-24 shrink-0 overflow-hidden rounded-xl">
-                  <img src={selectedRoom.img} alt={selectedRoom.name} className="h-full w-full object-cover" />
+                <div className="w-24 h-24 shrink-0 overflow-hidden rounded-xl bg-[#8B7355]/20">
+                  <img src={imageUrl} alt={selectedRoomData.name} className="h-full w-full object-cover" />
                 </div>
                 <div className="min-w-0">
-                  <h2 className="text-xl text-primary">{selectedRoom.name}</h2>
+                  <h2 className="text-xl text-primary">{selectedRoomData.name}</h2>
                   <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted-foreground">
                     <span className="inline-flex items-center gap-1.5"><Calendar className="h-3 w-3 text-gold" /> {params.checkIn || "—"} → {params.checkOut || "—"}</span>
-                    <span className="inline-flex items-center gap-1.5"><BedDouble className="h-3 w-3 text-gold" /> {nights} {nights === 1 ? "malam" : "malam"}</span>
-                    <span className="inline-flex items-center gap-1.5"><Users className="h-3 w-3 text-gold" /> {params.guests} {params.guests === 1 ? "tamu" : "tamu"}</span>
+                    <span className="inline-flex items-center gap-1.5"><BedDouble className="h-3 w-3 text-gold" /> {pricing?.nights || 0} malam</span>
+                    <span className="inline-flex items-center gap-1.5"><Users className="h-3 w-3 text-gold" /> {params.guests} tamu</span>
+
                   </div>
                   <Link
                     to="/rooms/$slug"
-                    params={{ slug: selectedRoom.slug }}
+                    params={{ slug: selectedRoomData.slug }}
                     search={{ checkIn: params.checkIn, checkOut: params.checkOut, guests: params.guests }}
                     className="mt-3 inline-block text-xs text-gold hover:underline"
                   >
@@ -265,131 +334,151 @@ function BookingFormPage() {
               <div className="hidden lg:block">
                 <button
                   type="submit"
-                  disabled={!fullName || !email || !phone || isLoading}
+                  disabled={!fullName || !email || !phone || isLoading || isPricingLoading || !!availabilityError}
                   className="w-full rounded-full bg-primary text-primary-foreground py-4 font-medium tracking-wide hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed inline-flex items-center justify-center gap-3 text-lg"
                 >
                   {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Konfirmasi Pemesanan <ArrowRight className="h-5 w-5" /></>}
                 </button>
-
-
               </div>
             </form>
           </div>
 
           {/* Right: Price breakdown */}
           <div className="lg:col-span-2">
-            <div className="lg:sticky lg:top-28 border border-border/60 bg-ivory/40 p-8 space-y-6 rounded-2xl">
-              <h3 className="text-2xl text-primary font-bold">Ringkasan Pemesanan</h3>
-
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Paviliun</span>
-                  <span className="font-medium text-right">{selectedRoom.name}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Check-in</span>
-                  <span className="font-medium">{params.checkIn || "—"}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Check-out</span>
-                  <span className="font-medium">{params.checkOut || "—"}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Malam</span>
-                  <span className="font-medium">{nights}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Tamu</span>
-                  <span className="font-medium">{params.guests}</span>
-                </div>
-              </div>
-
-              {extraGuests > 0 && (
-                <div className="bg-[#EFE5D5] p-4 rounded-xl flex gap-3 text-sm">
-                  <div className="shrink-0 mt-0.5">
-                    <div className="w-4 h-4 bg-black text-[#EFE5D5] rounded-full flex items-center justify-center font-bold text-[10px]">!</div>
-                  </div>
-                  <div>
-                    <div className="font-medium text-foreground">Anda melebihi batas kapasitas villa</div>
-                    <div className="text-muted-foreground mt-0.5 leading-snug">Maksimal kapasitas villa adalah {baseGuests} orang, tamu tambahan akan dikenakan charge</div>
-                  </div>
+            <div className="lg:sticky lg:top-28 border border-border/60 bg-ivory/40 p-8 space-y-6 rounded-2xl relative overflow-hidden">
+              {isPricingLoading && (
+                <div className="absolute inset-0 bg-ivory/50 backdrop-blur-[2px] z-10 flex items-center justify-center">
+                  <Loader2 className="w-8 h-8 animate-spin text-gold" />
                 </div>
               )}
+              
+              <h3 className="text-2xl text-primary font-bold">Ringkasan Pemesanan</h3>
 
-              <hr className="border-border/60" />
-
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-muted-foreground">Harga {extraGuests > 0 ? `(maks. ${baseGuests} orang)` : ""}</span>
-                    <span className="text-[11px] text-muted-foreground/50">{nights} malam</span>
+              {availabilityError ? (
+                <div className="py-10 text-center">
+                  <div className="w-12 h-12 rounded-full bg-destructive/10 text-destructive flex items-center justify-center mx-auto mb-4">
+                    <Check className="w-6 h-6 hidden" />
+                    <span className="text-xl font-bold">!</span>
                   </div>
-                  <span className="font-medium">{formatIDR(subtotalBase)}</span>
-                </div>
-                {extraGuests > 0 && (
-                  <div className="flex justify-between items-start mt-1">
-                    <div>
-                      <span className="text-muted-foreground block">Charge tamu tambahan</span>
-                      <span className="text-[11px] text-muted-foreground/50 mt-1 block">{extraGuests} orang x {formatIDR(extraChargePerPerson)}</span>
-                    </div>
-                    <span className="font-medium">{formatIDR(extraChargeTotal)}</span>
-                  </div>
-                )}
-              </div>
-
-              <hr className="border-border/60" />
-
-              <div className="space-y-3">
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    value={promoCode}
-                    onChange={(e) => setPromoCode(e.target.value)}
-                    placeholder="Kode Promo"
-                    className="w-full bg-transparent border border-border px-3 py-2 outline-none focus:border-gold text-foreground placeholder:text-muted-foreground/50 transition-colors rounded-xl text-sm"
-                    disabled={isPromoApplied}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (promoCode) setIsPromoApplied(true);
-                    }}
-                    disabled={isPromoApplied || !promoCode}
-                    className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:bg-primary/90 disabled:opacity-40 transition-colors"
+                  <h3 className="text-xl font-semibold text-primary mb-2">Tidak Tersedia</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed mb-6">
+                    {availabilityError}
+                  </p>
+                  <Link 
+                    to="/rooms/$slug" 
+                    params={{ slug: params.room }}
+                    className="inline-flex items-center justify-center px-6 py-3 bg-gold text-gold-foreground rounded-full text-sm font-medium hover:bg-gold/90 transition-colors"
                   >
-                    {isPromoApplied ? "Terpakai" : "Pakai"}
-                  </button>
+                    Pilih Tanggal Lain
+                  </Link>
                 </div>
-                {isPromoApplied && (
-                  <div className="flex justify-between items-center text-sm text-green-600">
-                    <span>Diskon (Promo: {promoCode})</span>
-                    <span>-{formatIDR(150000)}</span>
+              ) : (
+                <>
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Paviliun</span>
+                      <span className="font-medium text-right">{selectedRoomData.name}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Check-in</span>
+                      <span className="font-medium">{params.checkIn || "—"}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Check-out</span>
+                      <span className="font-medium">{params.checkOut || "—"}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Malam</span>
+                      <span className="font-medium">{pricing?.nights || differenceInDays(new Date(params.checkOut || Date.now()), new Date(params.checkIn || Date.now()))}</span>
+                    </div>
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">Tamu</span>
+                      <span className="font-medium">{params.guests}</span>
+                    </div>
                   </div>
-                )}
-              </div>
 
-              <hr className="border-border/60" />
+                  {pricing && pricing.extra_guests > 0 && (
+                    <div className="bg-[#EFE5D5] p-4 rounded-xl flex gap-3 text-sm">
+                      <div className="shrink-0 mt-0.5">
+                        <div className="w-4 h-4 bg-black text-[#EFE5D5] rounded-full flex items-center justify-center font-bold text-[10px]">!</div>
+                      </div>
+                      <div>
+                        <div className="font-medium text-foreground">Anda melebihi batas kapasitas villa</div>
+                        <div className="text-muted-foreground mt-0.5 leading-snug">Tamu tambahan akan dikenakan biaya tambahan</div>
+                      </div>
+                    </div>
+                  )}
 
-              <div className="flex justify-between items-baseline">
-                <span className="text-xl text-primary font-medium">Total</span>
-                <span className="text-3xl text-primary">{formatIDR(total)}</span>
-              </div>
+                  <hr className="border-border/60" />
 
+                  <div className="space-y-3 text-sm">
+                    <div className="flex justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground">Harga Villa</span>
+                        <span className="text-[11px] text-muted-foreground/50">{pricing?.nights || differenceInDays(new Date(params.checkOut || Date.now()), new Date(params.checkIn || Date.now()))} malam</span>
+                      </div>
+                      <span className="font-medium">{pricing ? formatIDR(pricing.base_price_total) : '—'}</span>
+                    </div>
+                    {pricing && pricing.extra_guests > 0 && (
+                      <div className="flex justify-between items-start mt-1">
+                        <div>
+                          <span className="text-muted-foreground block">Biaya tamu tambahan</span>
+                          <span className="text-[11px] text-muted-foreground/50 mt-1 block">{pricing.extra_guests} orang ekstra</span>
+                        </div>
+                        <span className="font-medium">{formatIDR(pricing.extra_charge_total)}</span>
+                      </div>
+                    )}
+                  </div>
 
+                  <hr className="border-border/60" />
 
+                  <div className="space-y-3">
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={promoCode}
+                        onChange={(e) => setPromoCode(e.target.value)}
+                        placeholder="Kode Promo"
+                        className="w-full bg-transparent border border-border px-3 py-2 outline-none focus:border-gold text-foreground placeholder:text-muted-foreground/50 transition-colors rounded-xl text-sm"
+                        disabled={isPromoApplied || isValidatingPromo}
+                      />
+                      <button
+                        type="button"
+                        onClick={handleApplyPromo}
+                        disabled={isPromoApplied || !promoCode || isValidatingPromo}
+                        className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:bg-primary/90 disabled:opacity-40 transition-colors inline-flex items-center gap-2"
+                      >
+                        {isValidatingPromo ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                        {isPromoApplied ? "Terpakai" : "Pakai"}
+                      </button>
+                    </div>
+                    {isPromoApplied && availData && availData.discount > 0 && (
+                      <div className="flex justify-between items-center text-sm text-green-600">
+                        <span>Diskon (Promo: {promoCode})</span>
+                        <span>-{formatIDR(availData.discount)}</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <hr className="border-border/60" />
+
+                  <div className="flex justify-between items-baseline">
+                    <span className="text-xl text-primary font-medium">Total</span>
+                    <span className="text-3xl text-primary">{availData ? formatIDR(availData.grand_total) : '—'}</span>
+                  </div>
+                </>
+              )}
 
               {/* Submit (Mobile only) */}
               <div className="lg:hidden pt-6 mt-6 border-t border-border/60">
                 <button
                   type="submit"
                   form="booking-form"
-                  disabled={!fullName || !email || !phone || isLoading}
+                  disabled={!fullName || !email || !phone || isLoading || isPricingLoading || !!availabilityError}
                   className="w-full rounded-full bg-primary text-primary-foreground py-4 font-medium tracking-wide hover:bg-primary/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed inline-flex items-center justify-center gap-3 text-lg"
                 >
                   {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Konfirmasi Pemesanan <ArrowRight className="h-5 w-5" /></>}
                 </button>
-
-
               </div>
             </div>
           </div>

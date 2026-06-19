@@ -6,7 +6,8 @@ import { id } from "date-fns/locale";
 import { DateRange } from "react-day-picker";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { getRoom, rooms, formatIDR, type Room } from "@/lib/rooms";
+import { formatIDR } from "@/lib/utils";
+import { api, Villa, IMAGE_BASE_URL } from "@/lib/api";
 import { Navbar } from "@/components/Navbar";
 
 import { z } from "zod";
@@ -20,29 +21,41 @@ const searchSchema = z.object({
 
 export const Route = createFileRoute("/rooms/$slug")({
   validateSearch: zodValidator(searchSchema),
-  loader: ({ params }) => {
-    const room = getRoom(params.slug);
-    if (!room) throw notFound();
-    return { room };
+  loader: async ({ params }) => {
+    try {
+      const [villaRes, villasRes, bookedDatesRes] = await Promise.all([
+        api.getVilla(params.slug),
+        api.getVillas(),
+        api.getBookedDates(params.slug)
+      ]);
+      return { 
+        room: villaRes.data,
+        otherRooms: villasRes.data.filter((r: Villa) => r.slug !== params.slug),
+        bookedDates: bookedDatesRes.data
+      };
+    } catch (err) {
+      throw notFound();
+    }
   },
-  head: ({ loaderData }) => ({
-    meta: [
-      { title: `${loaderData?.room.name} — Marme Villa Jogja` },
-      { name: "description", content: loaderData?.room.desc },
-      { property: "og:title", content: `${loaderData?.room.name} — Marme Villa Jogja` },
-      { property: "og:description", content: loaderData?.room.desc },
-      { property: "og:image", content: loaderData?.room.img },
-    ],
-    links: [
-      { rel: "preload", as: "image", href: loaderData?.room.gallery[0], fetchPriority: "high" },
-      ...(loaderData?.room.gallery[1]
-        ? [{ rel: "preload", as: "image", href: loaderData.room.gallery[1] }]
-        : []),
-      ...(loaderData?.room.gallery[2]
-        ? [{ rel: "preload", as: "image", href: loaderData.room.gallery[2] }]
-        : []),
-    ],
-  }),
+  head: ({ loaderData }) => {
+    if (!loaderData) return {};
+    const { room } = loaderData;
+    const images = room.images.map(img => `${IMAGE_BASE_URL}${img.image_url}`);
+    return {
+      meta: [
+        { title: `${room.name} — Marme Villa Jogja` },
+        { name: "description", content: room.description },
+        { property: "og:title", content: `${room.name} — Marme Villa Jogja` },
+        { property: "og:description", content: room.description },
+        { property: "og:image", content: images[0] },
+      ],
+      links: [
+        { rel: "preload", as: "image", href: images[0], fetchPriority: "high" },
+        ...(images[1] ? [{ rel: "preload", as: "image", href: images[1] }] : []),
+        ...(images[2] ? [{ rel: "preload", as: "image", href: images[2] }] : []),
+      ],
+    };
+  },
   component: RoomDetail,
   notFoundComponent: () => (
     <div className="min-h-screen flex items-center justify-center">
@@ -56,24 +69,26 @@ export const Route = createFileRoute("/rooms/$slug")({
 });
 
 function RoomDetail() {
-  const { room } = Route.useLoaderData() as { room: Room };
+  const { room, otherRooms, bookedDates } = Route.useLoaderData();
   const stats = [
     { icon: Maximize, label: room.size },
-    { icon: BedDouble, label: `${room.bed} kamar tidur` },
-    { icon: Users, label: `${room.baseGuests} tamu` },
-    { icon: Bath, label: `${room.bathrooms} kamar mandi` },
-    { icon: Eye, label: room.view },
+    { icon: BedDouble, label: `${room.bed_count} kamar tidur` },
+    { icon: Users, label: `${room.capacity} tamu` },
+    { icon: Bath, label: `${room.bathroom_count} kamar mandi` },
+    { icon: Eye, label: room.view_description },
   ];
 
   const searchParams = Route.useSearch();
 
-  const initialFrom = searchParams.checkIn ? new Date(searchParams.checkIn) : startOfToday();
-  const initialTo = searchParams.checkOut ? new Date(searchParams.checkOut) : addDays(startOfToday(), 1);
+  const initialFrom = searchParams.checkIn ? new Date(searchParams.checkIn) : undefined;
+  const initialTo = searchParams.checkOut ? new Date(searchParams.checkOut) : undefined;
 
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: initialFrom,
-    to: initialTo,
-  });
+  const [date, setDate] = React.useState<DateRange | undefined>(
+    initialFrom || initialTo ? {
+      from: initialFrom,
+      to: initialTo,
+    } : undefined
+  );
 
   const [adults, setAdults] = React.useState(searchParams.guests);
   const [children, setChildren] = React.useState(0);
@@ -81,11 +96,7 @@ function RoomDetail() {
 
   const totalGuests = adults + children;
 
-  const disabledDates = [
-    addDays(startOfToday(), 3),
-    addDays(startOfToday(), 4),
-    addDays(startOfToday(), 5),
-  ];
+  const disabledDates = bookedDates.map((dateStr: string) => new Date(dateStr + "T00:00:00"));
 
   return (
     <div className="bg-background text-foreground">
@@ -121,7 +132,7 @@ function RoomDetail() {
               </div>
             </div>
             <div className="lg:text-right">
-              <div className="font-sans text-4xl font-semibold text-primary">{formatIDR(room.price)}</div>
+              <div className="font-sans text-4xl font-semibold text-primary">{formatIDR(room.base_price)}</div>
               <div className="eyebrow text-muted-foreground mt-1">per malam · termasuk pajak</div>
             </div>
           </div>
@@ -132,11 +143,11 @@ function RoomDetail() {
       <section className="px-6">
         <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-4 auto-rows-[260px] md:auto-rows-[360px]">
           <div className="md:col-span-2 md:row-span-2 overflow-hidden rounded-2xl bg-[#8B7355]/20">
-            <img src={room.gallery[0]} alt={room.name} fetchPriority="high" decoding="sync" className="h-full w-full object-cover" />
+            <img src={room.images[0] ? `${IMAGE_BASE_URL}${room.images[0].image_url}` : ''} alt={room.name} fetchPriority="high" decoding="sync" className="h-full w-full object-cover" />
           </div>
-          {room.gallery.slice(1, 3).map((g, i) => (
+          {room.images.slice(1, 3).map((g, i) => (
             <div key={i} className="overflow-hidden rounded-2xl bg-[#8B7355]/20">
-              <img src={g} alt={`${room.name} ${i + 2}`} className="h-full w-full object-cover" loading="lazy" />
+              <img src={`${IMAGE_BASE_URL}${g.image_url}`} alt={`${room.name} ${i + 2}`} className="h-full w-full object-cover" loading="lazy" />
             </div>
           ))}
         </div>
@@ -158,7 +169,7 @@ function RoomDetail() {
             <div>
               <span className="eyebrow">Suite</span>
               <h2 className="text-3xl md:text-4xl mt-3 font-bold">Dunia yang intim, diukir dengan tangan.</h2>
-              {room.longDesc.map((p, i) => (
+              {room.long_description && room.long_description.map((p, i) => (
                 <p key={i} className="mt-6 text-muted-foreground leading-relaxed text-base md:text-lg">{p}</p>
               ))}
             </div>
@@ -166,7 +177,7 @@ function RoomDetail() {
             <div>
               <span className="eyebrow">Fitur Unggulan</span>
               <ul className="mt-6 grid sm:grid-cols-2 gap-3">
-                {room.features.map((f) => (
+                {room.features && room.features.map((f) => (
                   <li key={f} className="flex items-start gap-3 text-foreground">
                     <Check className="h-4 w-4 text-gold mt-1 shrink-0" /> {f}
                   </li>
@@ -174,22 +185,25 @@ function RoomDetail() {
               </ul>
             </div>
 
-            <div>
-              <span className="eyebrow">Fasilitas Kamar</span>
-              <ul className="mt-6 grid sm:grid-cols-2 gap-3">
-                {room.amenities.map((a) => (
-                  <li key={a} className="flex items-start gap-3 text-muted-foreground">
-                    <Check className="h-4 w-4 text-gold mt-1 shrink-0" /> {a}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {room.facilities && room.facilities.length > 0 && (
+              <div>
+                <span className="eyebrow mt-10 inline-block">Fasilitas Kamar</span>
+                <ul className="mt-6 grid sm:grid-cols-2 gap-3">
+                  {room.facilities.map((f) => (
+                    <li key={f.id} className="flex items-start gap-3 text-foreground">
+                      <Check className="h-4 w-4 text-gold mt-1 shrink-0" /> {f.name}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
           </div>
 
           {/* Booking card */}
           <aside className="lg:sticky lg:top-28 self-start">
             <div className="border border-border/60 bg-ivory/40 p-8 rounded-2xl">
-              <div className="font-sans text-3xl font-semibold text-primary">{formatIDR(room.price)}</div>
+              <div className="font-sans text-3xl font-semibold text-primary">{formatIDR(room.base_price)}</div>
               <div className="eyebrow text-muted-foreground mt-1">per malam</div>
 
               <div className="mt-6 space-y-4">
@@ -323,7 +337,7 @@ function RoomDetail() {
                         </div>
 
                         <div className="text-xs text-muted-foreground pt-4 border-t border-border/60">
-                          Kapasitas villa adalah {room.baseGuests} tamu, lebih dari itu dikenakan biaya tambahan Rp 125.000/orang. Balita tidak dihitung.
+                          Kapasitas villa adalah {room.capacity} tamu, lebih dari itu dikenakan biaya tambahan {formatIDR(room.extra_guest_fee)}/orang. Balita tidak dihitung.
                         </div>
                       </div>
                     </PopoverContent>
@@ -357,23 +371,28 @@ function RoomDetail() {
             <h2 className="text-3xl md:text-4xl mt-3">Jelajahi dunia pribadi kami yang lain.</h2>
           </div>
           <div className="grid md:grid-cols-2 gap-8">
-            {rooms.filter((r) => r.slug !== room.slug).map((r) => (
-              <Link
-                key={r.slug}
-                to="/rooms/$slug"
-                params={{ slug: r.slug }}
-                className="group grid grid-cols-2 bg-background border border-border/60 overflow-hidden rounded-2xl"
-              >
-                <div className="aspect-square overflow-hidden">
-                  <img src={r.img} alt={r.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                </div>
-                <div className="p-6 flex flex-col justify-center">
-                  <h3 className="font-manrope text-xl font-semibold text-primary">{r.name}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground line-clamp-3">{r.desc}</p>
-                  <div className="mt-4 text-sm text-gold tracking-wide">{formatIDR(r.price)} / malam</div>
-                </div>
-              </Link>
-            ))}
+            {otherRooms.map((r: Villa) => {
+              const primaryImage = r.images.find(img => img.is_primary) || r.images[0];
+              const imageUrl = primaryImage ? `${IMAGE_BASE_URL}${primaryImage.image_url}` : '';
+
+              return (
+                <Link
+                  key={r.slug}
+                  to="/rooms/$slug"
+                  params={{ slug: r.slug }}
+                  className="group grid grid-cols-2 bg-background border border-border/60 overflow-hidden rounded-2xl"
+                >
+                  <div className="aspect-square overflow-hidden">
+                    <img src={imageUrl} alt={r.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  </div>
+                  <div className="p-6 flex flex-col justify-center">
+                    <h3 className="font-manrope text-xl font-semibold text-primary">{r.name}</h3>
+                    <p className="mt-2 text-sm text-muted-foreground line-clamp-3">{r.description}</p>
+                    <div className="mt-4 text-sm text-gold tracking-wide">{formatIDR(r.base_price)} / malam</div>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </div>
       </section>
