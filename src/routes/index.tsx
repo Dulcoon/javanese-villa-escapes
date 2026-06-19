@@ -428,8 +428,8 @@ function Testimonials() {
 /* ---------- Location ---------- */
 function Location() {
   const nearby = [
-    ["Candi Borobudur", "25 mnt"], ["Candi Prambanan", "40 mnt"],
-    ["Kota Tua Yogyakarta", "30 mnt"], ["Bandara Adisutjipto", "45 mnt"],
+    ["Desa Wisata Sriharjo", "15 mnt"], ["Bukit Mangunan", "19 mnt"],
+    ["Pantai Parangtritis", "20 mnt"], ["Malioboro", "20 mnt"], ["Obelix Sea View", "30 mnt"],
   ];
   return (
     <section id="location" className="py-32 px-6 bg-ivory/40">
@@ -437,11 +437,10 @@ function Location() {
         <div>
           <span className="eyebrow">Lokasi</span>
           <h2 className="text-3xl md:text-5xl mt-4 text-balance font-bold">
-            Di antara terasering sawah dan candi-candi kuno Jawa Tengah.
+            Di antara hamparan sawah dan pedesaan asri Yogyakarta.
           </h2>
           <p className="mt-6 text-muted-foreground text-base md:text-lg leading-relaxed">
-            Tersembunyi di kaki bukit di luar Yogyakarta, Marme Villa Jogja adalah dunia pribadi — namun sangat dekat dari beberapa bangunan budaya paling luar biasa di Indonesia.
-          </p>
+            Tersembunyi di daerah pedesaan Bantul, Yogyakarta. Marme villa memiliki lokasi yang strategis dan indah </p>
           <ul className="mt-10 divide-y divide-border/60 border-t border-b border-border/60">
             {nearby.map(([place, time]) => (
               <li key={place} className="flex items-center justify-between py-4">
