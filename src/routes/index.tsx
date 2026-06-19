@@ -17,7 +17,6 @@ import roomPavilion from "@/assets/room-pavilion.webp";
 import carousel1 from "@/assets/carousel1.webp";
 import carousel2 from "@/assets/carousel2.webp";
 import carousel3 from "@/assets/carousel3.webp";
-import carousel4 from "@/assets/carousel4.webp";
 
 import sekilas1 from "@/assets/sekilas1.webp";
 import sekilas2 from "@/assets/sekilas2.webp";
@@ -43,7 +42,6 @@ export const Route = createFileRoute("/")({
       { rel: "preload", as: "image", href: carousel1, fetchPriority: "high" },
       { rel: "preload", as: "image", href: carousel2 },
       { rel: "preload", as: "image", href: carousel3 },
-      { rel: "preload", as: "image", href: carousel4 },
     ],
   }),
   component: VillaHome,
@@ -56,7 +54,7 @@ import { Navbar } from "@/components/Navbar";
 
 /* ---------- Hero ---------- */
 function Hero() {
-  const images = [carousel1, carousel2, carousel3, carousel4];
+  const images = [carousel1, carousel2, carousel3];
   const [currentIdx, setCurrentIdx] = useState(0);
 
   useEffect(() => {
