@@ -500,7 +500,7 @@ const faqs = [
   ["Apa saja yang termasuk dalam harga kamar?", "Harga kamar sudah termasuk seluruh fasilitas, snack, dan welcome drink"],
   ["Kapan waktu untuk check in dan check out?", "Waktu check in pukul 15.00 WIB dan waktu check out pukul 12.00 WIB. Apabila ingin early check in atau late check out akan dikenakan biaya 200.000/jam (Ketentuan ini berlaku apabila villa tidak full tamu)"],
   ["Bagaimana kebijakan pembatalan pemesanan?", "Pembatalan gratis hingga 30 hari sebelum kedatangan. Dalam kurun waktu 30 hari, akan dikenakan biaya malam pertama. Kebijakan periode khusus mungkin berbeda."],
-  ["Siapa yang akan melayani saya saat check in dan check out?", "Dikarenakan lokasi villa yang berbeda-beda maka petugas villa hanya akan datang pada waktu chek in dan check out saja. Anda bisa meminta bantuan langsung kepada petugas sebelum pulang atau menghubungi nomer admin. Jam operasional admin mulai dari pukul 08.00-22.00 WIB."],
+  ["Siapa yang akan melayani saya saat check in dan check out?", "Dikarenakan lokasi villa yang berbeda-beda maka petugas villa hanya akan datang pada waktu check in dan check out saja. Anda bisa meminta bantuan langsung kepada petugas sebelum pulang atau menghubungi nomer admin. Jam operasional admin mulai dari pukul 08.00-22.00 WIB."],
   ["Apakah villa ini cocok untuk anak-anak?", "Anak-anak dari segala usia disambut dengan hangat. Kami menawarkan layanan pengasuhan anak, fasilitas anak-anak, dan pengalaman keluarga yang dirancang khusus."],
 ];
 function FAQ() {
