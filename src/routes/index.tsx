@@ -152,7 +152,7 @@ function About() {
     { v: "Keramahan", d: "Pelayanan yang hangat dari semua staff Marme Villa Management." },
     { v: "Garansi", d: "Tanggungjawab atas semua kesalahan yang terjadi." },
     { v: "Ketenangan", d: "Lokasi pedesaan dengan keindahan alam yang menakjubkan." },
-    { v: "Keberlanjutan", d: "Dilengkapi dengan beberap servis tambahan." },
+    { v: "Keberlanjutan", d: "Dilengkapi dengan beberapa servis tambahan." },
   ];
   return (
     <section id="about" className="py-32 px-6">
