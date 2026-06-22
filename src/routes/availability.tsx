@@ -11,6 +11,7 @@ import { id } from "date-fns/locale";
 import { DateRange } from "react-day-picker";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { toast } from "sonner";
 
 const searchSchema = z.object({
   checkIn: fallback(z.string(), "").default(""),
@@ -79,6 +80,10 @@ function AvailabilityPage() {
   // Check real availability when search is submitted
   const checkAllAvailability = async () => {
     if (!checkInStr || !checkOutStr || villas.length === 0) return;
+    if (checkInStr === checkOutStr) {
+      toast.error("Minimal pencarian 1 malam", { description: "Tanggal check-in dan check-out tidak boleh sama." });
+      return;
+    }
     setIsChecking(true);
     const results: Record<string, boolean> = {};
     await Promise.all(
@@ -307,7 +312,7 @@ function AvailabilityPage() {
                     </div>
                     {r.isAvailable && (
                       <div className="mt-4 inline-flex items-center gap-2 text-xs text-gold">
-                        <Check className="h-3.5 w-3.5" /> Tersisa {r.remaining} paviliun dengan harga ini
+                        <Check className="h-3.5 w-3.5" /> Tersedia untuk dipesan
                       </div>
                     )}
                   </div>

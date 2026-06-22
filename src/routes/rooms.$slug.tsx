@@ -11,6 +11,7 @@ import { api, Villa, IMAGE_BASE_URL } from "@/lib/api";
 import { Navbar } from "@/components/Navbar";
 
 import { z } from "zod";
+import { toast } from "sonner";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 
 const searchSchema = z.object({
@@ -354,6 +355,12 @@ function RoomDetail() {
                   guests: totalGuests
                 }}
                 disabled={!date?.from || !date?.to}
+                onClick={(e) => {
+                  if (date?.from && date?.to && format(date.from, "yyyy-MM-dd") === format(date.to, "yyyy-MM-dd")) {
+                    e.preventDefault();
+                    toast.error("Minimal pemesanan 1 malam", { description: "Tanggal check-in dan check-out tidak boleh sama." });
+                  }
+                }}
                 className="mt-8 block text-center bg-gold text-gold-foreground py-4 font-medium tracking-wide hover:bg-gold/90 transition-colors rounded-full data-[disabled]:opacity-50 data-[disabled]:pointer-events-none"
               >
                 Pesan Sekarang
