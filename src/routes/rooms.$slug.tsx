@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, BedDouble, Bath, Users, Maximize, Eye, Check, ChevronRight, Minus, Plus, Calendar as CalendarIcon, Users as UsersIcon, MapPin } from "lucide-react";
+import { ArrowLeft, BedDouble, Bath, Users, Maximize, Eye, Check, ChevronRight, Minus, Plus, Calendar as CalendarIcon, Users as UsersIcon, MapPin, Share, Heart, Star } from "lucide-react";
 import { format, addDays, startOfToday } from "date-fns";
 import { id } from "date-fns/locale";
 import { DateRange } from "react-day-picker";
@@ -99,13 +99,59 @@ function RoomDetail() {
 
   const disabledDates = bookedDates.map((dateStr: string) => new Date(dateStr + "T00:00:00"));
 
+  const [isGalleryOpen, setIsGalleryOpen] = React.useState(false);
+  const carouselRef = React.useRef<HTMLDivElement>(null);
+  const [currentImageIndex, setCurrentImageIndex] = React.useState(1);
+
+  const handleCarouselScroll = () => {
+    if (!carouselRef.current) return;
+    const scrollLeft = carouselRef.current.scrollLeft;
+    const width = carouselRef.current.clientWidth;
+    const newIndex = Math.round(scrollLeft / width) + 1;
+    setCurrentImageIndex(newIndex);
+  };
+
   return (
     <div className="bg-background text-foreground">
-      {/* Top bar */}
-      <Navbar variant="back" backTo="/" backText="Kembali ke beranda" />
+      {/* Desktop Top Bar */}
+      <div className="hidden md:block">
+        <Navbar variant="back" backTo="/" backText="Kembali ke beranda" />
+      </div>
 
-      {/* Hero */}
-      <section className="pt-32 pb-12 px-6">
+      {/* MOBILE HEADER: Carousel + Actions */}
+      <div className="md:hidden relative w-full h-[45vh] bg-black/5">
+        {/* Top Actions Overlay */}
+        <div className="absolute top-6 left-4 right-4 flex justify-between items-start z-10">
+          <Link to="/" className="w-9 h-9 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-black shadow-sm shrink-0">
+            <ArrowLeft className="w-5 h-5" />
+          </Link>
+          <div className="bg-white/90 backdrop-blur-md text-black text-[13px] font-semibold px-4 py-2 rounded-full shadow-sm">
+            {room.images[currentImageIndex - 1]?.album || 'Lainnya'}
+          </div>
+        </div>
+
+        {/* Carousel */}
+        <div 
+          className="w-full h-full overflow-x-auto snap-x snap-mandatory flex hide-scrollbar" 
+          ref={carouselRef}
+          onScroll={handleCarouselScroll}
+          onClick={() => setIsGalleryOpen(true)}
+        >
+          {room.images.map((img) => (
+            <div key={img.id} className="w-full h-full flex-none snap-center relative">
+               <img src={`${IMAGE_BASE_URL}${img.image_url}`} alt={room.name} className="w-full h-full object-cover" loading="lazy" />
+            </div>
+          ))}
+        </div>
+
+        {/* Counter Badge */}
+        <div className="absolute bottom-8 right-4 bg-black/60 backdrop-blur-md text-white text-[11px] font-semibold tracking-wide px-3 py-1 rounded-md">
+          {currentImageIndex} / {room.images.length}
+        </div>
+      </div>
+
+      {/* DESKTOP HERO */}
+      <section className="hidden md:block pt-32 pb-12 px-6">
         <div className="max-w-7xl mx-auto">
           <nav className="text-xs tracking-wide text-muted-foreground mb-6 flex items-center gap-2">
             <Link to="/" className="hover:text-gold">Beranda</Link>
@@ -140,25 +186,55 @@ function RoomDetail() {
         </div>
       </section>
 
-      {/* Gallery */}
-      <section className="px-6">
-        <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-4 auto-rows-[260px] md:auto-rows-[360px]">
+      {/* DESKTOP GALLERY */}
+      <section className="hidden md:block px-6">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-4 auto-rows-[360px] relative group cursor-pointer" onClick={() => setIsGalleryOpen(true)}>
           <div className="md:col-span-2 md:row-span-2 overflow-hidden rounded-2xl bg-[#8B7355]/20">
-            <img src={room.images[0] ? `${IMAGE_BASE_URL}${room.images[0].image_url}` : ''} alt={room.name} fetchPriority="high" decoding="sync" className="h-full w-full object-cover" />
+            <img src={room.images[0] ? `${IMAGE_BASE_URL}${room.images[0].image_url}` : ''} alt={room.name} fetchPriority="high" decoding="sync" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]" />
           </div>
           {room.images.slice(1, 3).map((g, i) => (
-            <div key={i} className="overflow-hidden rounded-2xl bg-[#8B7355]/20">
-              <img src={`${IMAGE_BASE_URL}${g.image_url}`} alt={`${room.name} ${i + 2}`} className="h-full w-full object-cover" loading="lazy" />
+            <div key={i} className="overflow-hidden rounded-2xl bg-[#8B7355]/20 relative">
+              <img src={`${IMAGE_BASE_URL}${g.image_url}`} alt={`${room.name} ${i + 2}`} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]" loading="lazy" />
+              {i === 1 && room.images.length > 3 && (
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="bg-white text-black px-4 py-2 rounded-lg font-medium shadow-lg flex items-center gap-2">
+                    <Maximize className="w-4 h-4" />
+                    Tampilkan semua {room.images.length} foto
+                  </div>
+                </div>
+              )}
             </div>
           ))}
         </div>
       </section>
 
-      {/* Details */}
-      <section className="py-24 px-6">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-3 gap-16">
-          <div className="lg:col-span-2 space-y-10">
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-6 pb-10 border-b border-border/60">
+      {/* Gallery Modal */}
+      <GalleryModal 
+        isOpen={isGalleryOpen} 
+        onClose={() => setIsGalleryOpen(false)} 
+        images={room.images} 
+        roomName={room.name} 
+      />
+
+      {/* Details Section */}
+      <section className="relative bg-background md:bg-transparent rounded-t-3xl md:rounded-none -mt-6 md:mt-0 pt-6 md:pt-24 px-6 z-10">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-3 gap-10 md:gap-16">
+          <div className="lg:col-span-2 space-y-6 md:space-y-10">
+            
+            {/* Mobile Title Block */}
+            <div className="md:hidden">
+              <h1 className="text-[26px] font-bold leading-tight flex items-start gap-2">
+                <span>{room.name}</span>
+              </h1>
+              <p className="text-sm text-foreground mt-2">
+                {room.capacity} tamu · {room.bed_count} kamar tidur · {room.bathroom_count} kamar mandi
+              </p>
+            </div>
+
+            <hr className="md:hidden border-border/60 my-6" />
+
+            {/* Desktop Stats */}
+            <div className="hidden md:grid grid-cols-2 md:grid-cols-5 gap-6 pb-10 border-b border-border/60">
               {stats.map(({ icon: Icon, label }) => (
                 <div key={label} className="flex flex-col gap-2">
                   <Icon className="h-5 w-5 text-gold" strokeWidth={1.25} />
@@ -168,10 +244,10 @@ function RoomDetail() {
             </div>
 
             <div>
-              <span className="eyebrow">Suite</span>
-              <h2 className="text-3xl md:text-4xl mt-3 font-bold">Dunia yang intim, diukir dengan tangan.</h2>
+              <span className="hidden md:inline-block eyebrow">Suite</span>
+              <h2 className="hidden md:block text-3xl md:text-4xl mt-3 font-bold">Dunia yang intim, diukir dengan tangan.</h2>
               {room.long_description && room.long_description.map((p, i) => (
-                <p key={i} className="mt-6 text-muted-foreground leading-relaxed text-base md:text-lg">{p}</p>
+                <p key={i} className="mt-6 text-foreground/90 leading-relaxed text-[15px] md:text-lg">{p}</p>
               ))}
             </div>
 
@@ -407,6 +483,114 @@ function RoomDetail() {
       <footer className="bg-background border-t border-border/60 py-10 px-6 text-center text-sm text-muted-foreground">
         © {new Date().getFullYear()} Marme Villa Jogja
       </footer>
+    </div>
+  );
+}
+
+function GalleryModal({ isOpen, onClose, images, roomName }: { isOpen: boolean, onClose: () => void, images: any[], roomName: string }) {
+  if (!isOpen) return null;
+
+  const [activeIndex, setActiveIndex] = React.useState(0);
+  const [activeAlbum, setActiveAlbum] = React.useState(images[0]?.album || 'Lainnya');
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const container = scrollContainerRef.current;
+    if (!container) return;
+
+    let timeoutId: any;
+
+    const handleScroll = () => {
+      // Throttle for performance
+      if (timeoutId) clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        const imageEls = container.querySelectorAll('[data-index]');
+        let closest = null;
+        let minDistance = Infinity;
+        const containerCenter = container.scrollLeft + container.clientWidth / 2;
+
+        imageEls.forEach(el => {
+          const center = (el as HTMLElement).offsetLeft + (el as HTMLElement).clientWidth / 2;
+          const distance = Math.abs(containerCenter - center);
+          if (distance < minDistance) {
+            minDistance = distance;
+            closest = el;
+          }
+        });
+
+        if (closest) {
+          const index = parseInt((closest as HTMLElement).getAttribute('data-index') || '0', 10);
+          setActiveIndex(index);
+          setActiveAlbum((closest as HTMLElement).getAttribute('data-album') || 'Lainnya');
+        }
+      }, 50);
+    };
+
+    container.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      container.removeEventListener('scroll', handleScroll);
+      if (timeoutId) clearTimeout(timeoutId);
+    };
+  }, []);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isOpen]);
+
+  // Group images to create thumbnails or grid view inside modal (optional for future)
+  // For now we just implement the full-screen swipable carousel
+  return (
+    <div className="fixed inset-0 z-[100] bg-black text-white flex flex-col animate-in fade-in duration-300">
+      {/* Header */}
+      <div className="flex items-center justify-between p-4 bg-gradient-to-b from-black/80 to-transparent absolute top-0 w-full z-10 transition-opacity">
+        <button onClick={onClose} className="p-2 hover:bg-white/10 rounded-full transition-colors flex items-center justify-center">
+          <ArrowLeft className="w-6 h-6" />
+        </button>
+        <div className="font-semibold text-lg drop-shadow-md">
+          {activeAlbum}
+        </div>
+        <div className="text-sm text-white/90 font-medium drop-shadow-md">
+          {activeIndex + 1} / {images.length}
+        </div>
+      </div>
+
+      {/* Scrollable Carousel Container */}
+      <div 
+        ref={scrollContainerRef}
+        className="flex-1 overflow-x-auto flex snap-x snap-mandatory hide-scrollbar items-center"
+      >
+        {images.map((img, idx) => (
+          <div 
+            key={img.id} 
+            data-index={idx}
+            data-album={img.album || 'Lainnya'}
+            className="flex-none w-full h-full snap-center flex items-center justify-center p-0 md:p-10"
+          >
+            <img 
+              src={`${IMAGE_BASE_URL}${img.image_url}`} 
+              alt={`${roomName} - ${img.album || 'Lainnya'}`}
+              loading="lazy"
+              className="max-w-full max-h-full object-contain"
+            />
+          </div>
+        ))}
+      </div>
+      
+      {/* CSS to hide scrollbar */}
+      <style>{`
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .hide-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </div>
   );
 }

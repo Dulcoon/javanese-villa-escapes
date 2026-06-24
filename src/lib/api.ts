@@ -5,6 +5,7 @@ export interface VillaImage {
   id: string;
   image_url: string;
   is_primary: boolean;
+  album?: string;
 }
 
 export interface VillaFacility {
