@@ -228,7 +228,7 @@ function Rooms() {
       <div className="max-w-7xl mx-auto">
         <div className="max-w-2xl mb-16">
           <span className="eyebrow">Akomodasi</span>
-          <h2 className="text-3xl md:text-5xl mt-4 text-balance font-bold">Beberapa Pilihan Tipe & Unit Marme Villa Management.</h2>
+          <h2 className="text-3xl md:text-5xl mt-4 text-balance font-bold">Beberapa Pilihan Tipe & Unit Marme Villa Management</h2>
         </div>
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
           {villas.map((r) => {
@@ -283,7 +283,7 @@ function Experiences() {
           <div className="flex items-end justify-between flex-wrap gap-6 mb-16">
             <div>
               <span className="eyebrow">Aditional Service</span>
-              <h2 className="text-3xl md:text-5xl mt-4 max-w-xl text-balance font-bold">Layanan tambahan yang terbaik untuk tamu kami.</h2>
+              <h2 className="text-3xl md:text-5xl mt-4 max-w-xl text-balance font-bold">Layanan tambahan yang terbaik untuk tamu kami</h2>
             </div>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -365,7 +365,7 @@ function Amenities() {
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <span className="eyebrow">Fasilitas</span>
-          <h2 className="text-3xl md:text-5xl mt-4 font-bold">Segalanya untuk Kenyamanan Anda.</h2>
+          <h2 className="text-3xl md:text-5xl mt-4 font-bold">Segalanya untuk Kenyamanan Anda</h2>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-y-12 gap-x-8 text-center">
@@ -398,7 +398,7 @@ function Gallery() {
       <div className="max-w-7xl mx-auto">
         <div className="mb-16 max-w-2xl">
           <span className="eyebrow">Galeri</span>
-          <h2 className="text-3xl md:text-5xl mt-4 text-balance font-bold">Sekilas tentang kehidupan di Marme Villa Jogja.</h2>
+          <h2 className="text-3xl md:text-5xl mt-4 text-balance font-bold">Sekilas tentang kehidupan di Marme Villa Jogja</h2>
         </div>
         <div className="grid md:grid-cols-4 gap-4 auto-rows-[260px] md:auto-rows-[380px]">
           {imgs.map((im, idx) => (
@@ -434,7 +434,7 @@ function Testimonials() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <span className="eyebrow">Cerita Tamu</span>
-          <h2 className="text-3xl md:text-5xl mt-4 font-bold">Kesan dari para tamu kami.</h2>
+          <h2 className="text-3xl md:text-5xl mt-4 font-bold">Kesan dari para tamu kami</h2>
         </div>
         <div className="grid md:grid-cols-3 gap-8">
           {reviews.map((r) => (
@@ -469,7 +469,7 @@ function Location() {
         <div>
           <span className="eyebrow">Lokasi</span>
           <h2 className="text-3xl md:text-5xl mt-4 text-balance font-bold">
-            Di antara hamparan sawah dan pedesaan asri Yogyakarta.
+            Di antara hamparan sawah dan pedesaan asri Yogyakarta
           </h2>
           <p className="mt-6 text-muted-foreground text-base md:text-lg leading-relaxed">
             Tersembunyi di daerah pedesaan Bantul, Yogyakarta. Marme villa memiliki lokasi yang strategis dan indah </p>
@@ -510,7 +510,7 @@ function FAQ() {
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-16">
           <span className="eyebrow">Pertanyaan</span>
-          <h2 className="text-3xl md:text-5xl mt-4 font-bold">Sebelum Anda Tiba.</h2>
+          <h2 className="text-3xl md:text-5xl mt-4 font-bold">Sebelum Anda Tiba</h2>
         </div>
         <div className="border-t border-border/60">
           {faqs.map(([q, a], i) => (
@@ -537,7 +537,7 @@ function Contact() {
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16">
         <div>
           <span className="eyebrow">Reservasi</span>
-          <h2 className="text-3xl md:text-5xl mt-4 text-balance font-bold">Kami menantikan kedatangan Anda.</h2>
+          <h2 className="text-3xl md:text-5xl mt-4 text-balance font-bold">Kami menantikan kedatangan Anda</h2>
           <p className="mt-6 text-primary-foreground/75 text-base md:text-lg leading-relaxed">
             Tim reservasi kami merespons secara pribadi dalam beberapa jam,
             sepanjang waktu. Selamat datang.
