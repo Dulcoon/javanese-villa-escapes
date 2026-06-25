@@ -138,7 +138,7 @@ function RoomDetail() {
           onClick={() => setIsGalleryOpen(true)}
         >
           {room.images.map((img) => (
-            <div key={img.id} className="w-full h-full flex-none snap-center relative">
+            <div key={img.id} className="w-full h-full flex-none snap-center snap-always relative">
                <img src={`${IMAGE_BASE_URL}${img.image_url}`} alt={room.name} className="w-full h-full object-cover" loading="lazy" />
             </div>
           ))}
@@ -569,7 +569,7 @@ function GalleryModal({ isOpen, onClose, images, roomName }: { isOpen: boolean, 
             key={img.id} 
             data-index={idx}
             data-album={img.album || 'Lainnya'}
-            className="flex-none w-full h-full snap-center flex items-center justify-center p-0 md:p-10"
+            className="flex-none w-full h-full snap-center snap-always flex items-center justify-center p-0 md:p-10"
           >
             <img 
               src={`${IMAGE_BASE_URL}${img.image_url}`} 
