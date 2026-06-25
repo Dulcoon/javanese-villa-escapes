@@ -82,13 +82,13 @@ function Hero() {
             }`}
         />
       ))}
-      <div className="absolute inset-0 bg-black/40 bg-gradient-to-b from-primary/60 via-primary/30 to-primary/80 backdrop-blur-[1px]" />
+      <div className="absolute inset-0 bg-black/50 bg-gradient-to-b from-primary/70 via-primary/40 to-primary/80" />
       <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
-        <h1 className="text-4xl md:text-7xl lg:text-8xl text-ivory max-w-5xl text-balance leading-[1.05] drop-shadow-xl font-bold">
+        <h1 className="text-4xl md:text-7xl lg:text-8xl text-ivory max-w-5xl text-balance leading-[1.05] font-bold [text-shadow:0_4px_8px_rgba(0,0,0,0.5)]">
           Exceptional Service,<br />
           <span className="">Memorable Stays</span>
         </h1>
-        <p className="mt-8 max-w-xl text-ivory text-base md:text-lg font-light leading-relaxed drop-shadow-md">
+        <p className="mt-8 max-w-xl text-ivory text-base md:text-lg font-light leading-relaxed [text-shadow:0_2px_4px_rgba(0,0,0,0.5)]">
           Marme Villa Jogja lebih dari sekadar tempat menginap. Villa ini dirancang untuk menciptakan momen hangat yang berharga bersama keluarga dan orang terdekat
         </p>
         <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
@@ -159,15 +159,16 @@ function About() {
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
         <div className="relative aspect-[3/4] overflow-hidden rounded-2xl group bg-[#8B7355]/20">
           {/* Warm color overlay */}
-          <div className="absolute inset-0 bg-[#8c6b3e]/20 mix-blend-color pointer-events-none z-10" />
+          <div className="absolute inset-0 bg-[#8c6b3e]/30 pointer-events-none z-10" />
           {/* Darkening gradient overlay for better depth */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none z-10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent pointer-events-none z-10" />
 
           <img
             src={aboutDetail}
             alt="Detail ukiran kayu jati Jawa"
             loading="lazy"
-            className="h-full w-full object-cover hover:scale-105 transition-transform duration-700 sepia-[.25] saturate-[1.25] contrast-[1.05] brightness-[0.9]"
+            decoding="async"
+            className="h-full w-full object-cover hover:scale-105 transition-transform duration-700 transform-gpu"
           />
           {/* <div className="absolute -bottom-6 -right-6 hidden md:block bg-gold text-gold-foreground p-8 max-w-[220px]">
             <div className="font-manrope text-4xl">1923</div>
@@ -238,7 +239,7 @@ function Rooms() {
             return (
               <article key={r.slug} className="group bg-background border border-border/60 overflow-hidden flex flex-col rounded-2xl">
                 <Link to="/rooms/$slug" params={{ slug: r.slug }} className="aspect-[4/5] overflow-hidden block bg-[#8B7355]/20">
-                  <img src={imageUrl} alt={r.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                  <img src={imageUrl} alt={r.name} loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105 transform-gpu" />
                 </Link>
                 <div className="p-8 flex-1 flex flex-col">
                   <Link to="/rooms/$slug" params={{ slug: r.slug }}>
@@ -293,13 +294,13 @@ function Experiences() {
                 className="group relative aspect-[3/4] overflow-hidden rounded-2xl bg-[#8B7355]/20 cursor-pointer"
                 onClick={() => setSelectedImg(e.img)}
               >
-                <img src={e.img} alt={e.t} loading="lazy" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                <img src={e.img} alt={e.t} loading="lazy" decoding="async" className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 group-hover:scale-105 transform-gpu" />
 
                 {/* Gradient Overlay for text */}
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/30 to-transparent transition-opacity duration-300 group-hover:opacity-40" />
 
                 {/* Hover Cue */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/40 backdrop-blur-[2px]">
+                <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/50">
                   <div className="bg-white/20 p-3 rounded-full backdrop-blur-md mb-3 border border-white/30">
                     <Sparkles className="w-6 h-6 text-white" />
                   </div>
@@ -404,15 +405,16 @@ function Gallery() {
           {imgs.map((im, idx) => (
             <div key={idx} className={`relative overflow-hidden ${im.span} rounded-2xl group bg-[#8B7355]/20`}>
               {/* Warm color overlay */}
-              <div className="absolute inset-0 bg-[#8c6b3e]/20 mix-blend-color pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-[#8c6b3e]/10 pointer-events-none z-10" />
               {/* Darkening gradient overlay for better depth */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent pointer-events-none z-10" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none z-10" />
 
               <img
                 src={im.src}
                 alt={im.alt}
                 loading="lazy"
-                className="h-full w-full object-cover hover:scale-105 transition-transform duration-700 sepia-[.25] saturate-[1.25] contrast-[1.05] brightness-[0.9]"
+                decoding="async"
+                className="h-full w-full object-cover hover:scale-105 transition-transform duration-700 transform-gpu"
               />
             </div>
           ))}
