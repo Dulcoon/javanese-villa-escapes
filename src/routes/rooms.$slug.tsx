@@ -229,6 +229,18 @@ function RoomDetail() {
               <p className="text-sm text-foreground mt-2">
                 {room.capacity} tamu · {room.bed_count} kamar tidur · {room.bathroom_count} kamar mandi
               </p>
+              
+              <div className="mt-5">
+                <a 
+                  href="https://maps.google.com/?q=Marme+Villa+Jogja,+Serayu,+Bantul,+Yogyakarta" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gold/30 bg-gold/5 text-gold text-[13px] font-medium transition-all active:scale-95"
+                >
+                  <MapPin className="w-4 h-4" />
+                  Lihat Lokasi di Google Maps
+                </a>
+              </div>
             </div>
 
             <hr className="md:hidden border-border/60 my-6" />
