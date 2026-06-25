@@ -82,7 +82,7 @@ function Hero() {
             }`}
         />
       ))}
-      <div className="absolute inset-0 bg-black/50 bg-gradient-to-b from-primary/70 via-primary/40 to-primary/80" />
+      <div className="absolute inset-0 bg-black/20 bg-gradient-to-b from-primary/40 via-primary/20 to-primary/40" />
       <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
         <h1 className="text-4xl md:text-7xl lg:text-8xl text-ivory max-w-5xl text-balance leading-[1.05] font-bold [text-shadow:0_4px_8px_rgba(0,0,0,0.5)]">
           Exceptional Service,<br />
