@@ -488,8 +488,6 @@ function RoomDetail() {
 }
 
 function GalleryModal({ isOpen, onClose, images, roomName }: { isOpen: boolean, onClose: () => void, images: any[], roomName: string }) {
-  if (!isOpen) return null;
-
   const [activeIndex, setActiveIndex] = React.useState(0);
   const [activeAlbum, setActiveAlbum] = React.useState(images[0]?.album || 'Lainnya');
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
@@ -541,6 +539,8 @@ function GalleryModal({ isOpen, onClose, images, roomName }: { isOpen: boolean, 
     }
     return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
+
+  if (!isOpen) return null;
 
   // Group images to create thumbnails or grid view inside modal (optional for future)
   // For now we just implement the full-screen swipable carousel
