@@ -465,7 +465,7 @@ function RoomDetail() {
                   params={{ slug: r.slug }}
                   className="group grid grid-cols-2 bg-background border border-border/60 overflow-hidden rounded-2xl"
                 >
-                  <div className="aspect-square overflow-hidden">
+                  <div className="h-full overflow-hidden">
                     <img src={imageUrl} alt={r.name} loading="lazy" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105" />
                   </div>
                   <div className="p-6 flex flex-col justify-center">
