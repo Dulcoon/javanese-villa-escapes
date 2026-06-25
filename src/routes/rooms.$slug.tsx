@@ -529,7 +529,7 @@ function GalleryModal({ isOpen, onClose, images, roomName }: { isOpen: boolean, 
       container.removeEventListener('scroll', handleScroll);
       if (timeoutId) clearTimeout(timeoutId);
     };
-  }, []);
+  }, [isOpen]);
 
   React.useEffect(() => {
     if (isOpen) {
