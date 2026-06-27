@@ -229,7 +229,7 @@ function Rooms() {
       <div className="max-w-7xl mx-auto">
         <div className="max-w-2xl mb-16">
           <span className="eyebrow">Akomodasi</span>
-          <h2 className="text-3xl md:text-5xl mt-4 text-balance font-bold">Beberapa Pilihan Tipe & Unit Marme Villa Management</h2>
+          <h2 className="text-3xl md:text-5xl mt-4 text-balance font-bold">Tipe & Unit Marme Villa Management</h2>
         </div>
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
           {villas.map((r) => {
@@ -353,7 +353,7 @@ const amenitiesList = [
   { i: IconWifi, t: "WiFi" },
   { i: IconWaterHeater, t: "Waterheater" },
   { i: IconDispenser, t: "Dispenser" },
-  { i: IconTV, t: "Smart TV 55\"" },
+  { i: IconTV, t: "Smart TV" },
   { i: IconAmenities, t: "Amenities" },
   { i: IconParking, t: "Parking Area" },
   { i: IconSnack, t: "Snack" },
@@ -474,7 +474,7 @@ function Location() {
             Di antara hamparan sawah dan pedesaan asri Yogyakarta
           </h2>
           <p className="mt-6 text-muted-foreground text-base md:text-lg leading-relaxed">
-            Tersembunyi di daerah pedesaan Bantul, Yogyakarta. Marme villa memiliki lokasi yang strategis dan indah </p>
+            Tersembunyi di daerah pedesaan Bantul, Yogyakarta. Marme Villa memiliki lokasi yang strategis dan indah </p>
           <ul className="mt-10 divide-y divide-border/60 border-t border-b border-border/60">
             {nearby.map(([place, time]) => (
               <li key={place} className="flex items-center justify-between py-4">
