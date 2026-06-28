@@ -19,6 +19,7 @@ export interface Villa {
   name: string;
   slug: string;
   description: string;
+  description_en?: string;
   location: string;
   capacity: number;
   base_price: number;
@@ -26,13 +27,17 @@ export interface Villa {
   extra_guest_fee: number;
   weekend_enabled: boolean;
   tagline: string;
+  tagline_en?: string;
   long_description: string[];
+  long_description_en?: string[];
   size: string;
   bed_count: number;
   bathroom_count: number;
   view_description: string;
+  view_description_en?: string;
   max_guests: number;
   features: string[];
+  features_en?: string[];
   images: VillaImage[];
   facilities: VillaFacility[];
 }

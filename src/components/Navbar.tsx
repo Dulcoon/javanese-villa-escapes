@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { Menu, X, ArrowRight, ArrowLeft } from "lucide-react";
+import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 type NavbarProps = {
   /** 
@@ -15,14 +16,15 @@ type NavbarProps = {
 export function Navbar({ variant = "full", backTo = "/", backText = "Kembali ke beranda" }: NavbarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const { lang, setLang, t } = useTranslation();
 
   const links = [
-    ["Tentang Kami", "/#about"], 
-    ["Kamar", "/#rooms"], 
-    ["Pengalaman", "/#experiences"],
-    ["Galeri", "/#gallery"], 
-    ["Lokasi", "/#location"], 
-    ["Kontak", "/#contact"],
+    [t("hero.btn.about"), "/#about"], 
+    [t("rooms.eyebrow"), "/#rooms"], 
+    [t("exp.eyebrow"), "/#experiences"],
+    [t("gallery.eyebrow"), "/#gallery"], 
+    [t("location.eyebrow"), "/#location"], 
+    [t("contact.eyebrow"), "/#contact"],
   ];
 
   return (
@@ -41,9 +43,24 @@ export function Navbar({ variant = "full", backTo = "/", backText = "Kembali ke 
               ))}
             </nav>
             <div className="flex items-center gap-4">
-              <Link to="/availability" className="hidden items-center gap-2 px-5 py-2.5 border border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors text-sm tracking-wide rounded-full">
-                Cek Ketersediaan <ArrowRight className="h-3.5 w-3.5" />
+              <button 
+                onClick={() => setLang(lang === 'id' ? 'en' : 'id')}
+                className="hidden lg:flex items-center w-[52px] h-[26px] bg-black/5 dark:bg-white/10 rounded-full p-1 cursor-pointer transition-colors border border-border/40 relative"
+                aria-label="Toggle language"
+              >
+                <div className="w-full flex justify-between px-1 text-[9px] font-bold text-muted-foreground z-0">
+                  <span>ID</span>
+                  <span>EN</span>
+                </div>
+                <div className={`absolute top-0.5 bottom-0.5 w-[20px] bg-white dark:bg-black rounded-full shadow-sm flex items-center justify-center text-[9px] font-bold transition-transform duration-300 z-10 ${lang === 'en' ? 'translate-x-[24px]' : 'translate-x-0'}`}>
+                  {lang === 'id' ? 'ID' : 'EN'}
+                </div>
+              </button>
+              {/* 
+              <Link to="/availability" className="hidden lg:flex items-center gap-2 px-5 py-2.5 border border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors text-sm tracking-wide rounded-full">
+                {t("nav.availability")} <ArrowRight className="h-3.5 w-3.5" />
               </Link>
+              */}
               <button 
                 className="lg:hidden p-2 -mr-2 text-primary"
                 onClick={() => setIsOpen(!isOpen)}
@@ -55,7 +72,7 @@ export function Navbar({ variant = "full", backTo = "/", backText = "Kembali ke 
           </>
         ) : (
           <Link to={backTo} className="text-sm text-foreground/70 hover:text-gold inline-flex items-center gap-2">
-            <ArrowLeft className="h-4 w-4" /> {backText}
+            <ArrowLeft className="h-4 w-4" /> {t("nav.back")}
           </Link>
         )}
       </div>
@@ -63,6 +80,24 @@ export function Navbar({ variant = "full", backTo = "/", backText = "Kembali ke 
       {variant === "full" && isOpen && (
         <div className="lg:hidden fixed inset-x-0 top-20 h-[calc(100vh-5rem)] bg-background/95 backdrop-blur-md border-t border-border/40 overflow-y-auto">
           <nav className="flex flex-col px-6 py-8">
+            <div className="flex justify-between items-center py-4 border-b border-border/40 mb-2">
+              <span className="text-sm font-medium text-muted-foreground">Bahasa / Language</span>
+              <button 
+                onClick={() => {
+                  setLang(lang === 'id' ? 'en' : 'id');
+                  setIsOpen(false);
+                }}
+                className="flex items-center w-[60px] h-[30px] bg-black/5 dark:bg-white/10 rounded-full p-1 cursor-pointer transition-colors border border-border/40 relative"
+              >
+                <div className="w-full flex justify-between px-1 text-[10px] font-bold text-muted-foreground z-0">
+                  <span>ID</span>
+                  <span>EN</span>
+                </div>
+                <div className={`absolute top-0.5 bottom-0.5 w-[24px] bg-white dark:bg-black rounded-full shadow-sm flex items-center justify-center text-[10px] font-bold transition-transform duration-300 z-10 ${lang === 'en' ? 'translate-x-[28px]' : 'translate-x-0'}`}>
+                  {lang === 'id' ? 'ID' : 'EN'}
+                </div>
+              </button>
+            </div>
             {links.map(([l, h]) => (
               <a 
                 key={h} 

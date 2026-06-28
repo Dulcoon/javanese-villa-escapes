@@ -9,6 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { formatIDR } from "@/lib/utils";
 import { api, Villa, IMAGE_BASE_URL } from "@/lib/api";
 import { Navbar } from "@/components/Navbar";
+import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 import { z } from "zod";
 import { toast } from "sonner";
@@ -71,12 +72,13 @@ export const Route = createFileRoute("/rooms/$slug")({
 
 function RoomDetail() {
   const { room, otherRooms, bookedDates } = Route.useLoaderData();
+  const { t, tDynamic } = useTranslation();
   const stats = [
     { icon: Maximize, label: room.size },
-    { icon: BedDouble, label: `${room.bed_count} kamar tidur` },
-    { icon: Users, label: `${room.capacity} tamu` },
-    { icon: Bath, label: `${room.bathroom_count} kamar mandi` },
-    { icon: Eye, label: room.view_description },
+    { icon: BedDouble, label: `${room.bed_count} ${t("rooms.bedroom")}` },
+    { icon: Users, label: `${room.capacity} ${t("rooms.guest")}` },
+    { icon: Bath, label: `${room.bathroom_count} ${t("room.bathroom")}` },
+    { icon: Eye, label: tDynamic(room, "view_description") },
   ];
 
   const searchParams = Route.useSearch();
@@ -115,7 +117,7 @@ function RoomDetail() {
     <div className="bg-background text-foreground">
       {/* Desktop Top Bar */}
       <div className="hidden md:block">
-        <Navbar variant="back" backTo="/" backText="Kembali ke beranda" />
+        <Navbar variant="back" backTo="/" backText={t("nav.back")} />
       </div>
 
       {/* MOBILE HEADER: Carousel + Actions */}
@@ -154,17 +156,17 @@ function RoomDetail() {
       <section className="hidden md:block pt-32 pb-12 px-6">
         <div className="max-w-7xl mx-auto">
           <nav className="text-xs tracking-wide text-muted-foreground mb-6 flex items-center gap-2">
-            <Link to="/" className="hover:text-gold">Beranda</Link>
+            <Link to="/" className="hover:text-gold">{t("nav.home")}</Link>
             <ChevronRight className="h-3 w-3" />
-            <span>Akomodasi</span>
+            <span>{t("rooms.eyebrow")}</span>
             <ChevronRight className="h-3 w-3" />
             <span className="text-primary">{room.name}</span>
           </nav>
           <div className="grid lg:grid-cols-2 gap-10 items-end">
             <div>
-              <span className="eyebrow">Paviliun Pribadi</span>
+              <span className="eyebrow">{t("room.pavilion")}</span>
               <h1 className="text-4xl md:text-6xl font-bold mt-4 leading-tight text-balance">{room.name}</h1>
-              <p className="mt-6 text-base md:text-lg text-muted-foreground italic">{room.tagline}</p>
+              <p className="mt-6 text-base md:text-lg text-muted-foreground italic">{tDynamic(room, "tagline")}</p>
               
               <div className="mt-6">
                 <a 
@@ -174,13 +176,13 @@ function RoomDetail() {
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full border border-gold/30 bg-gold/5 hover:bg-gold/15 text-gold hover:text-gold-hover text-sm font-medium transition-all duration-300"
                 >
                   <MapPin className="w-4 h-4" />
-                  Lihat Lokasi di Google Maps
+                  {t("room.map")}
                 </a>
               </div>
             </div>
             <div className="lg:text-right">
               <div className="font-sans text-4xl font-semibold text-primary">{formatIDR(room.base_price)}</div>
-              <div className="eyebrow text-muted-foreground mt-1">per malam · termasuk pajak</div>
+              <div className="eyebrow text-muted-foreground mt-1">{t("rooms.pernight")} · {t("room.tax")}</div>
             </div>
           </div>
         </div>
@@ -199,7 +201,7 @@ function RoomDetail() {
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <div className="bg-white text-black px-4 py-2 rounded-lg font-medium shadow-lg flex items-center gap-2">
                     <Maximize className="w-4 h-4" />
-                    Tampilkan semua {room.images.length} foto
+                    {t("room.showall", { count: room.images.length })}
                   </div>
                 </div>
               )}
@@ -227,7 +229,7 @@ function RoomDetail() {
                 <span>{room.name}</span>
               </h1>
               <p className="text-sm text-foreground mt-2">
-                {room.capacity} tamu · {room.bed_count} kamar tidur · {room.bathroom_count} kamar mandi
+                {room.capacity} {t("rooms.guest")} · {room.bed_count} {t("rooms.bedroom")} · {room.bathroom_count} {t("room.bathroom")}
               </p>
               
               <div className="mt-5">
@@ -238,7 +240,7 @@ function RoomDetail() {
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gold/30 bg-gold/5 text-gold text-[13px] font-medium transition-all active:scale-95"
                 >
                   <MapPin className="w-4 h-4" />
-                  Lihat Lokasi di Google Maps
+                  {t("room.map")}
                 </a>
               </div>
             </div>
@@ -256,17 +258,17 @@ function RoomDetail() {
             </div>
 
             <div>
-              <span className="hidden md:inline-block eyebrow">Suite</span>
-              <h2 className="hidden md:block text-3xl md:text-4xl mt-3 font-bold">Dunia yang intim, diukir dengan tangan.</h2>
-              {room.long_description && room.long_description.map((p, i) => (
+              <span className="hidden md:inline-block eyebrow">{t("room.suite")}</span>
+              <h2 className="hidden md:block text-3xl md:text-4xl mt-3 font-bold">{t("room.slogan")}</h2>
+              {tDynamic(room, "long_description") && tDynamic(room, "long_description").map((p: string, i: number) => (
                 <p key={i} className="mt-6 text-foreground/90 leading-relaxed text-[15px] md:text-lg">{p}</p>
               ))}
             </div>
 
             <div>
-              <span className="eyebrow">Fitur Unggulan</span>
+              <span className="eyebrow">{t("room.features")}</span>
               <ul className="mt-6 grid sm:grid-cols-2 gap-3">
-                {room.features && room.features.map((f) => (
+                {tDynamic(room, "features") && tDynamic(room, "features").map((f: string) => (
                   <li key={f} className="flex items-start gap-3 text-foreground">
                     <Check className="h-4 w-4 text-gold mt-1 shrink-0" /> {f}
                   </li>
@@ -276,7 +278,7 @@ function RoomDetail() {
 
             {room.facilities && room.facilities.length > 0 && (
               <div>
-                <span className="eyebrow mt-10 inline-block">Fasilitas Kamar</span>
+                <span className="eyebrow mt-10 inline-block">{t("room.facilities")}</span>
                 <ul className="mt-6 grid sm:grid-cols-2 gap-3">
                   {room.facilities.map((f) => (
                     <li key={f.id} className="flex items-start gap-3 text-foreground">
@@ -293,12 +295,12 @@ function RoomDetail() {
           <aside className="lg:sticky lg:top-28 self-start">
             <div className="border border-border/60 bg-ivory/40 p-8 rounded-2xl">
               <div className="font-sans text-3xl font-semibold text-primary">{formatIDR(room.base_price)}</div>
-              <div className="eyebrow text-muted-foreground mt-1">per malam</div>
+              <div className="eyebrow text-muted-foreground mt-1">{t("rooms.pernight")}</div>
 
               <div className="mt-6 space-y-4">
                 {/* Date Picker */}
                 <div>
-                  <span className="eyebrow text-muted-foreground block mb-2">Pilih Tanggal</span>
+                  <span className="eyebrow text-muted-foreground block mb-2">{t("room.choosedate")}</span>
                   <Popover>
                     <PopoverTrigger asChild>
                       <button className="w-full flex items-center gap-3 p-3 bg-transparent border border-border/60 rounded-xl outline-none focus:border-gold hover:bg-black/5 text-left transition-colors">
@@ -311,7 +313,7 @@ function RoomDetail() {
                               format(date.from, "d MMM yyyy", { locale: id })
                             )
                           ) : (
-                            <span className="text-muted-foreground font-normal">Check-in - Check-out</span>
+                            <span className="text-muted-foreground font-normal">{t("room.checkinout")}</span>
                           )}
                         </span>
                       </button>
@@ -334,13 +336,13 @@ function RoomDetail() {
 
                 {/* Guest Picker */}
                 <div>
-                  <span className="eyebrow text-muted-foreground block mb-2">Tamu</span>
+                  <span className="eyebrow text-muted-foreground block mb-2">{t("booking.guest")}</span>
                   <Popover>
                     <PopoverTrigger asChild>
                       <button className="w-full flex items-center gap-3 p-3 bg-transparent border border-border/60 rounded-xl outline-none focus:border-gold hover:bg-black/5 text-left transition-colors">
                         <UsersIcon className="h-4 w-4 text-gold" />
                         <span className="flex-1 text-sm text-foreground font-medium">
-                          {totalGuests} Tamu{infants > 0 ? `, ${infants} Balita` : ''}
+                          {totalGuests} {t("rooms.guest")}{infants > 0 ? `, ${infants} ${t("room.infant")}` : ''}
                         </span>
                       </button>
                     </PopoverTrigger>
@@ -349,8 +351,8 @@ function RoomDetail() {
                         {/* Adults */}
                         <div className="flex items-center justify-between">
                           <div>
-                            <div className="text-sm font-medium text-foreground">Dewasa</div>
-                            <div className="text-xs text-muted-foreground">Usia 17+</div>
+                            <div className="text-sm font-medium text-foreground">{t("room.adult")}</div>
+                            <div className="text-xs text-muted-foreground">{t("room.adult.desc")}</div>
                           </div>
                           <div className="flex items-center gap-4">
                             <button
@@ -375,8 +377,8 @@ function RoomDetail() {
                         {/* Children */}
                         <div className="flex items-center justify-between">
                           <div>
-                            <div className="text-sm font-medium text-foreground">Anak-anak</div>
-                            <div className="text-xs text-muted-foreground">Usia 5+</div>
+                            <div className="text-sm font-medium text-foreground">{t("room.child")}</div>
+                            <div className="text-xs text-muted-foreground">{t("room.child.desc")}</div>
                           </div>
                           <div className="flex items-center gap-4">
                             <button
@@ -401,8 +403,8 @@ function RoomDetail() {
                         {/* Infants */}
                         <div className="flex items-center justify-between">
                           <div>
-                            <div className="text-sm font-medium text-foreground">Balita</div>
-                            <div className="text-xs text-muted-foreground">Di bawah 5 tahun</div>
+                            <div className="text-sm font-medium text-foreground">{t("room.infant")}</div>
+                            <div className="text-xs text-muted-foreground">{t("room.infant.desc")}</div>
                           </div>
                           <div className="flex items-center gap-4">
                             <button
@@ -426,7 +428,7 @@ function RoomDetail() {
                         </div>
 
                         <div className="text-xs text-muted-foreground pt-4 border-t border-border/60">
-                          Kapasitas villa adalah {room.capacity} tamu, lebih dari itu dikenakan biaya tambahan {formatIDR(room.extra_guest_fee)}/orang. Balita tidak dihitung.
+                          {t("room.capacity.desc", { capacity: room.capacity, fee: formatIDR(room.extra_guest_fee) })}
                         </div>
                       </div>
                     </PopoverContent>
@@ -446,12 +448,12 @@ function RoomDetail() {
                 onClick={(e) => {
                   if (date?.from && date?.to && format(date.from, "yyyy-MM-dd") === format(date.to, "yyyy-MM-dd")) {
                     e.preventDefault();
-                    toast.error("Minimal pemesanan 1 malam", { description: "Tanggal check-in dan check-out tidak boleh sama." });
+                    toast.error(t("room.minbook"), { description: t("room.minbook.desc") });
                   }
                 }}
                 className="mt-8 block text-center bg-gold text-gold-foreground py-4 font-medium tracking-wide hover:bg-gold/90 transition-colors rounded-full data-[disabled]:opacity-50 data-[disabled]:pointer-events-none"
               >
-                Pesan Sekarang
+                {t("room.book")}
               </Link>
             </div>
           </aside>
@@ -462,8 +464,8 @@ function RoomDetail() {
       <section className="py-24 px-6 bg-ivory/40">
         <div className="max-w-7xl mx-auto">
           <div className="mb-12">
-            <span className="eyebrow">Paviliun Lainnya</span>
-            <h2 className="text-3xl md:text-4xl mt-3">Jelajahi dunia pribadi kami yang lain.</h2>
+            <span className="eyebrow">{t("room.others")}</span>
+            <h2 className="text-3xl md:text-4xl mt-3">{t("room.others.title")}</h2>
           </div>
           <div className="grid md:grid-cols-2 gap-8">
             {otherRooms.map((r: Villa) => {
@@ -482,8 +484,8 @@ function RoomDetail() {
                   </div>
                   <div className="p-6 flex flex-col justify-center">
                     <h3 className="font-manrope text-xl font-semibold text-primary">{r.name}</h3>
-                    <p className="mt-2 text-sm text-muted-foreground line-clamp-3">{r.description}</p>
-                    <div className="mt-4 text-sm text-gold tracking-wide">{formatIDR(r.base_price)} / malam</div>
+                    <p className="mt-2 text-sm text-muted-foreground line-clamp-3">{tDynamic(r, 'description')}</p>
+                    <div className="mt-4 text-sm text-gold tracking-wide">{formatIDR(r.base_price)} / {t("rooms.pernight")}</div>
                   </div>
                 </Link>
               );

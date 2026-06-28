@@ -50,6 +50,7 @@ export const Route = createFileRoute("/")({
 });
 
 import { Navbar } from "@/components/Navbar";
+import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 /* ---------- Nav ---------- */
 // Removed inline Nav, now using imported Navbar
@@ -58,6 +59,7 @@ import { Navbar } from "@/components/Navbar";
 function Hero() {
   const images = [carousel1, carousel2, carousel3];
   const [currentIdx, setCurrentIdx] = useState(0);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -85,18 +87,18 @@ function Hero() {
       <div className="absolute inset-0 bg-black/20 bg-gradient-to-b from-primary/40 via-primary/20 to-primary/40" />
       <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
         <h1 className="text-4xl md:text-7xl lg:text-8xl text-ivory max-w-5xl text-balance leading-[1.05] font-bold [text-shadow:0_4px_8px_rgba(0,0,0,0.5)]">
-          Exceptional Service,<br />
-          <span className="">Memorable Stays</span>
+          {t("hero.title1")}<br />
+          <span className="">{t("hero.title2")}</span>
         </h1>
         <p className="mt-8 max-w-xl text-ivory text-base md:text-lg font-light leading-relaxed [text-shadow:0_2px_4px_rgba(0,0,0,0.5)]">
-          Marme Villa Jogja lebih dari sekadar tempat menginap. Villa ini dirancang untuk menciptakan momen hangat yang berharga bersama keluarga dan orang terdekat
+          {t("hero.desc")}
         </p>
         <div className="mt-12 flex flex-wrap items-center justify-center gap-4">
           <a href="#rooms" className="px-6 py-3 md:px-8 md:py-4 text-sm md:text-base bg-gold text-gold-foreground font-medium tracking-wide hover:bg-gold/90 transition-colors rounded-full shadow-lg">
-            Reservasi Sekarang
+            {t("hero.btn.reserve")}
           </a>
           <a href="#about" className="px-6 py-3 md:px-8 md:py-4 text-sm md:text-base border border-ivory/80 text-ivory hover:bg-ivory/20 transition-colors tracking-wide rounded-full shadow-lg backdrop-blur-sm">
-            Tentang Kami
+            {t("hero.btn.about")}
           </a>
         </div>
       </div>
@@ -110,6 +112,7 @@ function BookingWidget() {
   const [checkIn, setCheckIn] = useState(new Date().toISOString().slice(0, 10));
   const [checkOut, setCheckOut] = useState(new Date(Date.now() + 3 * 864e5).toISOString().slice(0, 10));
   const navigate = useNavigate();
+  const { t } = useTranslation();
   return (
     <section id="booking" className="relative -mt-20 z-20 px-6">
       <div className="max-w-6xl mx-auto bg-background shadow-luxe border border-border/60 overflow-hidden rounded-2xl">
@@ -120,17 +123,17 @@ function BookingWidget() {
           }}
           className="grid grid-cols-1 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-border"
         >
-          <Field label="Tanggal Masuk"><input type="date" className="w-full bg-transparent outline-none text-foreground" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} /></Field>
-          <Field label="Tanggal Keluar"><input type="date" className="w-full bg-transparent outline-none text-foreground" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} /></Field>
-          <Field label="Tamu">
+          <Field label={t("booking.checkin")}><input type="date" className="w-full bg-transparent outline-none text-foreground" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} /></Field>
+          <Field label={t("booking.checkout")}><input type="date" className="w-full bg-transparent outline-none text-foreground" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} /></Field>
+          <Field label={t("booking.guest")}>
             <div className="flex items-center justify-between">
               <button type="button" onClick={() => setGuests(Math.max(1, guests - 1))} className="p-1 text-muted-foreground hover:text-primary"><Minus className="h-4 w-4" /></button>
-              <span className="font-medium">{guests} Tamu</span>
+              <span className="font-medium">{guests} {t("rooms.guest")}</span>
               <button type="button" onClick={() => setGuests(Math.min(10, guests + 1))} className="p-1 text-muted-foreground hover:text-primary"><Plus className="h-4 w-4" /></button>
             </div>
           </Field>
           <button type="submit" className="bg-primary text-primary-foreground font-medium tracking-wide hover:bg-primary/90 transition-colors py-6 md:py-0 px-8">
-            Cari Ketersediaan
+            {t("booking.search")}
           </button>
         </form>
       </div>
@@ -148,11 +151,12 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 /* ---------- About ---------- */
 function About() {
+  const { t } = useTranslation();
   const values = [
-    { v: "Keramahan", d: "Pelayanan yang hangat dari semua staff Marme Villa Management." },
-    { v: "Garansi", d: "Tanggungjawab atas semua kesalahan yang terjadi." },
-    { v: "Ketenangan", d: "Lokasi pedesaan dengan keindahan alam yang menakjubkan." },
-    { v: "Keberlanjutan", d: "Dilengkapi dengan beberapa servis tambahan." },
+    { v: t("about.val1.t"), d: t("about.val1.d") },
+    { v: t("about.val2.t"), d: t("about.val2.d") },
+    { v: t("about.val3.t"), d: t("about.val3.d") },
+    { v: t("about.val4.t"), d: t("about.val4.d") },
   ];
   return (
     <section id="about" className="py-32 px-6">
@@ -175,14 +179,14 @@ function About() {
           </div> */}
         </div>
         <div>
-          <span className="eyebrow">Our Story</span>
+          <span className="eyebrow">{t("about.eyebrow")}</span>
           <h2 className="text-3xl md:text-5xl mt-4 leading-tight text-balance font-bold">
-            Where Comfort Meets Timeless Mediterranean Charm
+            {t("about.title")}
           </h2>
           <p className="mt-8 text-muted-foreground leading-relaxed text-base md:text-lg text-justify">
-            Marme Villa Jogja hadir dengan desain elegan khas Mediterania. Sudut lengkung, guci, batu alam, dan tumbuhan tropis akan membuatmu seperti di dalam keajaiban labirin Mediterania Tropical yang sesungguhnya. </p>
+            {t("about.p1")}</p>
           <p className="mt-4 text-muted-foreground leading-relaxed text-base md:text-lg text-justify">
-            Villa ini menawarkan suasana santai di pedesaan yang jauh dari kesibukan kota. Ruang yang luas, pemandangan indah, dan fasilitas lengkap akan memberikan pengalaman menginap yang nyaman. Dengan perpaduan kenyamanan modern dan pesona khas Mediterania, setiap kunjungan disini akan terasa istimewa dan penuh kehangatan.</p>
+            {t("about.p2")}</p>
           <div className="mt-12 grid grid-cols-2 gap-8">
             {values.map((val) => (
               <div key={val.v}>
@@ -201,6 +205,7 @@ function About() {
 function Rooms() {
   const [villas, setVillas] = useState<Villa[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { t, tDynamic } = useTranslation();
 
   useEffect(() => {
     api.getVillas().then(res => {
@@ -228,8 +233,8 @@ function Rooms() {
     <section id="rooms" className="py-32 px-6 bg-ivory/40">
       <div className="max-w-7xl mx-auto">
         <div className="max-w-2xl mb-16">
-          <span className="eyebrow">Akomodasi</span>
-          <h2 className="text-3xl md:text-5xl mt-4 text-balance font-bold">Tipe & Unit Marme Villa Management</h2>
+          <span className="eyebrow">{t("rooms.eyebrow")}</span>
+          <h2 className="text-3xl md:text-5xl mt-4 text-balance font-bold">{t("rooms.title")}</h2>
         </div>
         <div className="grid md:grid-cols-2 gap-8 lg:gap-12">
           {villas.map((r) => {
@@ -245,17 +250,17 @@ function Rooms() {
                   <Link to="/rooms/$slug" params={{ slug: r.slug }}>
                     <h3 className="font-manrope text-2xl font-semibold text-primary hover:text-gold transition-colors">{r.name}</h3>
                   </Link>
-                  <p className="mt-3 text-sm text-muted-foreground leading-relaxed flex-1 line-clamp-3">{r.description}</p>
+                  <p className="mt-3 text-sm text-muted-foreground leading-relaxed flex-1 line-clamp-3">{tDynamic(r, 'description')}</p>
                   <div className="mt-6 flex items-center gap-4 text-xs text-muted-foreground border-t border-border/60 pt-4">
-                    <span>{r.size}</span><span>·</span><span>{r.bed_count} kamar tidur</span><span>·</span><span>{r.capacity} tamu</span>
+                    <span>{r.size}</span><span>·</span><span>{r.bed_count} {t("rooms.bedroom")}</span><span>·</span><span>{r.capacity} {t("rooms.guest")}</span>
                   </div>
                   <div className="mt-6 flex items-end justify-between">
                     <div>
                       <div className="font-sans text-2xl font-semibold text-primary">{formatIDR(r.base_price)}</div>
-                      <div className="text-xs text-muted-foreground tracking-wide uppercase">per malam</div>
+                      <div className="text-xs text-muted-foreground tracking-wide uppercase">{t("rooms.pernight")}</div>
                     </div>
                     <Link to="/rooms/$slug" params={{ slug: r.slug }} className="text-sm tracking-wide text-gold hover:text-primary border-b border-gold pb-0.5">
-                      Lihat Detail
+                      {t("rooms.detail")}
                     </Link>
                   </div>
                 </div>
@@ -276,6 +281,7 @@ const experiences = [
 ];
 function Experiences() {
   const [selectedImg, setSelectedImg] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   return (
     <>
@@ -283,8 +289,8 @@ function Experiences() {
         <div className="max-w-7xl mx-auto">
           <div className="flex items-end justify-between flex-wrap gap-6 mb-16">
             <div>
-              <span className="eyebrow">Aditional Service</span>
-              <h2 className="text-3xl md:text-5xl mt-4 max-w-xl text-balance font-bold">Layanan tambahan yang terbaik untuk tamu kami</h2>
+              <span className="eyebrow">{t("exp.eyebrow")}</span>
+              <h2 className="text-3xl md:text-5xl mt-4 max-w-xl text-balance font-bold">{t("exp.title")}</h2>
             </div>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -304,7 +310,7 @@ function Experiences() {
                   <div className="bg-white/20 p-3 rounded-full backdrop-blur-md mb-3 border border-white/30">
                     <Sparkles className="w-6 h-6 text-white" />
                   </div>
-                  <span className="text-white font-medium tracking-wide">Lihat Gambar</span>
+                  <span className="text-white font-medium tracking-wide">{t("exp.viewimg")}</span>
                 </div>
 
                 {/* Text Content */}
@@ -361,12 +367,13 @@ const amenitiesList = [
 ];
 
 function Amenities() {
+  const { t } = useTranslation();
   return (
     <section className="py-32 px-6 bg-primary text-primary-foreground">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
-          <span className="eyebrow">Fasilitas</span>
-          <h2 className="text-3xl md:text-5xl mt-4 font-bold">Segalanya untuk Kenyamanan Anda</h2>
+          <span className="eyebrow">{t("amenities.eyebrow")}</span>
+          <h2 className="text-3xl md:text-5xl mt-4 font-bold">{t("amenities.title")}</h2>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-y-12 gap-x-8 text-center">
@@ -388,6 +395,7 @@ function Amenities() {
 
 /* ---------- Gallery ---------- */
 function Gallery() {
+  const { t } = useTranslation();
   const imgs = [
     { src: sekilas1, span: "md:col-span-2 md:row-span-2", alt: "Sekilas kehidupan di villa 1" },
     { src: sekilas2, span: "", alt: "Sekilas kehidupan di villa 2" },
@@ -398,8 +406,8 @@ function Gallery() {
     <section id="gallery" className="py-32 px-6 bg-ivory/40">
       <div className="max-w-7xl mx-auto">
         <div className="mb-16 max-w-2xl">
-          <span className="eyebrow">Galeri</span>
-          <h2 className="text-3xl md:text-5xl mt-4 text-balance font-bold">Sekilas tentang kehidupan di Marme Villa Jogja</h2>
+          <span className="eyebrow">{t("gallery.eyebrow")}</span>
+          <h2 className="text-3xl md:text-5xl mt-4 text-balance font-bold">{t("gallery.title")}</h2>
         </div>
         <div className="grid md:grid-cols-4 gap-4 auto-rows-[260px] md:auto-rows-[380px]">
           {imgs.map((im, idx) => (
@@ -431,12 +439,13 @@ const reviews = [
   { n: "Putri Anggraini", p: "Jakarta", q: "Sebuah kepulangan yang tidak saya sadari sangat saya butuhkan. Seluruh tim memperlakukan Anda layaknya keluarga sendiri.", r: 5 },
 ];
 function Testimonials() {
+  const { t } = useTranslation();
   return (
     <section className="py-32 px-6">
       <div className="max-w-7xl mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="eyebrow">Cerita Tamu</span>
-          <h2 className="text-3xl md:text-5xl mt-4 font-bold">Kesan dari para tamu kami</h2>
+          <span className="eyebrow">{t("testi.eyebrow")}</span>
+          <h2 className="text-3xl md:text-5xl mt-4 font-bold">{t("testi.title")}</h2>
         </div>
         <div className="grid md:grid-cols-3 gap-8">
           {reviews.map((r) => (
@@ -461,6 +470,7 @@ function Testimonials() {
 
 /* ---------- Location ---------- */
 function Location() {
+  const { t } = useTranslation();
   const nearby = [
     ["Desa Wisata Sriharjo", "15 mnt"], ["Bukit Mangunan", "19 mnt"],
     ["Pantai Parangtritis", "20 mnt"], ["Malioboro", "20 mnt"], ["Obelix Sea View", "30 mnt"],
@@ -469,12 +479,13 @@ function Location() {
     <section id="location" className="py-32 px-6 bg-ivory/40">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">
         <div>
-          <span className="eyebrow">Lokasi</span>
+          <span className="eyebrow">{t("location.eyebrow")}</span>
           <h2 className="text-3xl md:text-5xl mt-4 text-balance font-bold">
-            Di antara hamparan sawah dan pedesaan asri Yogyakarta
+            {t("location.title")}
           </h2>
           <p className="mt-6 text-muted-foreground text-base md:text-lg leading-relaxed">
-            Tersembunyi di daerah pedesaan Bantul, Yogyakarta. Marme Villa memiliki lokasi yang strategis dan indah </p>
+            {t("location.desc")}
+          </p>
           <ul className="mt-10 divide-y divide-border/60 border-t border-b border-border/60">
             {nearby.map(([place, time]) => (
               <li key={place} className="flex items-center justify-between py-4">
@@ -506,13 +517,14 @@ const faqs = [
   ["Apakah villa ini cocok untuk anak-anak?", "Anak-anak akan diterima dengan sangat baik. Kami menyediakan fasilitas penunjang seperti baby chair yang berguna untuk menjaga keamanan bayi saat makan."],
 ];
 function FAQ() {
+  const { t } = useTranslation();
   const [open, setOpen] = useState<number | null>(0);
   return (
     <section className="py-32 px-6">
       <div className="max-w-3xl mx-auto">
         <div className="text-center mb-16">
-          <span className="eyebrow">Pertanyaan</span>
-          <h2 className="text-3xl md:text-5xl mt-4 font-bold">Sebelum Anda Tiba</h2>
+          <span className="eyebrow">{t("faq.eyebrow")}</span>
+          <h2 className="text-3xl md:text-5xl mt-4 font-bold">{t("faq.title")}</h2>
         </div>
         <div className="border-t border-border/60">
           {faqs.map(([q, a], i) => (
@@ -534,15 +546,15 @@ function FAQ() {
 
 /* ---------- Contact ---------- */
 function Contact() {
+  const { t } = useTranslation();
   return (
     <section id="contact" className="py-32 px-6 bg-primary text-primary-foreground">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16">
         <div>
-          <span className="eyebrow">Reservasi</span>
-          <h2 className="text-3xl md:text-5xl mt-4 text-balance font-bold">Kami menantikan kedatangan Anda</h2>
+          <span className="eyebrow">{t("contact.eyebrow")}</span>
+          <h2 className="text-3xl md:text-5xl mt-4 text-balance font-bold">{t("contact.title")}</h2>
           <p className="mt-6 text-primary-foreground/75 text-base md:text-lg leading-relaxed">
-            Tim reservasi kami merespons secara pribadi dalam beberapa jam,
-            sepanjang waktu. Selamat datang.
+            {t("contact.desc")}
           </p>
           <div className="mt-12 space-y-5 text-sm">
             <div className="flex items-center gap-4"><Phone className="h-4 w-4 text-gold" /> +62 851 9008 3940</div>
@@ -554,15 +566,15 @@ function Contact() {
           onSubmit={(e) => { e.preventDefault(); alert("Terima kasih — tim kami akan segera menghubungi Anda."); }}
           className="space-y-6"
         >
-          <Input label="Nama Lengkap" type="text" required />
-          <Input label="Email" type="email" required />
-          <Input label="Telepon" type="tel" />
+          <Input label={t("contact.name")} type="text" required />
+          <Input label={t("contact.email")} type="email" required />
+          <Input label={t("contact.phone")} type="tel" />
           <div>
-            <div className="eyebrow text-primary-foreground/60 mb-2">Pesan</div>
+            <div className="eyebrow text-primary-foreground/60 mb-2">{t("contact.msg")}</div>
             <textarea rows={5} required className="w-full bg-transparent border-b border-primary-foreground/30 focus:border-gold outline-none py-3 text-primary-foreground placeholder:text-primary-foreground/40" />
           </div>
           <button type="submit" className="px-10 py-4 bg-gold text-gold-foreground font-medium tracking-wide hover:bg-gold/90 transition-colors rounded-full">
-            Kirim Pertanyaan
+            {t("contact.submit")}
           </button>
         </form>
       </div>
@@ -593,11 +605,12 @@ function WhatsAppIcon(props: React.SVGProps<SVGSVGElement>) {
 
 /* ---------- Footer ---------- */
 function Footer() {
+  const { t } = useTranslation();
   return (
     <footer className="bg-background border-t border-border/60 py-12 px-6">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-sm text-muted-foreground">
         <div className="font-manrope text-lg text-primary">Marme Villa Jogja</div>
-        <div>© {new Date().getFullYear()} Marme Villa Jogja. Hak cipta dilindungi undang-undang.</div>
+        <div>© {new Date().getFullYear()} Marme Villa Jogja. {t("footer.rights")}</div>
         <div className="flex gap-6">
           <a href="#" className="flex items-center gap-2 hover:text-gold transition-colors"><Instagram className="w-4 h-4" /> Instagram</a>
           <a href="#" className="flex items-center gap-2 hover:text-gold transition-colors"><Facebook className="w-4 h-4" /> Facebook</a>
