@@ -1,6 +1,7 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 
 export const Route = createFileRoute("/booking")({
   head: () => ({
@@ -22,10 +23,7 @@ function BookingLayout() {
       <Outlet />
 
       {/* Footer */}
-      <footer className="bg-background border-t border-border/60 py-10 px-6 text-center text-sm text-muted-foreground">
-        <p className="mb-1">© {new Date().getFullYear()} Marme Villa Jogja</p>
-        <p className="text-xs text-muted-foreground/70">Prototype · No real transactions</p>
-      </footer>
+      <Footer />
     </div>
   );
 }

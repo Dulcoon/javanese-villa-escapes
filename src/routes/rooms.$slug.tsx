@@ -9,6 +9,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { formatIDR } from "@/lib/utils";
 import { api, Villa, IMAGE_BASE_URL } from "@/lib/api";
 import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 import { z } from "zod";
@@ -494,9 +495,7 @@ function RoomDetail() {
         </div>
       </section>
 
-      <footer className="bg-background border-t border-border/60 py-10 px-6 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} Marme Villa Jogja
-      </footer>
+      <Footer />
     </div>
   );
 }

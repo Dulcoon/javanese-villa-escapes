@@ -4,6 +4,7 @@ import { z } from "zod";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
 import { ArrowLeft, Calendar as CalendarIcon, Users as UsersIcon, Minus, Plus, Check, Search, BedDouble, Maximize, Eye } from "lucide-react";
 import { Navbar } from "@/components/Navbar";
+import { Footer } from "@/components/Footer";
 import { formatIDR } from "@/lib/utils";
 import { api, Villa, IMAGE_BASE_URL } from "@/lib/api";
 import { format, startOfToday } from "date-fns";
@@ -351,9 +352,7 @@ function AvailabilityPage() {
         </div>
       </section>
 
-      <footer className="bg-background border-t border-border/60 py-10 px-6 text-center text-sm text-muted-foreground">
-        © {new Date().getFullYear()} Marme Villa Jogja
-      </footer>
+      <Footer />
     </div>
   );
 }
