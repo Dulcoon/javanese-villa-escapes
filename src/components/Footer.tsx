@@ -25,9 +25,9 @@ export function Footer() {
         <div className="font-manrope text-lg text-primary">Marme Villa Jogja</div>
         <div>© {year} Marme Villa Jogja. {t("footer.rights")}</div>
         <div className="flex gap-6">
-          <a href="#" className="flex items-center gap-2 hover:text-gold transition-colors"><Instagram className="w-4 h-4" /> Instagram</a>
+          <a href="https://www.instagram.com/marme.villa?igsh=MXVkbG02MXdvOTBvcA==" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-gold transition-colors"><Instagram className="w-4 h-4" /> Instagram</a>
           <a href="#" className="flex items-center gap-2 hover:text-gold transition-colors"><Facebook className="w-4 h-4" /> Facebook</a>
-          <a href="#" className="flex items-center gap-2 hover:text-gold transition-colors"><WhatsAppIcon className="w-4 h-4" /> WhatsApp</a>
+          <a href="https://wa.me/6285190083940" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-gold transition-colors"><WhatsAppIcon className="w-4 h-4" /> WhatsApp</a>
         </div>
       </div>
     </footer>
