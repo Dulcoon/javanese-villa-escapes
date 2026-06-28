@@ -283,7 +283,7 @@ function RoomDetail() {
                 <ul className="mt-6 grid sm:grid-cols-2 gap-3">
                   {room.facilities.map((f) => (
                     <li key={f.id} className="flex items-start gap-3 text-foreground">
-                      <Check className="h-4 w-4 text-gold mt-1 shrink-0" /> {tDynamic(f, 'name')}
+                      <span className="material-symbols-outlined text-gold mt-1 shrink-0 text-[18px]">{f.icon || 'check_circle'}</span> {tDynamic(f, 'name')}
                     </li>
                   ))}
                 </ul>

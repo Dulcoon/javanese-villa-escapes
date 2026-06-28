@@ -15,6 +15,7 @@ import logoMarme from "@/assets/logo-marme.webp";
 import carousel1 from "@/assets/carousel1.webp";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
+import "material-symbols/outlined.css";
 
 function NotFoundComponent() {
   return (
