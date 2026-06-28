@@ -11,6 +11,7 @@ export interface VillaImage {
 export interface VillaFacility {
   id: string;
   name: string;
+  name_en?: string;
   icon: string;
 }
 
