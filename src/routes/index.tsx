@@ -548,6 +548,30 @@ function FAQ() {
 /* ---------- Contact ---------- */
 function Contact() {
   const { t } = useTranslation();
+  const [formData, setFormData] = useState({ name: '', email: '', phone: '', message: '' });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    setError(null);
+    try {
+      const res = await api.submitContact(formData);
+      if (res.status === 'success') {
+        setSuccess(true);
+        setFormData({ name: '', email: '', phone: '', message: '' });
+      } else {
+        setError(res.message || 'Gagal mengirim pesan.');
+      }
+    } catch (err) {
+      setError('Terjadi kesalahan jaringan.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <section id="contact" className="py-32 px-6 bg-primary text-primary-foreground">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-16">
@@ -563,19 +587,53 @@ function Contact() {
             <div className="flex items-center gap-4"><MapPin className="h-4 w-4 text-gold" /> Serayu, RT 01, Bantul, Bantul, Bantul, Yogyakarta, 55711</div>
           </div>
         </div>
-        <form
-          onSubmit={(e) => { e.preventDefault(); alert("Terima kasih — tim kami akan segera menghubungi Anda."); }}
-          className="space-y-6"
-        >
-          <Input label={t("contact.name")} type="text" required />
-          <Input label={t("contact.email")} type="email" required />
-          <Input label={t("contact.phone")} type="tel" />
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {success && (
+            <div className="p-4 bg-green-500/20 text-green-200 rounded-md border border-green-500/30">
+              Terima kasih — pesan Anda telah terkirim. Tim kami akan segera menghubungi Anda.
+            </div>
+          )}
+          {error && (
+            <div className="p-4 bg-red-500/20 text-red-200 rounded-md border border-red-500/30">
+              {error}
+            </div>
+          )}
+          <Input 
+            label={t("contact.name")} 
+            type="text" 
+            required 
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+          />
+          <Input 
+            label={t("contact.email")} 
+            type="email" 
+            required 
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          />
+          <Input 
+            label={t("contact.phone")} 
+            type="tel" 
+            value={formData.phone}
+            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+          />
           <div>
             <div className="eyebrow text-primary-foreground/60 mb-2">{t("contact.msg")}</div>
-            <textarea rows={5} required className="w-full bg-transparent border-b border-primary-foreground/30 focus:border-gold outline-none py-3 text-primary-foreground placeholder:text-primary-foreground/40" />
+            <textarea 
+              rows={5} 
+              required 
+              value={formData.message}
+              onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+              className="w-full bg-transparent border-b border-primary-foreground/30 focus:border-gold outline-none py-3 text-primary-foreground placeholder:text-primary-foreground/40" 
+            />
           </div>
-          <button type="submit" className="px-10 py-4 bg-gold text-gold-foreground font-medium tracking-wide hover:bg-gold/90 transition-colors rounded-full">
-            {t("contact.submit")}
+          <button 
+            type="submit" 
+            disabled={isSubmitting}
+            className="px-10 py-4 bg-gold text-gold-foreground font-medium tracking-wide hover:bg-gold/90 transition-colors rounded-full disabled:opacity-50 flex items-center justify-center min-w-[160px]"
+          >
+            {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : t("contact.submit")}
           </button>
         </form>
       </div>

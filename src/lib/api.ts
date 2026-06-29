@@ -88,4 +88,10 @@ export const api = {
     headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
     body: JSON.stringify(data),
   }).then(r => r.json()),
+  submitContact: (data: any) =>
+    fetch(`${API_BASE_URL}/contact`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify(data),
+  }).then(r => r.json()),
 };
