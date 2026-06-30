@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { format, differenceInDays } from "date-fns";
 import { z } from "zod";
 import { zodValidator, fallback } from "@tanstack/zod-adapter";
-import { Calendar, Users, BedDouble, Check, ChevronRight, Mail, Phone, User, MessageSquare, ArrowRight, Loader2 } from "lucide-react";
+import { Calendar, Users, BedDouble, Check, ChevronRight, Mail, Phone, User, MessageSquare, ArrowRight, Loader2, AlertCircle } from "lucide-react";
 import { formatIDR } from "@/lib/utils";
 import { api, Villa, IMAGE_BASE_URL } from "@/lib/api";
 import { toast } from "sonner";
@@ -41,6 +41,7 @@ function BookingFormPage() {
   const [isPromoApplied, setIsPromoApplied] = useState(false);
   const [isValidatingPromo, setIsValidatingPromo] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   useEffect(() => {
     if (!params.room) {
@@ -105,12 +106,17 @@ function BookingFormPage() {
 
   const pricing = availData?.pricing ?? null;
 
-  const handleConfirm = async (e: React.FormEvent) => {
+  const handleConfirm = (e: React.FormEvent) => {
     e.preventDefault();
     if (isPricingLoading || !availData) {
       toast.error("Tunggu hingga harga selesai dihitung");
       return;
     }
+    setShowConfirmModal(true);
+  };
+
+  const executeBookingSubmit = async () => {
+    setShowConfirmModal(false);
     setIsLoading(true);
 
     try {
@@ -492,6 +498,82 @@ function BookingFormPage() {
           </div>
         </div>
       </section>
+
+      {/* Confirmation Modal */}
+      {showConfirmModal && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 animate-in fade-in duration-200">
+          {/* Backdrop */}
+          <div 
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+            onClick={() => setShowConfirmModal(false)}
+          />
+          
+          {/* Modal Container */}
+          <div className="relative bg-background border border-border/60 rounded-2xl w-full max-w-lg p-6 sm:p-8 shadow-luxe z-10 overflow-hidden transform transition-all duration-300 animate-in scale-in duration-200">
+            {/* Elegant header */}
+            <div className="flex items-center gap-3 border-b border-border/40 pb-4 mb-6">
+              <div className="w-10 h-10 rounded-full bg-gold/10 flex items-center justify-center text-gold">
+                <AlertCircle className="h-5 w-5" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-primary">Konfirmasi Data Anda</h3>
+                <p className="text-xs text-muted-foreground mt-0.5">Mohon periksa kembali agar tidak ada kesalahan pengiriman invoice.</p>
+              </div>
+            </div>
+            
+            {/* Form details overview */}
+            <div className="space-y-4 text-sm bg-ivory/30 border border-border/40 rounded-xl p-5 mb-6">
+              <div className="grid grid-cols-3 gap-2 py-1.5 border-b border-border/20">
+                <span className="text-muted-foreground text-xs uppercase tracking-wider font-medium flex items-center gap-1.5 col-span-1">
+                  <User className="h-3.5 w-3.5 text-gold shrink-0" /> Nama
+                </span>
+                <span className="text-foreground font-semibold col-span-2 break-words">{fullName}</span>
+              </div>
+              <div className="grid grid-cols-3 gap-2 py-1.5 border-b border-border/20">
+                <span className="text-muted-foreground text-xs uppercase tracking-wider font-medium flex items-center gap-1.5 col-span-1">
+                  <Mail className="h-3.5 w-3.5 text-gold shrink-0" /> Email
+                </span>
+                <span className="text-foreground font-semibold col-span-2 break-all">{email}</span>
+              </div>
+              <div className="grid grid-cols-3 gap-2 py-1.5 border-b border-border/20">
+                <span className="text-muted-foreground text-xs uppercase tracking-wider font-medium flex items-center gap-1.5 col-span-1">
+                  <Phone className="h-3.5 w-3.5 text-gold shrink-0" /> Telepon
+                </span>
+                <span className="text-foreground font-semibold col-span-2 break-words">{phone}</span>
+              </div>
+              <div className="grid grid-cols-3 gap-2 py-1.5">
+                <span className="text-muted-foreground text-xs uppercase tracking-wider font-medium flex items-center gap-1.5 col-span-1">
+                  <MessageSquare className="h-3.5 w-3.5 text-gold shrink-0" /> Catatan
+                </span>
+                <span className="text-foreground italic col-span-2 break-words text-xs">{requests ? `"${requests}"` : "Tidak ada"}</span>
+              </div>
+            </div>
+            
+            {/* Warning Text */}
+            <div className="bg-gold/5 border border-gold/20 rounded-xl p-4 text-xs text-[#8B7355] leading-relaxed mb-6">
+              <strong>PENTING:</strong> Nomor invoice dan rincian pembayaran akan dikirimkan otomatis ke email Anda. Admin juga akan menghubungi Anda via WhatsApp/Telepon ke nomor di atas untuk koordinasi kedatangan. Pastikan data di atas sudah aktif dan benar.
+            </div>
+            
+            {/* Actions */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              <button
+                type="button"
+                onClick={() => setShowConfirmModal(false)}
+                className="flex-1 rounded-full border border-border/80 text-foreground py-3 text-sm font-medium hover:bg-muted/50 transition-colors"
+              >
+                Periksa Kembali
+              </button>
+              <button
+                type="button"
+                onClick={executeBookingSubmit}
+                className="flex-1 rounded-full bg-primary text-primary-foreground py-3 text-sm font-medium hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
+              >
+                Ya, Lanjutkan Pemesanan <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

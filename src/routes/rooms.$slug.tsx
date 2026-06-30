@@ -11,6 +11,7 @@ import { api, Villa, IMAGE_BASE_URL } from "@/lib/api";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { useTranslation } from "@/lib/i18n/LanguageContext";
+import { AlertModal } from "@/components/ui/AlertModal";
 
 import { z } from "zod";
 import { toast } from "sonner";
@@ -103,6 +104,9 @@ function RoomDetail() {
   const disabledDates = bookedDates.map((dateStr: string) => new Date(dateStr + "T00:00:00"));
 
   const [isGalleryOpen, setIsGalleryOpen] = React.useState(false);
+  const [alertOpen, setAlertOpen] = React.useState(false);
+  const [alertTitle, setAlertTitle] = React.useState("");
+  const [alertMessage, setAlertMessage] = React.useState("");
   const carouselRef = React.useRef<HTMLDivElement>(null);
   const [currentImageIndex, setCurrentImageIndex] = React.useState(1);
 
@@ -445,14 +449,51 @@ function RoomDetail() {
                   checkOut: date?.to ? format(date.to, "yyyy-MM-dd") : "",
                   guests: totalGuests
                 }}
-                disabled={!date?.from || !date?.to}
                 onClick={(e) => {
-                  if (date?.from && date?.to && format(date.from, "yyyy-MM-dd") === format(date.to, "yyyy-MM-dd")) {
+                  if (!date?.from) {
                     e.preventDefault();
-                    toast.error(t("room.minbook"), { description: t("room.minbook.desc") });
+                    setAlertTitle("Pilih Tanggal");
+                    setAlertMessage("Silakan tentukan tanggal check-in dan check-out untuk reservasi Anda.");
+                    setAlertOpen(true);
+                    return;
+                  }
+                  if (!date?.to) {
+                    e.preventDefault();
+                    setAlertTitle("Pilih Tanggal Check-Out");
+                    setAlertMessage("Silakan tentukan tanggal check-out untuk melengkapi durasi menginap Anda.");
+                    setAlertOpen(true);
+                    return;
+                  }
+                  if (format(date.from, "yyyy-MM-dd") === format(date.to, "yyyy-MM-dd")) {
+                    e.preventDefault();
+                    setAlertTitle("Minimal 1 Malam");
+                    setAlertMessage("Pemesanan paviliun memerlukan minimal menginap selama 1 malam. Tanggal check-in dan check-out tidak boleh sama.");
+                    setAlertOpen(true);
+                    return;
+                  }
+
+                  // Check if any selected date is already booked
+                  let current = new Date(date.from);
+                  const end = new Date(date.to);
+                  let hasBookedDate = false;
+                  while (current < end) {
+                    const dateStr = format(current, "yyyy-MM-dd");
+                    if (bookedDates.includes(dateStr)) {
+                      hasBookedDate = true;
+                      break;
+                    }
+                    current.setDate(current.getDate() + 1);
+                  }
+
+                  if (hasBookedDate) {
+                    e.preventDefault();
+                    setAlertTitle("Tanggal Tidak Tersedia");
+                    setAlertMessage("Rentang tanggal yang Anda pilih melewati tanggal yang sudah dipesan oleh orang lain. Silakan pilih rentang tanggal kosong lainnya.");
+                    setAlertOpen(true);
+                    return;
                   }
                 }}
-                className="mt-8 block text-center bg-gold text-gold-foreground py-4 font-medium tracking-wide hover:bg-gold/90 transition-colors rounded-full data-[disabled]:opacity-50 data-[disabled]:pointer-events-none"
+                className="mt-8 block text-center bg-gold text-gold-foreground py-4 font-medium tracking-wide hover:bg-gold/90 transition-colors rounded-full"
               >
                 {t("room.book")}
               </Link>
@@ -495,6 +536,13 @@ function RoomDetail() {
         </div>
       </section>
 
+      <AlertModal
+        isOpen={alertOpen}
+        onClose={() => setAlertOpen(false)}
+        title={alertTitle}
+        description={alertMessage}
+        type="warning"
+      />
       <Footer />
     </div>
   );
