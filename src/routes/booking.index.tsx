@@ -126,36 +126,44 @@ function BookingFormPage() {
         voucher_code: isPromoApplied ? promoCode : undefined,
       });
 
-      if (response.status === 'success' && response.data.snap_token) {
-        // @ts-ignore
-        window.snap.pay(response.data.snap_token, {
-          onSuccess: function (result: any) {
-            navigate({
-              to: "/booking/success",
-              search: {
-                room: params.room,
-                checkIn: params.checkIn,
-                checkOut: params.checkOut,
-                guests: params.guests,
-                name: fullName,
-                email,
-                bookingCode: response.data.booking?.booking_code ?? '',
-                total: availData.grand_total ?? 0,
-              },
-            });
-          },
-          onPending: function (result: any) {
-            toast.info("Menunggu pembayaran...");
-          },
-          onError: function (result: any) {
-            toast.error("Pembayaran gagal!");
-            setIsLoading(false);
-          },
-          onClose: function () {
-            toast.error("Pembayaran dibatalkan");
-            setIsLoading(false);
-          }
-        });
+      if (response.status === 'success') {
+        if (response.data.payment_gateway === 'doku' && response.data.payment_url) {
+          toast.success("Mengarahkan ke halaman pembayaran DOKU...");
+          window.location.href = response.data.payment_url;
+        } else if (response.data.snap_token) {
+          // @ts-ignore
+          window.snap.pay(response.data.snap_token, {
+            onSuccess: function (result: any) {
+              navigate({
+                to: "/booking/success",
+                search: {
+                  room: params.room,
+                  checkIn: params.checkIn,
+                  checkOut: params.checkOut,
+                  guests: params.guests,
+                  name: fullName,
+                  email,
+                  bookingCode: response.data.booking?.booking_code ?? '',
+                  total: availData.grand_total ?? 0,
+                },
+              });
+            },
+            onPending: function (result: any) {
+              toast.info("Menunggu pembayaran...");
+            },
+            onError: function (result: any) {
+              toast.error("Pembayaran gagal!");
+              setIsLoading(false);
+            },
+            onClose: function () {
+              toast.error("Pembayaran dibatalkan");
+              setIsLoading(false);
+            }
+          });
+        } else {
+          toast.error("Metode pembayaran tidak dikenal.");
+          setIsLoading(false);
+        }
       }
     } catch (error: any) {
       toast.error(error.message || "Gagal membuat pesanan");
