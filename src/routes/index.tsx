@@ -56,34 +56,64 @@ import { useTranslation } from "@/lib/i18n/LanguageContext";
 /* ---------- Nav ---------- */
 // Removed inline Nav, now using imported Navbar
 
+
 /* ---------- Hero ---------- */
 function Hero() {
   const images = [carousel1, carousel2, carousel3];
   const [currentIdx, setCurrentIdx] = useState(0);
+  const [loadedImages, setLoadedImages] = useState<Record<number, boolean>>({ 0: false });
+  const [timeElapsed, setTimeElapsed] = useState(false);
   const { t } = useTranslation();
 
+  const markLoaded = (idx: number) => {
+    setLoadedImages(prev => ({ ...prev, [idx]: true }));
+  };
+
+  // Fallback to force load other images after 1.5s in case onLoad fails
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentIdx((prev) => (prev + 1) % images.length);
-    }, 5000);
-    return () => clearInterval(timer);
+    const timer = setTimeout(() => {
+      setLoadedImages(prev => prev[0] ? prev : { ...prev, 0: true });
+    }, 1500);
+    return () => clearTimeout(timer);
   }, []);
+
+  // Timer to signal when 5 seconds have passed
+  useEffect(() => {
+    setTimeElapsed(false);
+    const timer = setTimeout(() => {
+      setTimeElapsed(true);
+    }, 5000);
+    return () => clearTimeout(timer);
+  }, [currentIdx]);
+
+  // Transition controller
+  useEffect(() => {
+    const nextIdx = (currentIdx + 1) % images.length;
+    if (timeElapsed && loadedImages[nextIdx]) {
+      setCurrentIdx(nextIdx);
+    }
+  }, [timeElapsed, loadedImages, currentIdx, images.length]);
 
   return (
     <section id="top" className="relative h-screen min-h-[720px] w-full overflow-hidden bg-black">
       {images.map((img, idx) => (
-        <img
-          key={img}
-          src={img}
-          alt={`Marme Villa Carousel ${idx + 1}`}
-          loading={idx === 0 ? "eager" : "lazy"}
-          fetchPriority={idx === 0 ? "high" : "low"}
-          decoding={idx === 0 ? "sync" : "async"}
-          width="1920"
-          height="1080"
-          className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms] ease-in-out ${idx === currentIdx ? "opacity-100" : "opacity-0"
+        (idx === 0 || loadedImages[0]) ? (
+          <img
+            key={img}
+            src={img}
+            alt={`Marme Villa Carousel ${idx + 1}`}
+            loading={idx === 0 ? "eager" : "lazy"}
+            fetchPriority={idx === 0 ? "high" : "low"}
+            decoding={idx === 0 ? "sync" : "async"}
+            width="1920"
+            height="1080"
+            onLoad={() => markLoaded(idx)}
+            onError={() => markLoaded(idx)}
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms] ease-in-out ${
+              idx === currentIdx ? "opacity-100" : "opacity-0"
             }`}
-        />
+          />
+        ) : null
       ))}
       <div className="absolute inset-0 bg-black/20 bg-gradient-to-b from-primary/40 via-primary/20 to-primary/40" />
       <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">

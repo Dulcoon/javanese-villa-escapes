@@ -572,12 +572,26 @@ function RoomDetail() {
       <Footer />
     </div>
   );
-}
-
-function GalleryModal({ isOpen, onClose, images, roomName }: { isOpen: boolean, onClose: () => void, images: any[], roomName: string }) {
+}function GalleryModal({ isOpen, onClose, images, roomName }: { isOpen: boolean, onClose: () => void, images: any[], roomName: string }) {
   const [activeIndex, setActiveIndex] = React.useState(0);
   const [activeAlbum, setActiveAlbum] = React.useState(images[0]?.album || 'Lainnya');
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
+  
+  // Track loaded image indices to only render active and adjacent images initially
+  const [loadedIndices, setLoadedIndices] = React.useState<number[]>([]);
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setLoadedIndices(prev => {
+        const next = [...prev];
+        if (!next.includes(activeIndex)) next.push(activeIndex);
+        // Preload immediate neighbors
+        if (activeIndex > 0 && !next.includes(activeIndex - 1)) next.push(activeIndex - 1);
+        if (activeIndex < images.length - 1 && !next.includes(activeIndex + 1)) next.push(activeIndex + 1);
+        return next;
+      });
+    }
+  }, [activeIndex, isOpen, images.length]);
 
   React.useEffect(() => {
     const container = scrollContainerRef.current;
@@ -629,8 +643,6 @@ function GalleryModal({ isOpen, onClose, images, roomName }: { isOpen: boolean, 
 
   if (!isOpen) return null;
 
-  // Group images to create thumbnails or grid view inside modal (optional for future)
-  // For now we just implement the full-screen swipable carousel
   return (
     <div className="fixed inset-0 z-[100] bg-black text-white flex flex-col animate-in fade-in duration-300">
       {/* Header */}
@@ -651,21 +663,29 @@ function GalleryModal({ isOpen, onClose, images, roomName }: { isOpen: boolean, 
         ref={scrollContainerRef}
         className="flex-1 overflow-x-auto flex snap-x snap-mandatory hide-scrollbar items-center"
       >
-        {images.map((img, idx) => (
-          <div 
-            key={img.id} 
-            data-index={idx}
-            data-album={img.album || 'Lainnya'}
-            className="flex-none w-full h-full snap-center snap-always flex items-center justify-center p-0 md:p-10"
-          >
-            <img 
-              src={`${IMAGE_BASE_URL}${img.image_url}`} 
-              alt={`${roomName} - ${img.album || 'Lainnya'}`}
-              loading="lazy"
-              className="max-w-full max-h-full object-contain"
-            />
-          </div>
-        ))}
+        {images.map((img, idx) => {
+          const isLoaded = loadedIndices.includes(idx);
+          return (
+            <div 
+              key={img.id} 
+              data-index={idx}
+              data-album={img.album || 'Lainnya'}
+              className="flex-none w-full h-full snap-center snap-always flex items-center justify-center p-0 md:p-10 bg-black"
+            >
+              {isLoaded ? (
+                <img 
+                  src={`${IMAGE_BASE_URL}${img.image_url}`} 
+                  alt={`${roomName} - ${img.album || 'Lainnya'}`}
+                  className="max-w-full max-h-full object-contain animate-in fade-in duration-300"
+                />
+              ) : (
+                <div className="flex items-center justify-center w-full h-full text-muted-foreground">
+                  <span className="material-symbols-outlined animate-spin text-2xl">autorenew</span>
+                </div>
+              )}
+            </div>
+          );
+        })}
       </div>
       
       {/* CSS to hide scrollbar */}
