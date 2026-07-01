@@ -109,6 +109,15 @@ function RoomDetail() {
   const [alertMessage, setAlertMessage] = React.useState("");
   const carouselRef = React.useRef<HTMLDivElement>(null);
   const [currentImageIndex, setCurrentImageIndex] = React.useState(1);
+  const [firstImageLoaded, setFirstImageLoaded] = React.useState(false);
+
+  // Fallback to load other images after a short delay if onLoad doesn't fire (e.g. error, or cached image edge cases)
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setFirstImageLoaded(true);
+    }, 1500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const handleCarouselScroll = () => {
     if (!carouselRef.current) return;
@@ -144,9 +153,17 @@ function RoomDetail() {
           onScroll={handleCarouselScroll}
           onClick={() => setIsGalleryOpen(true)}
         >
-          {room.images.map((img) => (
-            <div key={img.id} className="w-full h-full flex-none snap-center snap-always relative">
-               <img src={`${IMAGE_BASE_URL}${img.image_url}`} alt={room.name} className="w-full h-full object-cover" loading="lazy" />
+          {room.images.map((img, idx) => (
+            <div key={img.id} className="w-full h-full flex-none snap-center snap-always relative bg-[#8B7355]/10">
+               {(idx === 0 || firstImageLoaded) ? (
+                 <img 
+                   src={`${IMAGE_BASE_URL}${img.image_url}`} 
+                   alt={room.name} 
+                   className="w-full h-full object-cover" 
+                   loading={idx === 0 ? "eager" : "lazy"} 
+                   onLoad={idx === 0 ? () => setFirstImageLoaded(true) : undefined}
+                 />
+               ) : null}
             </div>
           ))}
         </div>
@@ -197,11 +214,20 @@ function RoomDetail() {
       <section className="hidden md:block px-6">
         <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-4 auto-rows-[360px] relative group cursor-pointer" onClick={() => setIsGalleryOpen(true)}>
           <div className="md:col-span-2 md:row-span-2 overflow-hidden rounded-2xl bg-[#8B7355]/20">
-            <img src={room.images[0] ? `${IMAGE_BASE_URL}${room.images[0].image_url}` : ''} alt={room.name} fetchPriority="high" decoding="sync" className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]" />
+            <img 
+              src={room.images[0] ? `${IMAGE_BASE_URL}${room.images[0].image_url}` : ''} 
+              alt={room.name} 
+              fetchPriority="high" 
+              decoding="sync" 
+              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]" 
+              onLoad={() => setFirstImageLoaded(true)}
+            />
           </div>
           {room.images.slice(1, 3).map((g, i) => (
             <div key={i} className="overflow-hidden rounded-2xl bg-[#8B7355]/20 relative">
-              <img src={`${IMAGE_BASE_URL}${g.image_url}`} alt={`${room.name} ${i + 2}`} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]" loading="lazy" />
+              {firstImageLoaded ? (
+                <img src={`${IMAGE_BASE_URL}${g.image_url}`} alt={`${room.name} ${i + 2}`} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]" loading="lazy" />
+              ) : null}
               {i === 1 && room.images.length > 3 && (
                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <div className="bg-white text-black px-4 py-2 rounded-lg font-medium shadow-lg flex items-center gap-2">
