@@ -35,7 +35,7 @@ import { Footer } from "@/components/Footer";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Marme Villa Jogja — Villa Warisan Budaya Jawa yang Mewah" },
+      { title: "Marme Villa Jogja — Exceptional Service, Memorable Stays" },
       { name: "description", content: "Villa budaya mewah yang memadukan warisan tradisional Jawa, ketenangan, dan kenyamanan modern. Pesan Joglo pribadi Anda." },
       { property: "og:title", content: "Marme Villa Jogja" },
       { property: "og:description", content: "Villa budaya mewah di Jawa Tengah." },
@@ -109,9 +109,8 @@ function Hero() {
             height="1080"
             onLoad={() => markLoaded(idx)}
             onError={() => markLoaded(idx)}
-            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms] ease-in-out ${
-              idx === currentIdx ? "opacity-100" : "opacity-0"
-            }`}
+            className={`absolute inset-0 h-full w-full object-cover transition-opacity duration-[1500ms] ease-in-out ${idx === currentIdx ? "opacity-100" : "opacity-0"
+              }`}
           />
         ) : null
       ))}
@@ -628,38 +627,38 @@ function Contact() {
               {error}
             </div>
           )}
-          <Input 
-            label={t("contact.name")} 
-            type="text" 
-            required 
+          <Input
+            label={t("contact.name")}
+            type="text"
+            required
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           />
-          <Input 
-            label={t("contact.email")} 
-            type="email" 
-            required 
+          <Input
+            label={t("contact.email")}
+            type="email"
+            required
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           />
-          <Input 
-            label={t("contact.phone")} 
-            type="tel" 
+          <Input
+            label={t("contact.phone")}
+            type="tel"
             value={formData.phone}
             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
           />
           <div>
             <div className="eyebrow text-primary-foreground/60 mb-2">{t("contact.msg")}</div>
-            <textarea 
-              rows={5} 
-              required 
+            <textarea
+              rows={5}
+              required
               value={formData.message}
               onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              className="w-full bg-transparent border-b border-primary-foreground/30 focus:border-gold outline-none py-3 text-primary-foreground placeholder:text-primary-foreground/40" 
+              className="w-full bg-transparent border-b border-primary-foreground/30 focus:border-gold outline-none py-3 text-primary-foreground placeholder:text-primary-foreground/40"
             />
           </div>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={isSubmitting}
             className="px-10 py-4 bg-gold text-gold-foreground font-medium tracking-wide hover:bg-gold/90 transition-colors rounded-full disabled:opacity-50 flex items-center justify-center min-w-[160px]"
           >

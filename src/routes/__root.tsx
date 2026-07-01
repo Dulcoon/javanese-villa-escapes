@@ -12,6 +12,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import logoMarme from "@/assets/logo-marme.webp";
+import logoMarmeCropped from "@/assets/logo-marme-cropped.png";
 import carousel1 from "@/assets/carousel1.webp";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
@@ -82,10 +83,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Marme Villa Jogja — Villa Warisan Budaya Jawa yang Mewah" },
+      { title: "Marme Villa Jogja — Exceptional Service, Memorable Stays" },
       { name: "description", content: "Villa budaya mewah yang memadukan warisan tradisional Jawa, ketenangan, dan kenyamanan modern. Pesan Joglo pribadi Anda di Jawa Tengah." },
       { name: "author", content: "Marme Villa Jogja" },
-      { property: "og:title", content: "Marme Villa Jogja — Villa Warisan Budaya Jawa yang Mewah" },
+      { property: "og:title", content: "Marme Villa Jogja — Exceptional Service, Memorable Stays" },
       { property: "og:description", content: "Rasakan keindahan warisan budaya Jawa di villa budaya premium kami." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -96,6 +97,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
+      { rel: "icon", href: logoMarmeCropped, type: "image/png" },
+      { rel: "apple-touch-icon", href: logoMarmeCropped },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
