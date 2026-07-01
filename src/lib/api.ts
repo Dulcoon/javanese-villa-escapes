@@ -42,6 +42,10 @@ export interface Villa {
   images: VillaImage[];
   facilities: VillaFacility[];
   album_order?: string[];
+  seo_title?: string;
+  seo_description?: string;
+  seo_title_en?: string;
+  seo_description_en?: string;
 }
 
 export interface ApiResponse<T> {

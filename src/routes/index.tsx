@@ -680,8 +680,58 @@ function Input({ label, ...rest }: { label: string } & React.InputHTMLAttributes
 
 /* ---------- Page ---------- */
 function VillaHome() {
+  const schemaMarkup = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://marmevillajogja.com/#website",
+        "url": "https://marmevillajogja.com/",
+        "name": "Marme Villa Jogja",
+        "description": "Exceptional Service, Memorable Stays",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": "https://marmevillajogja.com/?s={search_term_string}"
+          },
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "LodgingBusiness",
+        "@id": "https://marmevillajogja.com/#lodging",
+        "name": "Marme Villa Jogja",
+        "url": "https://marmevillajogja.com/",
+        "image": "https://marmevillajogja.com/assets/logo-marme-cropped.png",
+        "telephone": "+62 851 9008 3940",
+        "email": "marmevillajogja@gmail.com",
+        "priceRange": "$$",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Marme Villa Jogja",
+          "addressLocality": "Yogyakarta",
+          "addressRegion": "Daerah Istimewa Yogyakarta",
+          "addressCountry": "ID"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": -7.8525674,
+          "longitude": 110.3496149
+        },
+        "sameAs": [
+          "https://www.instagram.com/marmevilla.jogja"
+        ]
+      }
+    ]
+  };
+
   return (
     <div className="bg-background text-foreground">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaMarkup) }}
+      />
       <Navbar />
       <main>
         <Hero />

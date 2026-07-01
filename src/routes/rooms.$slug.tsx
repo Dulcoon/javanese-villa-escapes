@@ -105,12 +105,17 @@ export const Route = createFileRoute("/rooms/$slug")({
     if (!loaderData) return {};
     const { room } = loaderData;
     const images = room.images.map(img => `${IMAGE_BASE_URL}${img.image_url}`);
+    
+    // Choose custom SEO title/description if provided, else fallback to defaults
+    const pageTitle = room.seo_title || `${room.name} — Marme Villa Jogja`;
+    const pageDesc = room.seo_description || room.description;
+
     return {
       meta: [
-        { title: `${room.name} — Marme Villa Jogja` },
-        { name: "description", content: room.description },
-        { property: "og:title", content: `${room.name} — Marme Villa Jogja` },
-        { property: "og:description", content: room.description },
+        { title: pageTitle },
+        { name: "description", content: pageDesc },
+        { property: "og:title", content: pageTitle },
+        { property: "og:description", content: pageDesc },
         { property: "og:image", content: images[0] },
       ],
       links: [
@@ -187,8 +192,66 @@ function RoomDetail() {
     setCurrentImageIndex(newIndex);
   };
 
+  const schemaMarkup = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "BreadcrumbList",
+        "@id": `https://marmevillajogja.com/rooms/${room.slug}#breadcrumb`,
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": t("nav.home") || "Home",
+            "item": "https://marmevillajogja.com/"
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": tDynamic(room, "name") || room.name,
+            "item": `https://marmevillajogja.com/rooms/${room.slug}`
+          }
+        ]
+      },
+      {
+        "@type": "HotelRoom",
+        "@id": `https://marmevillajogja.com/rooms/${room.slug}#room`,
+        "name": tDynamic(room, "name") || room.name,
+        "description": tDynamic(room, "description") || room.description,
+        "url": `https://marmevillajogja.com/rooms/${room.slug}`,
+        "image": room.images.map(img => `${IMAGE_BASE_URL}${img.image_url}`),
+        "bed": {
+          "@type": "BedDetails",
+          "numberOfBeds": room.bed_count,
+          "typeOfBed": "Double Bed"
+        },
+        "occupancy": {
+          "@type": "QuantitativeValue",
+          "maxValue": room.capacity,
+          "unitText": "people"
+        },
+        "offers": {
+          "@type": "Offer",
+          "price": room.base_price,
+          "priceCurrency": "IDR",
+          "availability": "https://schema.org/InStock",
+          "validFrom": new Date().toISOString().split('T')[0]
+        },
+        "amenityFeature": room.facilities.map(facility => ({
+          "@type": "LocationFeatureSpecification",
+          "name": tDynamic(facility, "name") || facility.name,
+          "value": true
+        }))
+      }
+    ]
+  };
+
   return (
     <div className="bg-background text-foreground">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaMarkup) }}
+      />
       {/* Desktop Top Bar */}
       <div className="hidden md:block">
         <Navbar variant="back" backTo="/" backText={t("nav.back")} />

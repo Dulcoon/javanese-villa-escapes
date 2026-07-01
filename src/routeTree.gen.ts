@@ -9,6 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as RobotsDottxtRouteImport } from './routes/robots[.]txt'
 import { Route as BookingRouteImport } from './routes/booking'
 import { Route as AvailabilityRouteImport } from './routes/availability'
 import { Route as IndexRouteImport } from './routes/index'
@@ -16,6 +18,16 @@ import { Route as BookingIndexRouteImport } from './routes/booking.index'
 import { Route as RoomsSlugRouteImport } from './routes/rooms.$slug'
 import { Route as BookingSuccessRouteImport } from './routes/booking.success'
 
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RobotsDottxtRoute = RobotsDottxtRouteImport.update({
+  id: '/robots.txt',
+  path: '/robots.txt',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BookingRoute = BookingRouteImport.update({
   id: '/booking',
   path: '/booking',
@@ -51,6 +63,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/availability': typeof AvailabilityRoute
   '/booking': typeof BookingRouteWithChildren
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/booking/success': typeof BookingSuccessRoute
   '/rooms/$slug': typeof RoomsSlugRoute
   '/booking/': typeof BookingIndexRoute
@@ -58,6 +72,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/availability': typeof AvailabilityRoute
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/booking/success': typeof BookingSuccessRoute
   '/rooms/$slug': typeof RoomsSlugRoute
   '/booking': typeof BookingIndexRoute
@@ -67,6 +83,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/availability': typeof AvailabilityRoute
   '/booking': typeof BookingRouteWithChildren
+  '/robots.txt': typeof RobotsDottxtRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/booking/success': typeof BookingSuccessRoute
   '/rooms/$slug': typeof RoomsSlugRoute
   '/booking/': typeof BookingIndexRoute
@@ -77,16 +95,27 @@ export interface FileRouteTypes {
     | '/'
     | '/availability'
     | '/booking'
+    | '/robots.txt'
+    | '/sitemap.xml'
     | '/booking/success'
     | '/rooms/$slug'
     | '/booking/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/availability' | '/booking/success' | '/rooms/$slug' | '/booking'
+  to:
+    | '/'
+    | '/availability'
+    | '/robots.txt'
+    | '/sitemap.xml'
+    | '/booking/success'
+    | '/rooms/$slug'
+    | '/booking'
   id:
     | '__root__'
     | '/'
     | '/availability'
     | '/booking'
+    | '/robots.txt'
+    | '/sitemap.xml'
     | '/booking/success'
     | '/rooms/$slug'
     | '/booking/'
@@ -96,11 +125,27 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AvailabilityRoute: typeof AvailabilityRoute
   BookingRoute: typeof BookingRouteWithChildren
+  RobotsDottxtRoute: typeof RobotsDottxtRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   RoomsSlugRoute: typeof RoomsSlugRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/robots.txt': {
+      id: '/robots.txt'
+      path: '/robots.txt'
+      fullPath: '/robots.txt'
+      preLoaderRoute: typeof RobotsDottxtRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/booking': {
       id: '/booking'
       path: '/booking'
@@ -163,6 +208,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AvailabilityRoute: AvailabilityRoute,
   BookingRoute: BookingRouteWithChildren,
+  RobotsDottxtRoute: RobotsDottxtRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   RoomsSlugRoute: RoomsSlugRoute,
 }
 export const routeTree = rootRouteImport
