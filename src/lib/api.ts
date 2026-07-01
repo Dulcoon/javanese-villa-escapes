@@ -41,6 +41,7 @@ export interface Villa {
   features_en?: string[];
   images: VillaImage[];
   facilities: VillaFacility[];
+  album_order?: string[];
 }
 
 export interface ApiResponse<T> {

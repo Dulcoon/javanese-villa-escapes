@@ -23,6 +23,62 @@ const searchSchema = z.object({
   guests: fallback(z.number().int().min(1), 2).default(2),
 });
 
+function sortVillaImages(images: any[], albumOrder?: string[]) {
+  if (!images || images.length <= 1) return images;
+
+  const primaryImg = images.find(img => img.is_primary) || images[0];
+  const primaryImgId = primaryImg.id;
+
+  // Filter out primary image from the rest to prevent duplication inside its album!
+  const otherImgs = images.filter(img => img.id !== primaryImgId);
+
+  // Group the remaining images by album
+  const groups: Record<string, any[]> = {};
+  otherImgs.forEach(img => {
+    const album = img.album || 'Lainnya';
+    if (!groups[album]) {
+      groups[album] = [];
+    }
+    groups[album].push(img);
+  });
+
+  // The primary image goes first (cover/thumbnail)
+  const result = [primaryImg];
+
+  // Determine the order of albums:
+  // 1. By index in albumOrder.
+  // 2. Alphabetically for unordered.
+  // 3. 'Lainnya' is always last.
+  const order = albumOrder || [];
+  const existingAlbums = Object.keys(groups);
+
+  const sortedAlbums = existingAlbums.sort((a, b) => {
+    if (a === 'Lainnya') return 1;
+    if (b === 'Lainnya') return -1;
+
+    const indexA = order.indexOf(a);
+    const indexB = order.indexOf(b);
+
+    if (indexA !== -1 && indexB !== -1) {
+      return indexA - indexB;
+    }
+    if (indexA !== -1) {
+      return -1;
+    }
+    if (indexB !== -1) {
+      return 1;
+    }
+
+    return a.localeCompare(b, 'id');
+  });
+
+  sortedAlbums.forEach(album => {
+    result.push(...groups[album]);
+  });
+
+  return result;
+}
+
 export const Route = createFileRoute("/rooms/$slug")({
   validateSearch: zodValidator(searchSchema),
   loader: async ({ params }) => {
@@ -32,8 +88,12 @@ export const Route = createFileRoute("/rooms/$slug")({
         api.getVillas(),
         api.getBookedDates(params.slug)
       ]);
+      const room = villaRes.data;
+      if (room && Array.isArray(room.images)) {
+        room.images = sortVillaImages(room.images, room.album_order);
+      }
       return { 
-        room: villaRes.data,
+        room,
         otherRooms: villasRes.data.filter((r: Villa) => r.slug !== params.slug),
         bookedDates: bookedDatesRes.data
       };
@@ -141,9 +201,11 @@ function RoomDetail() {
           <Link to="/" className="w-9 h-9 rounded-full bg-white/90 backdrop-blur-md flex items-center justify-center text-black shadow-sm shrink-0">
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <div className="bg-white/90 backdrop-blur-md text-black text-[13px] font-semibold px-4 py-2 rounded-full shadow-sm">
-            {room.images[currentImageIndex - 1]?.album || 'Lainnya'}
-          </div>
+          {currentImageIndex > 1 && (
+            <div className="bg-white/90 backdrop-blur-md text-black text-[13px] font-semibold px-4 py-2 rounded-full shadow-sm">
+              {room.images[currentImageIndex - 1]?.album || 'Lainnya'}
+            </div>
+          )}
         </div>
 
         {/* Carousel */}
@@ -651,7 +713,7 @@ function RoomDetail() {
           <ArrowLeft className="w-6 h-6" />
         </button>
         <div className="font-semibold text-lg drop-shadow-md">
-          {activeAlbum}
+          {activeIndex > 0 ? activeAlbum : ''}
         </div>
         <div className="text-sm text-white/90 font-medium drop-shadow-md">
           {activeIndex + 1} / {images.length}
