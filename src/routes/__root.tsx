@@ -135,22 +135,22 @@ function SplashScreen() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setVisible(false);
-    }, 4500);
+    }, 2000);
     return () => clearTimeout(timer);
   }, []);
 
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 z-[99999] bg-[#F5F6EB] flex items-center justify-center overflow-hidden animate-[splashFade_5s_ease_forwards]">
+    <div className="fixed inset-0 z-[99999] bg-[#F5F6EB] flex items-center justify-center overflow-hidden animate-[splashFade_2s_ease_forwards]">
       {/* Outer slow-expanding ring */}
-      <div className="absolute w-[480px] h-[480px] sm:w-[600px] sm:h-[600px] rounded-full border border-[#C9A96E]/20 animate-[ringExpand_4s_ease-out_0.5s_forwards] opacity-0 pointer-events-none" />
+      <div className="absolute w-[480px] h-[480px] sm:w-[600px] sm:h-[600px] rounded-full border border-[#C9A96E]/20 animate-[ringExpand_2s_ease-out_0.2s_forwards] opacity-0 pointer-events-none" />
       {/* Middle ring */}
-      <div className="absolute w-[360px] h-[360px] sm:w-[480px] sm:h-[480px] rounded-full border border-[#C9A96E]/30 animate-[ringExpand_4s_ease-out_1s_forwards] opacity-0 pointer-events-none" />
+      <div className="absolute w-[360px] h-[360px] sm:w-[480px] sm:h-[480px] rounded-full border border-[#C9A96E]/30 animate-[ringExpand_2s_ease-out_0.5s_forwards] opacity-0 pointer-events-none" />
       {/* Soft gold radial glow behind logo */}
-      <div className="absolute w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(201,169,110,0.18)_0%,transparent_70%)] animate-[breathe_3s_ease-in-out_0.8s_infinite_alternate] pointer-events-none" />
+      <div className="absolute w-[300px] h-[300px] sm:w-[400px] sm:h-[400px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(201,169,110,0.18)_0%,transparent_70%)] animate-[breathe_2s_ease-in-out_0.5s_infinite_alternate] pointer-events-none" />
       {/* Logo */}
-      <div className="relative w-[260px] sm:w-[360px] md:w-[440px] animate-[logoReveal_1.2s_cubic-bezier(0.22,1,0.36,1)_0.3s_both]">
+      <div className="relative w-[260px] sm:w-[360px] md:w-[440px] animate-[logoReveal_0.8s_cubic-bezier(0.22,1,0.36,1)_0.2s_both]">
         <img src={logoMarme} alt="Marme Villa" className="w-full block mix-blend-multiply" />
       </div>
       <style dangerouslySetInnerHTML={{
