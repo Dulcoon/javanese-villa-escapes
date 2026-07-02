@@ -12,7 +12,6 @@ import { useEffect, useState, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import logoMarme from "@/assets/logo-marme.webp";
-import logoMarmeCropped from "@/assets/logo-marme-cropped.png";
 import carousel1 from "@/assets/carousel1.webp";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
@@ -98,8 +97,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: logoMarmeCropped, type: "image/png" },
-      { rel: "apple-touch-icon", href: logoMarmeCropped },
+      { rel: "icon", href: "/favicon.png", type: "image/png" },
+      { rel: "apple-touch-icon", href: "/favicon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
