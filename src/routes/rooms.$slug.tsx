@@ -4,6 +4,7 @@ import { ArrowLeft, BedDouble, Bath, Users, Maximize, Eye, Check, ChevronRight, 
 import { format, addDays, startOfToday } from "date-fns";
 import { id } from "date-fns/locale";
 import { DateRange } from "react-day-picker";
+import { IconRenderer } from "@/utils/icon-mapper";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { formatIDR } from "@/lib/utils";
@@ -438,7 +439,7 @@ function RoomDetail() {
                 <ul className="mt-6 grid sm:grid-cols-2 gap-3">
                   {room.facilities.map((f) => (
                     <li key={f.id} className="flex items-start gap-3 text-foreground">
-                      <span className="material-symbols-outlined text-gold mt-1 shrink-0 text-[18px]">{f.icon || 'check_circle'}</span> {tDynamic(f, 'name')}
+                      <IconRenderer name={f.icon || 'check_circle'} className="text-gold mt-1 shrink-0 text-[18px]" /> {tDynamic(f, 'name')}
                     </li>
                   ))}
                 </ul>
@@ -805,7 +806,7 @@ function RoomDetail() {
                 />
               ) : (
                 <div className="flex items-center justify-center w-full h-full text-muted-foreground">
-                  <span className="material-symbols-outlined animate-spin text-2xl">autorenew</span>
+                  <IconRenderer name="autorenew" className="animate-spin text-2xl" />
                 </div>
               )}
             </div>
