@@ -1,5 +1,4 @@
 import React from 'react';
-import { IconType } from 'react-icons';
 import {
   MdWifi,
   MdPool,
@@ -256,10 +255,46 @@ import {
   MdSentimentSatisfied,
   MdSentimentDissatisfied,
   MdSentimentVerySatisfied,
-  MdSentimentVeryDissatisfied
+  MdSentimentVeryDissatisfied,
+  MdDragIndicator,
+  MdPhotoLibrary,
+  MdExpandMore,
+  MdExpandLess,
+  MdAddCircle,
+  MdAddPhotoAlternate,
+  MdBed,
+  MdDeveloperMode,
+  MdEdit,
+  MdEditCalendar,
+  MdGroup,
+  MdImage,
+  MdLanguage,
+  MdPending,
+  MdRedeem,
+  MdYard,
+  MdWindow,
+  MdTableRestaurant,
+  MdTableBar,
+  MdLiving,
+  MdDining,
+  MdChair,
+  MdCameraOutdoor,
+  MdCameraIndoor,
+  MdStroller,
+  MdRoomPreferences,
+  MdGrass,
+  MdDesk,
+  MdCrib,
+  MdSportsEsports,
+  MdLocalFireDepartment,
+  MdHvac,
+  MdToys,
+  MdSecurity,
+  MdVpnKey,
+  MdGames
 } from 'react-icons/md';
 
-export const iconMap: Record<string, IconType> = {
+export const iconMap = {
   'wifi': MdWifi,
   'pool': MdPool,
   'ac_unit': MdAcUnit,
@@ -516,10 +551,46 @@ export const iconMap: Record<string, IconType> = {
   'sentiment_dissatisfied': MdSentimentDissatisfied,
   'sentiment_very_satisfied': MdSentimentVerySatisfied,
   'sentiment_very_dissatisfied': MdSentimentVeryDissatisfied,
+  'drag_indicator': MdDragIndicator,
+  'photo_library': MdPhotoLibrary,
+  'expand_more': MdExpandMore,
+  'expand_less': MdExpandLess,
+  'add_circle': MdAddCircle,
+  'add_photo_alternate': MdAddPhotoAlternate,
+  'bed': MdBed,
+  'developer_mode': MdDeveloperMode,
+  'edit': MdEdit,
+  'edit_calendar': MdEditCalendar,
+  'group': MdGroup,
+  'image': MdImage,
+  'language': MdLanguage,
+  'pending': MdPending,
+  'redeem': MdRedeem,
+  'yard': MdYard,
+  'window': MdWindow,
+  'table_restaurant': MdTableRestaurant,
+  'table_bar': MdTableBar,
+  'living': MdLiving,
+  'dining': MdDining,
+  'chair': MdChair,
+  'camera_outdoor': MdCameraOutdoor,
+  'camera_indoor': MdCameraIndoor,
+  'stroller': MdStroller,
+  'room_preferences': MdRoomPreferences,
+  'grass': MdGrass,
+  'desk': MdDesk,
+  'crib': MdCrib,
+  'sports_esports': MdSportsEsports,
+  'local_fire_department': MdLocalFireDepartment,
+  'hvac': MdHvac,
+  'toys': MdToys,
+  'security': MdSecurity,
+  'vpn_key': MdVpnKey,
+  'games': MdGames,
 };
 
 export const IconRenderer = ({ name, className = '', ...props }: { name: string, className?: string, [key: string]: any }) => {
-  const IconComponent = iconMap[name];
+  const IconComponent = iconMap[name as keyof typeof iconMap];
   
   if (!IconComponent) {
     return <MdCheckCircle className={className} {...props} />;
