@@ -4,6 +4,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -12,7 +13,6 @@ import { useEffect, useState, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import logoMarme from "@/assets/logo-marme.webp";
-import carousel1 from "@/assets/carousel1.webp";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 import { WhatsAppButton } from "@/components/WhatsAppButton";
 
@@ -105,7 +105,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600&family=Manrope:wght@300;400;500;600;700&display=swap",
       },
-      { rel: "preload", as: "image", href: carousel1, fetchPriority: "high" },
     ],
   }),
   shellComponent: RootShell,
@@ -114,14 +113,28 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+function PageLoader() {
+  const isLoading = useRouterState({ select: (s) => s.status === 'pending' });
+
+  return (
+    <div
+      className={`fixed top-0 left-0 right-0 z-[99999] h-0.5 transition-opacity duration-300 ${isLoading ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+    >
+      <div className="h-full w-full bg-[#C9A96E] animate-[loaderSlide_1.2s_ease_infinite] origin-left" />
+    </div>
+  );
+}
+
 function RootShell({ children }: { children: ReactNode }) {
   return (
     <html lang="id">
       <head>
         <HeadContent />
+        <style>{`@keyframes loaderSlide{0%{transform:scaleX(0);transform-origin:left}50%{transform:scaleX(1);transform-origin:left}50.1%{transform:scaleX(1);transform-origin:right}100%{transform:scaleX(0);transform-origin:right}}`}</style>
         <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key={import.meta.env.VITE_MIDTRANS_CLIENT_KEY}></script>
       </head>
       <body>
+        <PageLoader />
         {children}
         <Scripts />
       </body>

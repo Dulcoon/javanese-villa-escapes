@@ -329,7 +329,7 @@ function RoomDetail() {
               </div>
             </div>
             <div className="lg:text-right">
-              <div className="font-sans text-4xl font-semibold text-primary">{formatIDR(room.base_price)}</div>
+              <div className="font-sans text-4xl font-semibold text-primary">{formatIDR(room.display_price ?? room.base_price)}</div>
               <div className="eyebrow text-muted-foreground mt-1">{t("rooms.pernight")} · {t("room.tax")}</div>
             </div>
           </div>
@@ -451,7 +451,7 @@ function RoomDetail() {
           {/* Booking card */}
           <aside className="lg:sticky lg:top-28 self-start">
             <div className="border border-border/60 bg-ivory/40 p-8 rounded-2xl">
-              <div className="font-sans text-3xl font-semibold text-primary">{formatIDR(room.base_price)}</div>
+              <div className="font-sans text-3xl font-semibold text-primary">{formatIDR(room.display_price ?? room.base_price)}</div>
               <div className="eyebrow text-muted-foreground mt-1">{t("rooms.pernight")}</div>
 
               <div className="mt-6 space-y-4">
@@ -679,7 +679,7 @@ function RoomDetail() {
                   <div className="p-6 flex flex-col justify-center">
                     <h3 className="font-manrope text-xl font-semibold text-primary">{r.name}</h3>
                     <p className="mt-2 text-sm text-muted-foreground line-clamp-3">{tDynamic(r, 'description')}</p>
-                    <div className="mt-4 text-sm text-gold tracking-wide">{formatIDR(r.base_price)} / {t("rooms.pernight")}</div>
+                      <div className="mt-4 text-sm text-gold tracking-wide">{formatIDR(r.display_price ?? r.base_price)} / {t("rooms.pernight")}</div>
                   </div>
                 </Link>
               );

@@ -46,6 +46,23 @@ export interface Villa {
   seo_description?: string;
   seo_title_en?: string;
   seo_description_en?: string;
+  display_price?: number;
+}
+
+export interface VillaLite {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  description_en?: string;
+  size: string;
+  bed_count: number;
+  capacity: number;
+  base_price: number;
+  weekend_price: number;
+  weekend_enabled: boolean;
+  display_price: number;
+  images: VillaImage[];
 }
 
 export interface ApiResponse<T> {
@@ -79,6 +96,7 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
 
 export const api = {
   getVillas: (): Promise<ApiResponse<Villa[]>> => fetchApi('/villas'),
+  getVillasLite: (): Promise<ApiResponse<VillaLite[]>> => fetchApi('/villas/lite'),
   getVilla: (slug: string): Promise<ApiResponse<Villa>> => fetchApi(`/villas/${slug}`),
   checkAvailability: (data: any) => 
     fetch(`${API_BASE_URL}/check-availability`, {

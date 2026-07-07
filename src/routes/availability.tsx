@@ -319,7 +319,7 @@ function AvailabilityPage() {
                   </div>
                   <div className="p-6 md:py-8 md:pr-8 md:text-right border-t md:border-t-0 md:border-l border-border/60 flex md:flex-col items-center md:items-end justify-between gap-4">
                     <div>
-                      <div className="font-sans text-2xl font-semibold text-primary">{formatIDR(r.base_price)}</div>
+                      <div className="font-sans text-2xl font-semibold text-primary">{formatIDR(r.display_price ?? r.base_price)}</div>
                       <div className="eyebrow text-muted-foreground mt-1">per malam</div>
                       {nights > 0 && (
                         <div className="mt-3 text-xs text-muted-foreground">

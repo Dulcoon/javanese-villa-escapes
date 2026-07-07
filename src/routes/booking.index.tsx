@@ -205,7 +205,7 @@ function BookingFormPage() {
                     <h3 className="text-xl text-primary">{r.name}</h3>
                     <p className="mt-1 text-sm text-muted-foreground line-clamp-2">{r.description}</p>
                     <div className="mt-4 flex items-center justify-between">
-                      <span className="text-lg text-gold">{formatIDR(r.base_price)} <span className="text-xs text-muted-foreground font-sans">/malam</span></span>
+                      <span className="text-lg text-gold">{formatIDR(r.display_price ?? r.base_price)} <span className="text-xs text-muted-foreground font-sans">/malam</span></span>
                       <span className="text-gold text-sm group-hover:translate-x-1 transition-transform inline-flex items-center gap-1">Pilih <ChevronRight className="h-3 w-3" /></span>
                     </div>
                   </div>

@@ -11,10 +11,6 @@ import addon1 from "@/assets/addon1.webp";
 import addon2 from "@/assets/addon2.webp";
 import addon3 from "@/assets/addon3.webp";
 import aboutDetail from "@/assets/about-detail.webp";
-import galleryPool from "@/assets/gallery-pool.webp";
-import galleryGarden from "@/assets/gallery-garden.webp";
-import galleryRestaurant from "@/assets/gallery-restaurant.webp";
-import roomPavilion from "@/assets/room-pavilion.webp";
 import carousel1 from "@/assets/carousel1.webp";
 import carousel2 from "@/assets/carousel2.webp";
 import carousel3 from "@/assets/carousel3.webp";
@@ -25,7 +21,7 @@ import sekilas3 from "@/assets/sekilas3.webp";
 import sekilas4 from "@/assets/sekilas4.webp";
 
 import { formatIDR } from "@/lib/utils";
-import { api, Villa, IMAGE_BASE_URL } from "@/lib/api";
+import { api, VillaLite, IMAGE_BASE_URL } from "@/lib/api";
 import {
   Icon5Bed, Icon5Bath, IconKitchen, IconPool, IconFridge, IconAC, IconWifi,
   IconWaterHeater, IconDispenser, IconTV, IconAmenities, IconParking, IconSnack, IconWelcomeDrink
@@ -33,6 +29,10 @@ import {
 import { Footer } from "@/components/Footer";
 
 export const Route = createFileRoute("/")({
+  loader: async () => {
+    const res = await api.getVillasLite();
+    return { villas: res.data as VillaLite[] };
+  },
   head: () => ({
     meta: [
       { title: "Marme Villa Jogja — Exceptional Service, Memorable Stays" },
@@ -43,8 +43,6 @@ export const Route = createFileRoute("/")({
     ],
     links: [
       { rel: "preload", as: "image", href: carousel1, fetchPriority: "high" },
-      { rel: "preload", as: "image", href: carousel2 },
-      { rel: "preload", as: "image", href: carousel3 },
     ],
   }),
   component: VillaHome,
@@ -233,31 +231,8 @@ function About() {
 
 /* ---------- Rooms ---------- */
 function Rooms() {
-  const [villas, setVillas] = useState<Villa[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { villas } = Route.useLoaderData();
   const { t, tDynamic } = useTranslation();
-
-  useEffect(() => {
-    api.getVillas().then(res => {
-      if (res.status === 'success') {
-        setVillas(res.data);
-      }
-    }).catch(err => {
-      console.error(err);
-    }).finally(() => {
-      setIsLoading(false);
-    });
-  }, []);
-
-  if (isLoading) {
-    return (
-      <section id="rooms" className="py-32 px-6 bg-ivory/40">
-        <div className="max-w-7xl mx-auto flex items-center justify-center">
-          <Loader2 className="w-10 h-10 animate-spin text-gold" />
-        </div>
-      </section>
-    );
-  }
 
   return (
     <section id="rooms" className="py-32 px-6 bg-ivory/40">
@@ -286,7 +261,7 @@ function Rooms() {
                   </div>
                   <div className="mt-6 flex items-end justify-between">
                     <div>
-                      <div className="font-sans text-2xl font-semibold text-primary">{formatIDR(r.base_price)}</div>
+                      <div className="font-sans text-2xl font-semibold text-primary">{formatIDR(r.display_price)}</div>
                       <div className="text-xs text-muted-foreground tracking-wide uppercase">{t("rooms.pernight")}</div>
                     </div>
                     <Link to="/rooms/$slug" params={{ slug: r.slug }} className="text-sm tracking-wide text-gold hover:text-primary border-b border-gold pb-0.5">
