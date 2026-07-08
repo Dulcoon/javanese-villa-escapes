@@ -127,12 +127,18 @@ function PageLoader() {
 }
 
 function RootShell({ children }: { children: ReactNode }) {
+  const clientKey = import.meta.env.VITE_MIDTRANS_CLIENT_KEY || "";
+  const isProduction = clientKey && !clientKey.startsWith("SB-");
+  const snapUrl = isProduction
+    ? "https://app.midtrans.com/snap/snap.js"
+    : "https://app.sandbox.midtrans.com/snap/snap.js";
+
   return (
     <html lang="id">
       <head>
         <HeadContent />
         <style>{`@keyframes loaderSlide{0%{transform:scaleX(0);transform-origin:left}50%{transform:scaleX(1);transform-origin:left}50.1%{transform:scaleX(1);transform-origin:right}100%{transform:scaleX(0);transform-origin:right}}`}</style>
-        <script type="text/javascript" src="https://app.sandbox.midtrans.com/snap/snap.js" data-client-key={import.meta.env.VITE_MIDTRANS_CLIENT_KEY}></script>
+        <script type="text/javascript" src={snapUrl} data-client-key={clientKey}></script>
       </head>
       <body>
         <PageLoader />
