@@ -98,6 +98,12 @@ export const api = {
   getVillas: (): Promise<ApiResponse<Villa[]>> => fetchApi('/villas'),
   getVillasLite: (): Promise<ApiResponse<VillaLite[]>> => fetchApi('/villas/lite'),
   getVilla: (slug: string): Promise<ApiResponse<Villa>> => fetchApi(`/villas/${slug}`),
+  getBookingStatus: (code: string, email: string): Promise<ApiResponse<{
+    booking: any;
+    payment_gateway: string;
+    payment_url: string | null;
+    snap_token: string | null;
+  }>> => fetchApi(`/bookings/status?booking_code=${encodeURIComponent(code)}&email=${encodeURIComponent(email)}`),
   checkAvailability: (data: any) => 
     fetch(`${API_BASE_URL}/check-availability`, {
       method: 'POST',

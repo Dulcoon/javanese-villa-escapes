@@ -433,6 +433,30 @@ function BookingFormPage() {
                       </div>
                       <span className="font-medium">{pricing ? formatIDR(pricing.base_price_total) : '—'}</span>
                     </div>
+
+                    {pricing?.breakdown && (
+                      <div className="pl-4 border-l border-gold/30 space-y-1.5 text-xs text-muted-foreground/80 my-1">
+                        {pricing.breakdown.map((day: any) => (
+                          <div key={day.date} className="flex justify-between items-center">
+                            <span className="flex items-center gap-1.5">
+                              <span>{new Date(day.date).toLocaleDateString("id-ID", { day: "numeric", month: "short", weekday: "short" })}</span>
+                              {day.type === 'custom' && (
+                                <span className="text-[9px] font-sans tracking-wide uppercase px-1.5 py-0.5 rounded bg-gold/10 text-gold border border-gold/25">
+                                  Tarif Khusus
+                                </span>
+                              )}
+                              {day.type === 'weekend' && (
+                                <span className="text-[9px] font-sans tracking-wide uppercase px-1.5 py-0.5 rounded bg-[#EFE5D5] text-[#8B7355]">
+                                  Weekend
+                                </span>
+                              )}
+                            </span>
+                            <span className="font-mono">{formatIDR(day.price)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
                     {pricing && pricing.extra_guests > 0 && (
                       <div className="flex justify-between items-start mt-1">
                         <div>

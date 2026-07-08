@@ -5,6 +5,7 @@ import {
   createRootRouteWithContext,
   useRouter,
   useRouterState,
+  useLocation,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -143,14 +144,25 @@ function RootShell({ children }: { children: ReactNode }) {
 }
 
 function SplashScreen() {
-  const [visible, setVisible] = useState(true);
+  const location = useLocation();
+  const [visible, setVisible] = useState(() => {
+    if (typeof window !== 'undefined') {
+      const isHome = location.pathname === '/';
+      const hasSeen = sessionStorage.getItem('hasSeenSplash');
+      return isHome && !hasSeen;
+    }
+    return false;
+  });
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setVisible(false);
-    }, 2000);
-    return () => clearTimeout(timer);
-  }, []);
+    if (visible) {
+      const timer = setTimeout(() => {
+        setVisible(false);
+        sessionStorage.setItem('hasSeenSplash', 'true');
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [visible]);
 
   if (!visible) return null;
 
