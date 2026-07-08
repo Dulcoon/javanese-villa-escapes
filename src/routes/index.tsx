@@ -438,13 +438,22 @@ function Gallery() {
 }
 
 /* ---------- Testimonials ---------- */
-const reviews = [
-  { n: "Amélie L.", p: "Paris", q: "Pengalaman menginap paling puitis dalam hidup kami. Setiap detail membisikkan keindahan Jawa kuno, namun kenyamanan modern tetap terpenuhi secara sempurna.", r: 5 },
-  { n: "James & Mia", p: "Singapura", q: "Kami datang untuk akhir pekan dan akhirnya tinggal selama seminggu. Malam-malam syahdu dengan alunan gamelan akan selalu hidup dalam ingatan kami.", r: 5 },
-  { n: "Putri Anggraini", p: "Jakarta", q: "Sebuah kepulangan yang tidak saya sadari sangat saya butuhkan. Seluruh tim memperlakukan Anda layaknya keluarga sendiri.", r: 5 },
-];
 function Testimonials() {
   const { t } = useTranslation();
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const apiBase = import.meta.env.VITE_API_BASE_URL || "http://localhost:8000/api";
+    fetch(`${apiBase}/reviews`, { headers: { Accept: "application/json" } })
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.status === "success") setReviews(data.data);
+      })
+      .catch(() => {})
+      .finally(() => setIsLoading(false));
+  }, []);
+
   return (
     <section className="py-32 px-6">
       <div className="max-w-7xl mx-auto">
@@ -453,25 +462,34 @@ function Testimonials() {
           <h2 className="text-3xl md:text-5xl mt-4 font-bold">{t("testi.title")}</h2>
         </div>
         <div className="grid md:grid-cols-3 gap-8">
-          {reviews.map((r) => (
-            <figure key={r.n} className="bg-background border border-border/60 p-10 flex flex-col rounded-2xl">
-              <div className="flex gap-1 text-gold mb-6">
-                {Array.from({ length: r.r }).map((_, i) => <Star key={i} className="h-4 w-4 fill-current" />)}
-              </div>
-              <blockquote className="font-manrope text-xl leading-relaxed text-foreground/90 flex-1">
-                "{r.q}"
-              </blockquote>
-              <figcaption className="mt-8 pt-6 border-t border-border/60">
-                <div className="font-medium text-primary">{r.n}</div>
-                <div className="text-xs text-muted-foreground tracking-wide mt-1">{r.p}</div>
-              </figcaption>
-            </figure>
-          ))}
+          {isLoading
+            ? Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="bg-background border border-border/60 p-10 flex flex-col rounded-2xl animate-pulse">
+                  <div className="flex gap-1 mb-6">{Array.from({length:5}).map((_,j)=><div key={j} className="h-4 w-4 rounded bg-border/60"/>)}</div>
+                  <div className="space-y-2 flex-1"><div className="h-4 bg-border/60 rounded w-full"/><div className="h-4 bg-border/60 rounded w-5/6"/><div className="h-4 bg-border/60 rounded w-4/6"/></div>
+                  <div className="mt-8 pt-6 border-t border-border/60"><div className="h-4 bg-border/60 rounded w-1/3 mb-2"/><div className="h-3 bg-border/40 rounded w-1/4"/></div>
+                </div>
+              ))
+            : reviews.map((r) => (
+                <figure key={r.id} className="bg-background border border-border/60 p-10 flex flex-col rounded-2xl">
+                  <div className="flex gap-1 text-gold mb-6">
+                    {Array.from({ length: r.rating }).map((_, i) => <Star key={i} className="h-4 w-4 fill-current" />)}
+                  </div>
+                  <blockquote className="font-manrope text-xl leading-relaxed text-foreground/90 flex-1">
+                    "{r.comment}"
+                  </blockquote>
+                  <figcaption className="mt-8 pt-6 border-t border-border/60">
+                    <div className="font-medium text-primary">{r.guest_name}</div>
+                    <div className="text-xs text-muted-foreground tracking-wide mt-1">{r.city}</div>
+                  </figcaption>
+                </figure>
+              ))}
         </div>
       </div>
     </section>
   );
 }
+
 
 /* ---------- Location ---------- */
 function Location() {

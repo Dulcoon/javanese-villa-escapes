@@ -16,6 +16,7 @@ import { Route as AvailabilityRouteImport } from './routes/availability'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BookingIndexRouteImport } from './routes/booking.index'
 import { Route as RoomsSlugRouteImport } from './routes/rooms.$slug'
+import { Route as ReviewTokenRouteImport } from './routes/review.$token'
 import { Route as BookingSuccessRouteImport } from './routes/booking.success'
 import { Route as BookingStatusRouteImport } from './routes/booking.status'
 
@@ -54,6 +55,11 @@ const RoomsSlugRoute = RoomsSlugRouteImport.update({
   path: '/rooms/$slug',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ReviewTokenRoute = ReviewTokenRouteImport.update({
+  id: '/review/$token',
+  path: '/review/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BookingSuccessRoute = BookingSuccessRouteImport.update({
   id: '/success',
   path: '/success',
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/booking/status': typeof BookingStatusRoute
   '/booking/success': typeof BookingSuccessRoute
+  '/review/$token': typeof ReviewTokenRoute
   '/rooms/$slug': typeof RoomsSlugRoute
   '/booking/': typeof BookingIndexRoute
 }
@@ -83,6 +90,7 @@ export interface FileRoutesByTo {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/booking/status': typeof BookingStatusRoute
   '/booking/success': typeof BookingSuccessRoute
+  '/review/$token': typeof ReviewTokenRoute
   '/rooms/$slug': typeof RoomsSlugRoute
   '/booking': typeof BookingIndexRoute
 }
@@ -95,6 +103,7 @@ export interface FileRoutesById {
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/booking/status': typeof BookingStatusRoute
   '/booking/success': typeof BookingSuccessRoute
+  '/review/$token': typeof ReviewTokenRoute
   '/rooms/$slug': typeof RoomsSlugRoute
   '/booking/': typeof BookingIndexRoute
 }
@@ -108,6 +117,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/booking/status'
     | '/booking/success'
+    | '/review/$token'
     | '/rooms/$slug'
     | '/booking/'
   fileRoutesByTo: FileRoutesByTo
@@ -118,6 +128,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/booking/status'
     | '/booking/success'
+    | '/review/$token'
     | '/rooms/$slug'
     | '/booking'
   id:
@@ -129,6 +140,7 @@ export interface FileRouteTypes {
     | '/sitemap.xml'
     | '/booking/status'
     | '/booking/success'
+    | '/review/$token'
     | '/rooms/$slug'
     | '/booking/'
   fileRoutesById: FileRoutesById
@@ -139,6 +151,7 @@ export interface RootRouteChildren {
   BookingRoute: typeof BookingRouteWithChildren
   RobotsDottxtRoute: typeof RobotsDottxtRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  ReviewTokenRoute: typeof ReviewTokenRoute
   RoomsSlugRoute: typeof RoomsSlugRoute
 }
 
@@ -193,6 +206,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RoomsSlugRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/review/$token': {
+      id: '/review/$token'
+      path: '/review/$token'
+      fullPath: '/review/$token'
+      preLoaderRoute: typeof ReviewTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/booking/success': {
       id: '/booking/success'
       path: '/success'
@@ -231,6 +251,7 @@ const rootRouteChildren: RootRouteChildren = {
   BookingRoute: BookingRouteWithChildren,
   RobotsDottxtRoute: RobotsDottxtRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  ReviewTokenRoute: ReviewTokenRoute,
   RoomsSlugRoute: RoomsSlugRoute,
 }
 export const routeTree = rootRouteImport
