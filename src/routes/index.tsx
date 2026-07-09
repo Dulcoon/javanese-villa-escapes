@@ -521,7 +521,7 @@ function Location() {
         <div className="aspect-[4/5] overflow-hidden border border-border/60 rounded-2xl">
           <iframe
             title="Lokasi Marme Villa Jogja"
-            src="https://www.openstreetmap.org/export/embed.html?bbox=110.2%2C-7.85%2C110.5%2C-7.65&layer=mapnik&marker=-7.75%2C110.35"
+            src="https://maps.google.com/maps?q=marme%20villa%20jogja&t=&z=15&ie=UTF8&iwloc=&output=embed"
             className="h-full w-full grayscale-[20%]"
             loading="lazy"
           />
