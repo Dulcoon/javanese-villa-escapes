@@ -167,7 +167,39 @@ function RoomDetail() {
 
   const totalGuests = adults + children;
 
-  const disabledDates = bookedDates.map((dateStr: string) => new Date(dateStr + "T00:00:00"));
+  const isDateDisabled = (day: Date) => {
+    const today = startOfToday();
+    if (day < today) return true;
+
+    const year = day.getFullYear();
+    const month = String(day.getMonth() + 1).padStart(2, '0');
+    const dateStr = String(day.getDate()).padStart(2, '0');
+    const formattedDay = `${year}-${month}-${dateStr}`;
+
+    if (!date?.from) {
+      return bookedDates.includes(formattedDay);
+    }
+
+    const checkIn = date.from;
+    const checkInTime = new Date(checkIn.getFullYear(), checkIn.getMonth(), checkIn.getDate()).getTime();
+    const dayTime = new Date(day.getFullYear(), day.getMonth(), day.getDate()).getTime();
+
+    if (dayTime <= checkInTime) return true;
+
+    const bookedDatesSorted = [...bookedDates].sort();
+    const checkInStr = `${checkIn.getFullYear()}-${String(checkIn.getMonth() + 1).padStart(2, '0')}-${String(checkIn.getDate()).padStart(2, '0')}`;
+    
+    const firstBookedDateAfterCheckIn = bookedDatesSorted.find(d => d > checkInStr);
+
+    if (firstBookedDateAfterCheckIn) {
+      const firstBookedTime = new Date(firstBookedDateAfterCheckIn + "T00:00:00").getTime();
+      if (dayTime > firstBookedTime) {
+        return true;
+      }
+    }
+
+    return bookedDates.includes(formattedDay) && formattedDay !== firstBookedDateAfterCheckIn;
+  };
 
   const [isGalleryOpen, setIsGalleryOpen] = React.useState(false);
   const [alertOpen, setAlertOpen] = React.useState(false);
@@ -482,10 +514,7 @@ function RoomDetail() {
                         selected={date}
                         onSelect={setDate}
                         numberOfMonths={1}
-                        disabled={[
-                          { before: startOfToday() },
-                          ...disabledDates
-                        ]}
+                        disabled={isDateDisabled}
                       />
                     </PopoverContent>
                   </Popover>
