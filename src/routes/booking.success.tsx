@@ -165,7 +165,7 @@ function BookingSuccessPage() {
 
           <div className="mt-10 text-center space-y-4">
             <p className="text-sm text-muted-foreground">
-              Ada pertanyaan? <a href="mailto:stay@marmevillajogja.com" className="text-gold hover:underline">stay@marmevillajogja.com</a> · +62 361 1234 567
+              Ada pertanyaan? <a href="mailto:marmevillajogja@gmail.com" className="text-gold hover:underline">marmevillajogja@gmail.com</a> · +62 851 9008 3940
             </p>
             <Link
               to="/"
