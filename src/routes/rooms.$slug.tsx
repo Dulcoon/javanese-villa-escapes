@@ -516,6 +516,14 @@ function RoomDetail() {
                         numberOfMonths={1}
                         disabled={isDateDisabled}
                       />
+                      <div className="p-3 border-t border-border/50">
+                        <button 
+                          onClick={() => setDate(undefined)} 
+                          className="w-full py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-black/5 rounded-lg transition-colors"
+                        >
+                          Reset
+                        </button>
+                      </div>
                     </PopoverContent>
                   </Popover>
                 </div>
