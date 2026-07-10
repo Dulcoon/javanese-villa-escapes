@@ -36,10 +36,10 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Marme Villa Jogja — Exceptional Service, Memorable Stays" },
-      { name: "description", content: "Villa budaya mewah yang memadukan warisan tradisional Jawa, ketenangan, dan kenyamanan modern. Pesan Joglo pribadi Anda." },
+      { name: "description", content: "Marme Villa Jogja lebih dari sekadar tempat menginap. Villa ini dirancang untuk menciptakan momen hangat yang berharga bersama keluarga dan orang terdekat" },
       { property: "og:title", content: "Marme Villa Jogja" },
-      { property: "og:description", content: "Villa budaya mewah di Jawa Tengah." },
-      { property: "og:image", content: heroVilla },
+      { property: "og:description", content: "Exceptional Service, Memorable Stays" },
+      { property: "og:image", content: `https://marmevillajogja.com${carousel3}` },
     ],
     links: [
       { rel: "preload", as: "image", href: carousel1, fetchPriority: "high" },
@@ -450,7 +450,7 @@ function Testimonials() {
       .then((data) => {
         if (data.status === "success") setReviews(data.data);
       })
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setIsLoading(false));
   }, []);
 
@@ -464,26 +464,26 @@ function Testimonials() {
         <div className="grid md:grid-cols-3 gap-8">
           {isLoading
             ? Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="bg-background border border-border/60 p-10 flex flex-col rounded-2xl animate-pulse">
-                  <div className="flex gap-1 mb-6">{Array.from({length:5}).map((_,j)=><div key={j} className="h-4 w-4 rounded bg-border/60"/>)}</div>
-                  <div className="space-y-2 flex-1"><div className="h-4 bg-border/60 rounded w-full"/><div className="h-4 bg-border/60 rounded w-5/6"/><div className="h-4 bg-border/60 rounded w-4/6"/></div>
-                  <div className="mt-8 pt-6 border-t border-border/60"><div className="h-4 bg-border/60 rounded w-1/3 mb-2"/><div className="h-3 bg-border/40 rounded w-1/4"/></div>
-                </div>
-              ))
+              <div key={i} className="bg-background border border-border/60 p-10 flex flex-col rounded-2xl animate-pulse">
+                <div className="flex gap-1 mb-6">{Array.from({ length: 5 }).map((_, j) => <div key={j} className="h-4 w-4 rounded bg-border/60" />)}</div>
+                <div className="space-y-2 flex-1"><div className="h-4 bg-border/60 rounded w-full" /><div className="h-4 bg-border/60 rounded w-5/6" /><div className="h-4 bg-border/60 rounded w-4/6" /></div>
+                <div className="mt-8 pt-6 border-t border-border/60"><div className="h-4 bg-border/60 rounded w-1/3 mb-2" /><div className="h-3 bg-border/40 rounded w-1/4" /></div>
+              </div>
+            ))
             : reviews.map((r) => (
-                <figure key={r.id} className="bg-background border border-border/60 p-10 flex flex-col rounded-2xl">
-                  <div className="flex gap-1 text-gold mb-6">
-                    {Array.from({ length: r.rating }).map((_, i) => <Star key={i} className="h-4 w-4 fill-current" />)}
-                  </div>
-                  <blockquote className="font-manrope text-xl leading-relaxed text-foreground/90 flex-1">
-                    "{r.comment}"
-                  </blockquote>
-                  <figcaption className="mt-8 pt-6 border-t border-border/60">
-                    <div className="font-medium text-primary">{r.guest_name}</div>
-                    <div className="text-xs text-muted-foreground tracking-wide mt-1">{r.city}</div>
-                  </figcaption>
-                </figure>
-              ))}
+              <figure key={r.id} className="bg-background border border-border/60 p-10 flex flex-col rounded-2xl">
+                <div className="flex gap-1 text-gold mb-6">
+                  {Array.from({ length: r.rating }).map((_, i) => <Star key={i} className="h-4 w-4 fill-current" />)}
+                </div>
+                <blockquote className="font-manrope text-xl leading-relaxed text-foreground/90 flex-1">
+                  "{r.comment}"
+                </blockquote>
+                <figcaption className="mt-8 pt-6 border-t border-border/60">
+                  <div className="font-medium text-primary">{r.guest_name}</div>
+                  <div className="text-xs text-muted-foreground tracking-wide mt-1">{r.city}</div>
+                </figcaption>
+              </figure>
+            ))}
         </div>
       </div>
     </section>
