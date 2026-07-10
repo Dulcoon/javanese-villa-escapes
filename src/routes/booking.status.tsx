@@ -306,7 +306,7 @@ function BookingStatusPage() {
                     <Calendar className="h-3.5 w-3.5 text-gold" /> Tanggal Check-in
                   </div>
                   <div className="font-semibold text-primary">{formatDate(bookingData.check_in)}</div>
-                  <div className="text-xs text-muted-foreground mt-1">Mulai pukul 14:00 WIB</div>
+                  <div className="text-xs text-muted-foreground mt-1">Mulai pukul 15:00 WIB</div>
                 </div>
                 <div>
                   <div className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1.5">
