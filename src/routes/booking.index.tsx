@@ -178,6 +178,9 @@ function BookingFormPage() {
           toast.error(lang === "en" ? "Unknown payment method." : "Metode pembayaran tidak dikenal.");
           setIsLoading(false);
         }
+      } else {
+        toast.error(response.message || t("booking.alert.submit_error"));
+        setIsLoading(false);
       }
     } catch (error: any) {
       toast.error(error.message || t("booking.alert.submit_error"));

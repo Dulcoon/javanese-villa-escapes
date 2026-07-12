@@ -131,22 +131,22 @@ function BookingStatusPage() {
 
   const getStatusDisplay = (bookingStatus: string, paymentStatus: string) => {
     if (bookingStatus === "cancelled") {
-      return { label: t("booking.status.cancelled"), style: "text-red-700 bg-red-50 border-red-200" };
+      return { label: t("booking.status.val.cancelled"), style: "text-red-700 bg-red-50 border-red-200" };
     }
     if (bookingStatus === "payment_error") {
-      return { label: lang === "en" ? "Payment Error" : "Error Pembayaran", style: "text-red-700 bg-red-50 border-red-200" };
+      return { label: t("booking.status.val.payment_error"), style: "text-red-700 bg-red-50 border-red-200" };
     }
     if (paymentStatus === "paid") {
-      return { label: t("booking.status.paid"), style: "text-emerald-700 bg-emerald-50 border-emerald-200" };
+      return { label: t("booking.status.val.paid"), style: "text-emerald-700 bg-emerald-50 border-emerald-200" };
     }
     if (paymentStatus === "pending") {
-      return { label: t("booking.status.pending"), style: "text-amber-700 bg-amber-50 border-amber-200 animate-pulse" };
+      return { label: t("booking.status.val.pending"), style: "text-amber-700 bg-amber-50 border-amber-200 animate-pulse" };
     }
     if (bookingStatus === "checked_in") {
-      return { label: lang === "en" ? "Checked In" : "Sudah Check-in", style: "text-blue-700 bg-blue-50 border-blue-200" };
+      return { label: t("booking.status.val.checked_in"), style: "text-blue-700 bg-blue-50 border-blue-200" };
     }
     if (bookingStatus === "checked_out") {
-      return { label: lang === "en" ? "Checked Out" : "Selesai", style: "text-gray-700 bg-gray-50 border-gray-200" };
+      return { label: t("booking.status.val.checked_out"), style: "text-gray-700 bg-gray-50 border-gray-200" };
     }
     return { label: bookingStatus, style: "text-primary bg-ivory border-border" };
   };
@@ -329,14 +329,14 @@ function BookingStatusPage() {
                   <div className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1.5">
                     <Users className="h-3.5 w-3.5 text-gold" /> {t("booking.summary.guests")}
                   </div>
-                  <div className="font-medium text-primary">{bookingData.guest_count} {lang === "en" ? (bookingData.guest_count === 1 ? "Guest" : "Guests") : "Tamu"}</div>
+                  <div className="font-medium text-primary">{t("booking.status.guests_value", { count: bookingData.guest_count })}</div>
                 </div>
                 <div>
                   <div className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1.5">
-                    <BedDouble className="h-3.5 w-3.5 text-gold" /> {lang === "en" ? "Length of Stay" : "Durasi Menginap"}
+                    <BedDouble className="h-3.5 w-3.5 text-gold" /> {t("booking.status.nights_label")}
                   </div>
                   <div className="font-medium text-primary">
-                    {nightsBetween(bookingData.check_in, bookingData.check_out)} {nightsBetween(bookingData.check_in, bookingData.check_out) === 1 ? t("booking.night") : t("booking.nights", { count: nightsBetween(bookingData.check_in, bookingData.check_out) })}
+                    {nightsBetween(bookingData.check_in, bookingData.check_out) === 1 ? t("booking.night", { count: 1 }) : t("booking.nights", { count: nightsBetween(bookingData.check_in, bookingData.check_out) })}
                   </div>
                 </div>
                 <div>
