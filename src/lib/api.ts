@@ -94,6 +94,13 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   return data;
 }
 
+export interface DailyPriceEntry {
+  price: number;
+  type: 'standard' | 'weekend' | 'custom';
+}
+
+export type DailyPriceMap = Record<string, DailyPriceEntry>;
+
 export const api = {
   getVillas: (): Promise<ApiResponse<Villa[]>> => fetchApi('/villas'),
   getVillasLite: (): Promise<ApiResponse<VillaLite[]>> => fetchApi('/villas/lite'),
@@ -111,6 +118,8 @@ export const api = {
       body: JSON.stringify(data),
     }).then(r => r.json()),
   getBookedDates: (slug: string) => fetch(`${API_BASE_URL}/villas/${slug}/booked-dates`).then(r => r.json()),
+  getDailyPrices: (slug: string, startDate: string, endDate: string): Promise<ApiResponse<DailyPriceMap>> =>
+    fetchApi(`/villas/${slug}/daily-prices?start_date=${startDate}&end_date=${endDate}`),
   submitBooking: (data: any) =>
     fetch(`${API_BASE_URL}/bookings`, {
     method: 'POST',
@@ -124,3 +133,4 @@ export const api = {
     body: JSON.stringify(data),
   }).then(r => r.json()),
 };
+

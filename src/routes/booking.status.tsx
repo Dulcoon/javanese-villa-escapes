@@ -6,6 +6,7 @@ import { Calendar, Users, BedDouble, Mail, Phone, CreditCard, Loader2, AlertCirc
 import { formatIDR } from "@/lib/utils";
 import { api, IMAGE_BASE_URL } from "@/lib/api";
 import { toast } from "sonner";
+import { useTranslation } from "@/lib/i18n/LanguageContext";
 
 const searchSchema = z.object({
   code: fallback(z.string(), "").default(""),
@@ -32,6 +33,11 @@ function nightsBetween(a: string, b: string) {
 function BookingStatusPage() {
   const params = Route.useSearch();
   const navigate = useNavigate();
+  const { lang, t, tDynamic } = useTranslation();
+
+  useEffect(() => {
+    document.title = t("booking.status.title_page") + " — Marme Villa";
+  }, [t]);
 
   // Search input state
   const [inputCode, setInputCode] = useState(params.code);
@@ -56,11 +62,11 @@ function BookingStatusPage() {
         setPaymentUrl(response.data.payment_url);
         setSnapToken(response.data.snap_token);
       } else {
-        toast.error(response.message || "Gagal memuat status reservasi.");
+        toast.error(response.message || (lang === "en" ? "Failed to load booking status." : "Gagal memuat status reservasi."));
         setBookingData(null);
       }
     } catch (error: any) {
-      toast.error(error.message || "Gagal menemukan reservasi. Periksa kode booking dan email Anda.");
+      toast.error(error.message || t("booking.status.not_found"));
       setBookingData(null);
     } finally {
       setIsLoading(false);
@@ -77,7 +83,7 @@ function BookingStatusPage() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputCode.trim() || !inputEmail.trim()) {
-      toast.error("Harap isi Kode Booking dan Email");
+      toast.error(t("booking.status.form.validation"));
       return;
     }
     navigate({
@@ -91,7 +97,7 @@ function BookingStatusPage() {
 
   const handlePay = () => {
     if (paymentGateway === "doku" && paymentUrl) {
-      toast.success("Mengarahkan ke DOKU...");
+      toast.success(lang === "en" ? "Redirecting to DOKU..." : "Mengarahkan ke DOKU...");
       window.location.href = paymentUrl;
     } else if (snapToken) {
       // @ts-ignore
@@ -99,48 +105,48 @@ function BookingStatusPage() {
         // @ts-ignore
         window.snap.pay(snapToken, {
           onSuccess: function (result: any) {
-            toast.success("Pembayaran berhasil!");
+            toast.success(t("booking.status.payment.success_toast"));
             // Reload status
             if (params.code && params.email) {
               fetchBookingStatus(params.code, params.email);
             }
           },
           onPending: function (result: any) {
-            toast.info("Menunggu pembayaran...");
+            toast.info(t("booking.status.payment.pending_toast"));
           },
           onError: function (result: any) {
-            toast.error("Pembayaran gagal!");
+            toast.error(t("booking.status.payment.failed_toast"));
           },
           onClose: function () {
-            toast.info("Pembayaran ditutup.");
+            toast.info(lang === "en" ? "Payment window closed." : "Pembayaran ditutup.");
           }
         });
       } else {
-        toast.error("Midtrans Snap belum terload. Silakan muat ulang halaman.");
+        toast.error(lang === "en" ? "Midtrans Snap has not loaded yet. Please refresh." : "Midtrans Snap belum terload. Silakan muat ulang halaman.");
       }
     } else {
-      toast.error("Gagal mendapatkan link pembayaran. Hubungi admin.");
+      toast.error(lang === "en" ? "Failed to retrieve payment link. Please contact admin." : "Gagal mendapatkan link pembayaran. Hubungi admin.");
     }
   };
 
   const getStatusDisplay = (bookingStatus: string, paymentStatus: string) => {
     if (bookingStatus === "cancelled") {
-      return { label: "Dibatalkan", style: "text-red-700 bg-red-50 border-red-200" };
+      return { label: t("booking.status.cancelled"), style: "text-red-700 bg-red-50 border-red-200" };
     }
     if (bookingStatus === "payment_error") {
-      return { label: "Error Pembayaran", style: "text-red-700 bg-red-50 border-red-200" };
+      return { label: lang === "en" ? "Payment Error" : "Error Pembayaran", style: "text-red-700 bg-red-50 border-red-200" };
     }
     if (paymentStatus === "paid") {
-      return { label: "Terkonfirmasi & Lunas", style: "text-emerald-700 bg-emerald-50 border-emerald-200" };
+      return { label: t("booking.status.paid"), style: "text-emerald-700 bg-emerald-50 border-emerald-200" };
     }
     if (paymentStatus === "pending") {
-      return { label: "Menunggu Pembayaran", style: "text-amber-700 bg-amber-50 border-amber-200 animate-pulse" };
+      return { label: t("booking.status.pending"), style: "text-amber-700 bg-amber-50 border-amber-200 animate-pulse" };
     }
     if (bookingStatus === "checked_in") {
-      return { label: "Sudah Check-in", style: "text-blue-700 bg-blue-50 border-blue-200" };
+      return { label: lang === "en" ? "Checked In" : "Sudah Check-in", style: "text-blue-700 bg-blue-50 border-blue-200" };
     }
     if (bookingStatus === "checked_out") {
-      return { label: "Selesai", style: "text-gray-700 bg-gray-50 border-gray-200" };
+      return { label: lang === "en" ? "Checked Out" : "Selesai", style: "text-gray-700 bg-gray-50 border-gray-200" };
     }
     return { label: bookingStatus, style: "text-primary bg-ivory border-border" };
   };
@@ -148,7 +154,7 @@ function BookingStatusPage() {
   const formatDate = (dateStr: string) => {
     if (!dateStr) return "—";
     try {
-      return new Date(dateStr).toLocaleDateString("id-ID", {
+      return new Date(dateStr).toLocaleDateString(lang === "en" ? "en-US" : "id-ID", {
         weekday: "long",
         day: "numeric",
         month: "long",
@@ -165,7 +171,7 @@ function BookingStatusPage() {
         {/* Navigation Breadcrumb / Back button */}
         <div className="mb-8 flex items-center justify-between">
           <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors">
-            <ArrowLeft className="h-4 w-4" /> Kembali ke beranda
+            <ArrowLeft className="h-4 w-4" /> {t("booking.success.back_home")}
           </Link>
           {bookingData && (
             <button 
@@ -178,7 +184,7 @@ function BookingStatusPage() {
               }}
               className="text-xs tracking-wider uppercase text-gold hover:underline"
             >
-              Cek Reservasi Lain
+              {t("booking.status.check_another")}
             </button>
           )}
         </div>
@@ -186,18 +192,18 @@ function BookingStatusPage() {
         {/* Search Form (if no booking details fetched yet) */}
         {!bookingData ? (
           <div className="bg-ivory/40 border border-border/60 p-8 rounded-2xl md:p-12 text-center">
-            <h1 className="text-3xl font-serif text-primary mb-2">Cek Status Reservasi</h1>
+            <h1 className="text-3xl font-serif text-primary mb-2">{t("booking.status.title_page")}</h1>
             <p className="text-muted-foreground text-sm max-w-md mx-auto mb-8">
-              Masukkan Kode Booking (contoh: BK-XXXXXXXX) dan email yang Anda gunakan saat pemesanan untuk melacak status terbaru.
+              {t("booking.status.desc")}
             </p>
 
             <form onSubmit={handleSubmit} className="space-y-5 max-w-md mx-auto text-left">
               <div>
-                <label htmlFor="code" className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Kode Booking</label>
+                <label htmlFor="code" className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{t("booking.status.form.code")}</label>
                 <input 
                   type="text" 
                   id="code"
-                  placeholder="Contoh: BK-8F2D1A9B"
+                  placeholder={lang === "en" ? "Example: BK-8F2D1A9B" : "Contoh: BK-8F2D1A9B"}
                   value={inputCode}
                   onChange={(e) => setInputCode(e.target.value.toUpperCase())}
                   className="w-full bg-background border border-border/80 px-4 py-3 text-sm focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold rounded-lg font-mono"
@@ -206,11 +212,11 @@ function BookingStatusPage() {
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Alamat Email</label>
+                <label htmlFor="email" className="block text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">{t("booking.form.email")}</label>
                 <input 
                   type="email" 
                   id="email"
-                  placeholder="Contoh: emailtamu@gmail.com"
+                  placeholder={t("booking.form.email_placeholder")}
                   value={inputEmail}
                   onChange={(e) => setInputEmail(e.target.value)}
                   className="w-full bg-background border border-border/80 px-4 py-3 text-sm focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold rounded-lg"
@@ -225,10 +231,10 @@ function BookingStatusPage() {
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="h-4 w-4 animate-spin" /> Mencari Reservasi...
+                    <Loader2 className="h-4 w-4 animate-spin" /> {lang === "en" ? "Searching Booking..." : "Mencari Reservasi..."}
                   </>
                 ) : (
-                  "Cari Reservasi"
+                  lang === "en" ? "Search Booking" : "Cari Reservasi"
                 )}
               </button>
             </form>
@@ -236,7 +242,7 @@ function BookingStatusPage() {
             {hasSearched && !isLoading && (
               <div className="mt-6 flex items-center justify-center gap-2 text-sm text-red-600 bg-red-50/50 max-w-md mx-auto p-4 border border-red-100 rounded-lg">
                 <AlertCircle className="h-4 w-4 shrink-0" />
-                <span>Data reservasi tidak ditemukan. Pastikan kode booking dan email sudah benar.</span>
+                <span>{lang === "en" ? "Booking details not found. Make sure the booking code and email are correct." : "Data reservasi tidak ditemukan. Pastikan kode booking dan email sudah benar."}</span>
               </div>
             )}
           </div>
@@ -246,7 +252,7 @@ function BookingStatusPage() {
             {/* Header Status Card */}
             <div className="bg-background border border-border/60 p-6 rounded-2xl flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm">
               <div>
-                <span className="text-xs text-muted-foreground tracking-widest uppercase font-semibold">Nomor Reservasi</span>
+                <span className="text-xs text-muted-foreground tracking-widest uppercase font-semibold">{t("booking.success.order_number")}</span>
                 <h1 className="text-2xl font-mono text-primary font-bold mt-0.5">{bookingData.booking_code}</h1>
               </div>
               <div className="flex items-center gap-2.5">
@@ -262,9 +268,9 @@ function BookingStatusPage() {
                 <div className="flex items-start gap-3">
                   <CreditCard className="h-6 w-6 text-amber-600 mt-0.5 shrink-0" />
                   <div>
-                    <h3 className="font-semibold text-amber-900 text-sm">Pembayaran Belum Diselesaikan</h3>
+                    <h3 className="font-semibold text-amber-900 text-sm">{lang === "en" ? "Payment Not Completed" : "Pembayaran Belum Diselesaikan"}</h3>
                     <p className="text-xs text-amber-700 mt-1 max-w-lg">
-                      Selesaikan pembayaran Anda segera untuk mengamankan dan mengonfirmasi reservasi Paviliun pilihan Anda.
+                      {lang === "en" ? "Please complete your payment immediately to secure and confirm your booking." : "Selesaikan pembayaran Anda segera untuk mengamankan dan mengonfirmasi reservasi Paviliun pilihan Anda."}
                     </p>
                   </div>
                 </div>
@@ -272,7 +278,7 @@ function BookingStatusPage() {
                   onClick={handlePay}
                   className="bg-amber-600 hover:bg-amber-700 text-white text-sm px-6 py-2.5 rounded-lg font-medium transition-colors whitespace-nowrap shadow-sm"
                 >
-                  Bayar Sekarang
+                  {lang === "en" ? "Pay Now" : "Bayar Sekarang"}
                 </button>
               </div>
             )}
@@ -285,14 +291,14 @@ function BookingStatusPage() {
                   <div className="w-24 h-24 shrink-0 overflow-hidden bg-[#8B7355]/20 rounded-xl">
                     <img 
                       src={`${IMAGE_BASE_URL}${bookingData.villa.images.find((img: any) => img.is_primary)?.image_url || bookingData.villa.images[0]?.image_url}`} 
-                      alt={bookingData.villa.name} 
+                      alt={tDynamic(bookingData.villa, "name")} 
                       className="h-full w-full object-cover" 
                     />
                   </div>
                 )}
                 <div>
-                  <span className="text-xs text-gold uppercase tracking-wider font-semibold">Paviliun Pilihan</span>
-                  <h3 className="text-xl text-primary font-semibold mt-0.5">{bookingData.villa?.name}</h3>
+                  <span className="text-xs text-gold uppercase tracking-wider font-semibold">{lang === "en" ? "Selected Pavilion" : "Paviliun Pilihan"}</span>
+                  <h3 className="text-xl text-primary font-semibold mt-0.5">{tDynamic(bookingData.villa, "name")}</h3>
                   <p className="text-xs text-muted-foreground mt-1.5 flex items-center gap-1">
                     <MapPin className="h-3 w-3 text-gold" /> Bantul, Daerah Istimewa Yogyakarta
                   </p>
@@ -303,17 +309,17 @@ function BookingStatusPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pb-6 border-b border-border/50">
                 <div>
                   <div className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1.5">
-                    <Calendar className="h-3.5 w-3.5 text-gold" /> Tanggal Check-in
+                    <Calendar className="h-3.5 w-3.5 text-gold" /> {t("booking.summary.checkin")}
                   </div>
                   <div className="font-semibold text-primary">{formatDate(bookingData.check_in)}</div>
-                  <div className="text-xs text-muted-foreground mt-1">Mulai pukul 15:00 WIB</div>
+                  <div className="text-xs text-muted-foreground mt-1">{lang === "en" ? "From 3:00 PM" : "Mulai pukul 15:00 WIB"}</div>
                 </div>
                 <div>
                   <div className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1.5">
-                    <Calendar className="h-3.5 w-3.5 text-gold" /> Tanggal Check-out
+                    <Calendar className="h-3.5 w-3.5 text-gold" /> {t("booking.summary.checkout")}
                   </div>
                   <div className="font-semibold text-primary">{formatDate(bookingData.check_out)}</div>
-                  <div className="text-xs text-muted-foreground mt-1">Sebelum pukul 12:00 WIB</div>
+                  <div className="text-xs text-muted-foreground mt-1">{lang === "en" ? "Before 12:00 PM" : "Sebelum pukul 12:00 WIB"}</div>
                 </div>
               </div>
 
@@ -321,21 +327,21 @@ function BookingStatusPage() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 pb-6 border-b border-border/50 text-sm">
                 <div>
                   <div className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1.5">
-                    <Users className="h-3.5 w-3.5 text-gold" /> Jumlah Tamu
+                    <Users className="h-3.5 w-3.5 text-gold" /> {t("booking.summary.guests")}
                   </div>
-                  <div className="font-medium text-primary">{bookingData.guest_count} Tamu</div>
+                  <div className="font-medium text-primary">{bookingData.guest_count} {lang === "en" ? (bookingData.guest_count === 1 ? "Guest" : "Guests") : "Tamu"}</div>
                 </div>
                 <div>
                   <div className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1.5">
-                    <BedDouble className="h-3.5 w-3.5 text-gold" /> Durasi Menginap
+                    <BedDouble className="h-3.5 w-3.5 text-gold" /> {lang === "en" ? "Length of Stay" : "Durasi Menginap"}
                   </div>
                   <div className="font-medium text-primary">
-                    {nightsBetween(bookingData.check_in, bookingData.check_out)} Malam
+                    {nightsBetween(bookingData.check_in, bookingData.check_out)} {nightsBetween(bookingData.check_in, bookingData.check_out) === 1 ? t("booking.night") : t("booking.nights", { count: nightsBetween(bookingData.check_in, bookingData.check_out) })}
                   </div>
                 </div>
                 <div>
                   <div className="text-xs text-muted-foreground mb-1.5 flex items-center gap-1.5">
-                    <Mail className="h-3.5 w-3.5 text-gold" /> Email Pemesan
+                    <Mail className="h-3.5 w-3.5 text-gold" /> {lang === "en" ? "Booker Email" : "Email Pemesan"}
                   </div>
                   <div className="font-medium text-primary truncate">{bookingData.guest_email}</div>
                 </div>
@@ -343,20 +349,20 @@ function BookingStatusPage() {
 
               {/* Guest Information */}
               <div className="space-y-3 pb-6 border-b border-border/50 text-sm">
-                <h4 className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Informasi Tamu</h4>
+                <h4 className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">{t("booking.guest_details.title")}</h4>
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <span className="text-xs text-muted-foreground block">Nama Lengkap</span>
+                    <span className="text-xs text-muted-foreground block">{t("booking.form.fullname")}</span>
                     <span className="font-medium text-primary">{bookingData.guest_name}</span>
                   </div>
                   <div>
-                    <span className="text-xs text-muted-foreground block">Nomor Telepon</span>
+                    <span className="text-xs text-muted-foreground block">{t("booking.form.phone")}</span>
                     <span className="font-medium text-primary">{bookingData.guest_phone}</span>
                   </div>
                 </div>
                 {bookingData.special_requests && (
                   <div className="mt-2">
-                    <span className="text-xs text-muted-foreground block">Permintaan Khusus</span>
+                    <span className="text-xs text-muted-foreground block">{t("booking.form.requests")}</span>
                     <p className="text-xs text-primary bg-background/50 p-3 rounded-lg border border-border/40 mt-1 italic">
                       "{bookingData.special_requests}"
                     </p>
@@ -366,29 +372,29 @@ function BookingStatusPage() {
 
               {/* Pricing breakdown */}
               <div className="space-y-3">
-                <h4 className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Rincian Pembayaran</h4>
+                <h4 className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">{lang === "en" ? "Payment Details" : "Rincian Pembayaran"}</h4>
                 <div className="space-y-2.5 text-sm">
                   <div className="flex justify-between text-muted-foreground">
-                    <span>Biaya Kamar ({nightsBetween(bookingData.check_in, bookingData.check_out)} malam)</span>
+                    <span>{lang === "en" ? `Room Charge (${nightsBetween(bookingData.check_in, bookingData.check_out)} nights)` : `Biaya Kamar (${nightsBetween(bookingData.check_in, bookingData.check_out)} malam)`}</span>
                     <span className="font-mono">{formatIDR(bookingData.base_price_total)}</span>
                   </div>
                   
                   {bookingData.extra_charge_total > 0 && (
                     <div className="flex justify-between text-muted-foreground">
-                      <span>Biaya Tamu Tambahan</span>
+                      <span>{t("booking.summary.extra_guest_price")}</span>
                       <span className="font-mono">{formatIDR(bookingData.extra_charge_total)}</span>
                     </div>
                   )}
 
                   {bookingData.discount_amount > 0 && (
                     <div className="flex justify-between text-emerald-600">
-                      <span>Potongan Voucher</span>
+                      <span>{lang === "en" ? "Voucher Discount" : "Potongan Voucher"}</span>
                       <span className="font-mono">-{formatIDR(bookingData.discount_amount)}</span>
                     </div>
                   )}
 
                   <div className="flex justify-between items-baseline pt-4 border-t border-border/60">
-                    <span className="text-base font-semibold text-primary">Total Pembayaran</span>
+                    <span className="text-base font-semibold text-primary">{lang === "en" ? "Total Payment" : "Total Pembayaran"}</span>
                     <span className="text-2xl font-semibold text-primary font-mono">
                       {formatIDR(bookingData.total_amount)}
                     </span>
@@ -400,9 +406,9 @@ function BookingStatusPage() {
             {/* Assistance Section */}
             <div className="bg-ivory/20 border border-border/60 p-6 rounded-2xl flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
               <div>
-                <h4 className="font-semibold text-primary">Butuh Bantuan atau Kontak Darurat?</h4>
+                <h4 className="font-semibold text-primary">{lang === "en" ? "Need Help or Emergency Contact?" : "Butuh Bantuan atau Kontak Darurat?"}</h4>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Hubungi kami di nomor darurat admin jika ada kendala perjalanan atau penyesuaian pesanan.
+                  {lang === "en" ? "Contact us at our emergency admin number for travel issues or booking adjustments." : "Hubungi kami di nomor darurat admin jika ada kendala perjalanan atau penyesuaian pesanan."}
                 </p>
               </div>
               <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
@@ -418,7 +424,7 @@ function BookingStatusPage() {
                   href="tel:+6285190083940" 
                   className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/95 transition-colors text-white text-sm px-6 py-2.5 rounded-lg font-medium"
                 >
-                  <Phone className="h-4 w-4" /> Hubungi Telepon
+                  <Phone className="h-4 w-4" /> {lang === "en" ? "Call Phone" : "Hubungi Telepon"}
                 </a>
               </div>
             </div>

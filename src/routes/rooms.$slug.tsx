@@ -1,12 +1,13 @@
 import * as React from "react";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
-import { ArrowLeft, BedDouble, Bath, Users, Maximize, Eye, Check, ChevronRight, Minus, Plus, Calendar as CalendarIcon, Users as UsersIcon, MapPin, Share, Heart, Star } from "lucide-react";
+import { ArrowLeft, BedDouble, Bath, Users, Maximize, Eye, Check, ChevronRight, Minus, Plus, Calendar as CalendarIcon, Users as UsersIcon, MapPin, Share, Heart, Star, X } from "lucide-react";
 import { format, addDays, startOfToday } from "date-fns";
-import { id } from "date-fns/locale";
+import { id, enUS } from "date-fns/locale";
 import { DateRange } from "react-day-picker";
 import { IconRenderer } from "@/utils/icon-mapper";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Drawer, DrawerClose, DrawerContent, DrawerDescription, DrawerFooter, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import { formatIDR } from "@/lib/utils";
 import { api, Villa, IMAGE_BASE_URL } from "@/lib/api";
 import { Navbar } from "@/components/Navbar";
@@ -140,7 +141,7 @@ export const Route = createFileRoute("/rooms/$slug")({
 
 function RoomDetail() {
   const { room, otherRooms, bookedDates } = Route.useLoaderData();
-  const { t, tDynamic } = useTranslation();
+  const { lang, t, tDynamic } = useTranslation();
   const stats = [
     { icon: Maximize, label: room.size },
     { icon: BedDouble, label: `${room.bed_count} ${t("rooms.bedroom")}` },
@@ -160,6 +161,53 @@ function RoomDetail() {
       to: initialTo,
     } : undefined
   );
+
+  const handleDateSelect = (range: DateRange | undefined) => {
+    if (range?.from && range?.to) {
+      const fromStr = format(range.from, "yyyy-MM-dd");
+      const toStr = format(range.to, "yyyy-MM-dd");
+      if (fromStr === toStr) {
+        setDate({ from: range.from, to: undefined });
+        return;
+      }
+    }
+    setDate(range);
+  };
+
+  const activeLocale = lang === "en" ? enUS : id;
+
+  const hasRangeConflict = React.useMemo(() => {
+    if (!date?.from || !date?.to) return false;
+    let current = new Date(date.from.getFullYear(), date.from.getMonth(), date.from.getDate());
+    const end = new Date(date.to.getFullYear(), date.to.getMonth(), date.to.getDate());
+    // Move day by day from check-in (inclusive) to check-out (exclusive)
+    while (current < end) {
+      const year = current.getFullYear();
+      const month = String(current.getMonth() + 1).padStart(2, '0');
+      const dateStr = String(current.getDate()).padStart(2, '0');
+      const formatted = `${year}-${month}-${dateStr}`;
+      if (bookedDates.includes(formatted)) {
+        return true;
+      }
+      current.setDate(current.getDate() + 1);
+    }
+    return false;
+  }, [date, bookedDates]);
+
+  const nightsCount = React.useMemo(() => {
+    if (!date?.from || !date?.to) return 0;
+    const diffTime = Math.abs(date.to.getTime() - date.from.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  }, [date]);
+
+  const nightsText = React.useMemo(() => {
+    if (nightsCount === 0) return "";
+    if (lang === "en") {
+      return t(nightsCount === 1 ? "booking.night" : "booking.nights", { count: nightsCount });
+    }
+    return t("booking.nights", { count: nightsCount });
+  }, [nightsCount, lang, t]);
 
   const [adults, setAdults] = React.useState(searchParams.guests);
   const [children, setChildren] = React.useState(0);
@@ -490,143 +538,397 @@ function RoomDetail() {
                 {/* Date Picker */}
                 <div>
                   <span className="eyebrow text-muted-foreground block mb-2">{t("room.choosedate")}</span>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <button className="w-full flex items-center gap-3 p-3 bg-transparent border border-border/60 rounded-xl outline-none focus:border-gold hover:bg-black/5 text-left transition-colors">
-                        <CalendarIcon className="h-4 w-4 text-gold" />
-                        <span className="flex-1 text-sm text-foreground font-medium">
-                          {date?.from ? (
-                            date.to ? (
-                              <>{format(date.from, "d MMM yyyy", { locale: id })} - {format(date.to, "d MMM yyyy", { locale: id })}</>
+                  
+                  {/* Desktop view */}
+                  <div className="hidden md:block">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button className="w-full flex items-center gap-3 p-3 bg-transparent border border-border/60 rounded-xl outline-none focus:border-gold hover:bg-black/5 text-left transition-colors">
+                          <CalendarIcon className="h-4 w-4 text-gold" />
+                          <span className="flex-1 text-sm text-foreground font-medium">
+                            {date?.from ? (
+                              date.to ? (
+                                <>{format(date.from, "d MMM yyyy", { locale: activeLocale })} - {format(date.to, "d MMM yyyy", { locale: activeLocale })}</>
+                              ) : (
+                                format(date.from, "d MMM yyyy", { locale: activeLocale })
+                              )
                             ) : (
-                              format(date.from, "d MMM yyyy", { locale: id })
-                            )
-                          ) : (
-                            <span className="text-muted-foreground font-normal">{t("room.checkinout")}</span>
-                          )}
-                        </span>
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 rounded-2xl" align="start">
-                      <Calendar
-                        mode="range"
-                        defaultMonth={date?.from}
-                        selected={date}
-                        onSelect={setDate}
-                        numberOfMonths={1}
-                        disabled={isDateDisabled}
-                      />
-                      <div className="p-3 border-t border-border/50">
-                        <button 
-                          onClick={() => setDate(undefined)} 
-                          className="w-full py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-black/5 rounded-lg transition-colors"
-                        >
-                          Reset
+                              <span className="text-muted-foreground font-normal">{t("room.checkinout")}</span>
+                            )}
+                          </span>
                         </button>
-                      </div>
-                    </PopoverContent>
-                  </Popover>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0 rounded-2xl" align="start">
+                        {/* Real-time Selected Dates Summary & Warning for Desktop */}
+                        <div className="p-4 border-b border-border/50 bg-muted/10">
+                          <div className="flex items-center justify-between gap-4">
+                             <div className="flex flex-col">
+                              <span className="text-[0.6rem] eyebrow text-muted-foreground uppercase">{t("booking.checkin")}</span>
+                              <span className="text-xs font-semibold text-foreground">
+                                {date?.from ? format(date.from, "d MMM yyyy", { locale: activeLocale }) : "-"}
+                              </span>
+                            </div>
+                            {nightsCount > 0 ? (
+                              <span className="text-[0.65rem] px-2 py-0.5 bg-gold/15 text-gold rounded-full font-medium shrink-0">
+                                {nightsText}
+                              </span>
+                            ) : (
+                              <div className="w-4 h-[1px] bg-border" />
+                            )}
+                            <div className="flex flex-col text-right">
+                              <span className="text-[0.6rem] eyebrow text-muted-foreground uppercase">{t("booking.checkout")}</span>
+                              <span className="text-xs font-semibold text-foreground">
+                                {date?.to ? format(date.to, "d MMM yyyy", { locale: activeLocale }) : "-"}
+                              </span>
+                            </div>
+                          </div>
+                          {hasRangeConflict && (
+                            <div className="mt-2 text-[0.65rem] text-rose-500 font-medium flex items-center gap-1 animate-pulse">
+                              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
+                              {t("booking.warning.unavailable")}
+                            </div>
+                          )}
+                        </div>
+                        <Calendar
+                          mode="range"
+                          defaultMonth={date?.from}
+                          selected={date}
+                          onSelect={handleDateSelect}
+                          numberOfMonths={1}
+                          disabled={isDateDisabled}
+                        />
+                        <div className="p-3 border-t border-border/50">
+                          <button 
+                            type="button"
+                            onClick={() => setDate(undefined)} 
+                            className="w-full py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-black/5 rounded-lg transition-colors"
+                          >
+                            Reset
+                          </button>
+                        </div>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+
+                  {/* Mobile view */}
+                  <div className="md:hidden">
+                    <Drawer>
+                      <DrawerTrigger asChild>
+                        <button className="w-full flex items-center gap-3 p-3 bg-transparent border border-border/60 rounded-xl outline-none focus:border-gold hover:bg-black/5 text-left transition-colors">
+                          <CalendarIcon className="h-4 w-4 text-gold" />
+                          <span className="flex-1 text-sm text-foreground font-medium">
+                            {date?.from ? (
+                              date.to ? (
+                                <>{format(date.from, "d MMM yyyy", { locale: activeLocale })} - {format(date.to, "d MMM yyyy", { locale: activeLocale })}</>
+                              ) : (
+                                format(date.from, "d MMM yyyy", { locale: activeLocale })
+                              )
+                            ) : (
+                              <span className="text-muted-foreground font-normal">{t("room.checkinout")}</span>
+                            )}
+                          </span>
+                        </button>
+                      </DrawerTrigger>
+                      <DrawerContent className="p-0 rounded-t-3xl max-h-[85vh] flex flex-col bg-background">
+                        <DrawerHeader className="text-left border-b border-border/50 px-6 py-4 shrink-0">
+                          <div className="flex items-center justify-between">
+                            <DrawerTitle className="text-lg font-bold text-primary">{t("room.choosedate")}</DrawerTitle>
+                            <DrawerClose asChild>
+                              <button className="text-muted-foreground p-1 hover:bg-black/5 rounded-full">
+                                <X className="w-5 h-5" />
+                              </button>
+                            </DrawerClose>
+                          </div>
+
+                          {/* Real-time Selected Dates Summary */}
+                          <div className="mt-3 px-3 py-2 bg-muted/40 border border-border/40 rounded-xl flex items-center justify-between">
+                            <div className="flex flex-col">
+                              <span className="text-[0.65rem] eyebrow text-muted-foreground uppercase">{t("booking.checkin")}</span>
+                              <span className="text-xs font-semibold text-foreground">
+                                {date?.from ? format(date.from, "d MMM yyyy", { locale: activeLocale }) : "-"}
+                              </span>
+                            </div>
+                            {nightsCount > 0 ? (
+                              <span className="text-[0.65rem] px-2.5 py-0.5 bg-gold/15 text-gold rounded-full font-medium shrink-0">
+                                {nightsText}
+                              </span>
+                            ) : (
+                              <div className="w-6 h-[1px] bg-border" />
+                            )}
+                            <div className="flex flex-col text-right">
+                              <span className="text-[0.65rem] eyebrow text-muted-foreground uppercase">{t("booking.checkout")}</span>
+                              <span className="text-xs font-semibold text-foreground">
+                                {date?.to ? format(date.to, "d MMM yyyy", { locale: activeLocale }) : "-"}
+                              </span>
+                            </div>
+                          </div>
+                          {/* Warning Message if range has unavailable dates */}
+                          {hasRangeConflict && (
+                            <div className="mt-2 text-[0.7rem] text-rose-500 font-medium flex items-center gap-1.5 animate-pulse">
+                              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
+                              {t("booking.warning.unavailable")}
+                            </div>
+                          )}
+                        </DrawerHeader>
+                        
+                        <div className="overflow-y-auto flex-1 p-6 flex flex-col items-center">
+                          <Calendar
+                            mode="range"
+                            defaultMonth={date?.from || new Date()}
+                            selected={date}
+                            onSelect={handleDateSelect}
+                            numberOfMonths={24}
+                            disabled={isDateDisabled}
+                            className="w-full flex justify-center [&_.rdp-months]:flex-col [&_.rdp-months]:gap-8"
+                          />
+                        </div>
+                        
+                        <div className="p-6 border-t border-border/50 bg-background flex gap-4 shrink-0">
+                          <button 
+                            type="button"
+                            onClick={() => setDate(undefined)} 
+                            className="flex-1 py-3 text-sm font-semibold text-muted-foreground hover:bg-black/5 border border-border/60 rounded-full transition-colors"
+                          >
+                            Reset
+                          </button>
+                          <DrawerClose asChild disabled={!date?.from || !date?.to || hasRangeConflict}>
+                            <button 
+                              type="button"
+                              disabled={!date?.from || !date?.to || hasRangeConflict}
+                              className="flex-1 py-3 text-sm font-semibold bg-gold text-gold-foreground rounded-full hover:bg-gold/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {t("booking.apply")}
+                            </button>
+                          </DrawerClose>
+                        </div>
+                      </DrawerContent>
+                    </Drawer>
+                  </div>
                 </div>
 
                 {/* Guest Picker */}
                 <div>
                   <span className="eyebrow text-muted-foreground block mb-2">{t("booking.guest")}</span>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <button className="w-full flex items-center gap-3 p-3 bg-transparent border border-border/60 rounded-xl outline-none focus:border-gold hover:bg-black/5 text-left transition-colors">
-                        <UsersIcon className="h-4 w-4 text-gold" />
-                        <span className="flex-1 text-sm text-foreground font-medium">
-                          {totalGuests} {t("rooms.guest")}{infants > 0 ? `, ${infants} ${t("room.infant")}` : ''}
-                        </span>
-                      </button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-80 p-6 rounded-2xl" align="start">
-                      <div className="space-y-6">
-                        {/* Adults */}
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="text-sm font-medium text-foreground">{t("room.adult")}</div>
-                            <div className="text-xs text-muted-foreground">{t("room.adult.desc")}</div>
+                  
+                  {/* Desktop view */}
+                  <div className="hidden md:block">
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <button className="w-full flex items-center gap-3 p-3 bg-transparent border border-border/60 rounded-xl outline-none focus:border-gold hover:bg-black/5 text-left transition-colors">
+                          <UsersIcon className="h-4 w-4 text-gold" />
+                          <span className="flex-1 text-sm text-foreground font-medium">
+                            {totalGuests} {t("rooms.guest")}{infants > 0 ? `, ${infants} ${t("room.infant")}` : ''}
+                          </span>
+                        </button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-80 p-6 rounded-2xl" align="start">
+                        <div className="space-y-6">
+                          {/* Adults */}
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <div className="text-sm font-medium text-foreground">{t("room.adult")}</div>
+                              <div className="text-xs text-muted-foreground">{t("room.adult.desc")}</div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <button
+                                type="button"
+                                disabled={adults <= 1}
+                                onClick={() => setAdults(a => a - 1)}
+                                className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
+                              >
+                                <Minus className="h-3 w-3" />
+                              </button>
+                              <span className="w-4 text-center text-sm font-medium text-foreground">{adults}</span>
+                              <button
+                                type="button"
+                                onClick={() => setAdults(a => a + 1)}
+                                className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
+                              >
+                                <Plus className="h-3 w-3" />
+                              </button>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-4">
-                            <button
-                              type="button"
-                              disabled={adults <= 1}
-                              onClick={() => setAdults(a => a - 1)}
-                              className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
-                            >
-                              <Minus className="h-3 w-3" />
-                            </button>
-                            <span className="w-4 text-center text-sm font-medium text-foreground">{adults}</span>
-                            <button
-                              type="button"
-                              onClick={() => setAdults(a => a + 1)}
-                              className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
-                            >
-                              <Plus className="h-3 w-3" />
-                            </button>
-                          </div>
-                        </div>
 
-                        {/* Children */}
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="text-sm font-medium text-foreground">{t("room.child")}</div>
-                            <div className="text-xs text-muted-foreground">{t("room.child.desc")}</div>
+                          {/* Children */}
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <div className="text-sm font-medium text-foreground">{t("room.child")}</div>
+                              <div className="text-xs text-muted-foreground">{t("room.child.desc")}</div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <button
+                                type="button"
+                                disabled={children <= 0}
+                                onClick={() => setChildren(a => a - 1)}
+                                className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
+                              >
+                                <Minus className="h-3 w-3" />
+                              </button>
+                              <span className="w-4 text-center text-sm font-medium text-foreground">{children}</span>
+                              <button
+                                type="button"
+                                onClick={() => setChildren(a => a + 1)}
+                                className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
+                              >
+                                <Plus className="h-3 w-3" />
+                              </button>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-4">
-                            <button
-                              type="button"
-                              disabled={children <= 0}
-                              onClick={() => setChildren(a => a - 1)}
-                              className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
-                            >
-                              <Minus className="h-3 w-3" />
-                            </button>
-                            <span className="w-4 text-center text-sm font-medium text-foreground">{children}</span>
-                            <button
-                              type="button"
-                              onClick={() => setChildren(a => a + 1)}
-                              className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
-                            >
-                              <Plus className="h-3 w-3" />
-                            </button>
-                          </div>
-                        </div>
 
-                        {/* Infants */}
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="text-sm font-medium text-foreground">{t("room.infant")}</div>
-                            <div className="text-xs text-muted-foreground">{t("room.infant.desc")}</div>
+                          {/* Infants */}
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <div className="text-sm font-medium text-foreground">{t("room.infant")}</div>
+                              <div className="text-xs text-muted-foreground">{t("room.infant.desc")}</div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <button
+                                type="button"
+                                disabled={infants <= 0}
+                                onClick={() => setInfants(a => a - 1)}
+                                className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
+                              >
+                                <Minus className="h-3 w-3" />
+                              </button>
+                              <span className="w-4 text-center text-sm font-medium text-foreground">{infants}</span>
+                              <button
+                                type="button"
+                                disabled={infants >= 5}
+                                onClick={() => setInfants(a => a + 1)}
+                                className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
+                              >
+                                <Plus className="h-3 w-3" />
+                              </button>
+                            </div>
                           </div>
-                          <div className="flex items-center gap-4">
-                            <button
-                              type="button"
-                              disabled={infants <= 0}
-                              onClick={() => setInfants(a => a - 1)}
-                              className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
-                            >
-                              <Minus className="h-3 w-3" />
-                            </button>
-                            <span className="w-4 text-center text-sm font-medium text-foreground">{infants}</span>
-                            <button
-                              type="button"
-                              disabled={infants >= 5}
-                              onClick={() => setInfants(a => a + 1)}
-                              className="w-8 h-8 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
-                            >
-                              <Plus className="h-3 w-3" />
-                            </button>
-                          </div>
-                        </div>
 
-                        <div className="text-xs text-muted-foreground pt-4 border-t border-border/60">
-                          {t("room.capacity.desc", { capacity: room.capacity, fee: formatIDR(room.extra_guest_fee) })}
+                          <div className="text-xs text-muted-foreground pt-4 border-t border-border/60">
+                            {t("room.capacity.desc", { capacity: room.capacity, fee: formatIDR(room.extra_guest_fee) })}
+                          </div>
                         </div>
-                      </div>
-                    </PopoverContent>
-                  </Popover>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
+
+                  {/* Mobile view */}
+                  <div className="md:hidden">
+                    <Drawer>
+                      <DrawerTrigger asChild>
+                        <button className="w-full flex items-center gap-3 p-3 bg-transparent border border-border/60 rounded-xl outline-none focus:border-gold hover:bg-black/5 text-left transition-colors">
+                          <UsersIcon className="h-4 w-4 text-gold" />
+                          <span className="flex-1 text-sm text-foreground font-medium">
+                            {totalGuests} {t("rooms.guest")}{infants > 0 ? `, ${infants} ${t("room.infant")}` : ''}
+                          </span>
+                        </button>
+                      </DrawerTrigger>
+                      <DrawerContent className="p-0 rounded-t-3xl max-h-[85vh] flex flex-col bg-background">
+                        <DrawerHeader className="text-left border-b border-border/50 px-6 py-4 flex items-center justify-between shrink-0">
+                          <DrawerTitle className="text-lg font-bold text-primary">{t("booking.guest")}</DrawerTitle>
+                          <DrawerClose asChild>
+                            <button className="text-muted-foreground p-1 hover:bg-black/5 rounded-full">
+                              <X className="w-5 h-5" />
+                            </button>
+                          </DrawerClose>
+                        </DrawerHeader>
+                        
+                        <div className="overflow-y-auto flex-1 p-6 space-y-6">
+                          {/* Adults */}
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <div className="text-sm font-medium text-foreground">{t("room.adult")}</div>
+                              <div className="text-xs text-muted-foreground">{t("room.adult.desc")}</div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <button
+                                type="button"
+                                disabled={adults <= 1}
+                                onClick={() => setAdults(a => a - 1)}
+                                className="w-10 h-10 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
+                              >
+                                <Minus className="h-4 w-4" />
+                              </button>
+                              <span className="w-4 text-center text-sm font-medium text-foreground">{adults}</span>
+                              <button
+                                type="button"
+                                onClick={() => setAdults(a => a + 1)}
+                                className="w-10 h-10 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
+                              >
+                                <Plus className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Children */}
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <div className="text-sm font-medium text-foreground">{t("room.child")}</div>
+                              <div className="text-xs text-muted-foreground">{t("room.child.desc")}</div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <button
+                                type="button"
+                                disabled={children <= 0}
+                                onClick={() => setChildren(a => a - 1)}
+                                className="w-10 h-10 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
+                              >
+                                <Minus className="h-4 w-4" />
+                              </button>
+                              <span className="w-4 text-center text-sm font-medium text-foreground">{children}</span>
+                              <button
+                                type="button"
+                                onClick={() => setChildren(a => a + 1)}
+                                className="w-10 h-10 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
+                              >
+                                <Plus className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Infants */}
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <div className="text-sm font-medium text-foreground">{t("room.infant")}</div>
+                              <div className="text-xs text-muted-foreground">{t("room.infant.desc")}</div>
+                            </div>
+                            <div className="flex items-center gap-4">
+                              <button
+                                type="button"
+                                disabled={infants <= 0}
+                                onClick={() => setInfants(a => a - 1)}
+                                className="w-10 h-10 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
+                              >
+                                <Minus className="h-4 w-4" />
+                              </button>
+                              <span className="w-4 text-center text-sm font-medium text-foreground">{infants}</span>
+                              <button
+                                type="button"
+                                disabled={infants >= 5}
+                                onClick={() => setInfants(a => a + 1)}
+                                className="w-10 h-10 rounded-full border border-border/60 flex items-center justify-center text-foreground hover:border-gold disabled:opacity-30 disabled:hover:border-border/60 transition-colors"
+                              >
+                                <Plus className="h-4 w-4" />
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="text-xs text-muted-foreground pt-4 border-t border-border/60">
+                            {t("room.capacity.desc", { capacity: room.capacity, fee: formatIDR(room.extra_guest_fee) })}
+                          </div>
+                        </div>
+                        
+                        <div className="p-6 border-t border-border/50 bg-background shrink-0">
+                          <DrawerClose asChild>
+                            <button 
+                              type="button"
+                              className="w-full py-3 text-sm font-semibold bg-gold text-gold-foreground rounded-full hover:bg-gold/90 transition-colors"
+                            >
+                              {t("booking.done")}
+                            </button>
+                          </DrawerClose>
+                        </div>
+                      </DrawerContent>
+                    </Drawer>
+                  </div>
                 </div>
               </div>
 
@@ -641,22 +943,22 @@ function RoomDetail() {
                 onClick={(e) => {
                   if (!date?.from) {
                     e.preventDefault();
-                    setAlertTitle("Pilih Tanggal");
-                    setAlertMessage("Silakan tentukan tanggal check-in dan check-out untuk reservasi Anda.");
+                    setAlertTitle(t("booking.alert.title.checkin"));
+                    setAlertMessage(t("booking.alert.msg.checkin"));
                     setAlertOpen(true);
                     return;
                   }
                   if (!date?.to) {
                     e.preventDefault();
-                    setAlertTitle("Pilih Tanggal Check-Out");
-                    setAlertMessage("Silakan tentukan tanggal check-out untuk melengkapi durasi menginap Anda.");
+                    setAlertTitle(t("booking.alert.title.checkout"));
+                    setAlertMessage(t("booking.alert.msg.checkout"));
                     setAlertOpen(true);
                     return;
                   }
                   if (format(date.from, "yyyy-MM-dd") === format(date.to, "yyyy-MM-dd")) {
                     e.preventDefault();
-                    setAlertTitle("Minimal 1 Malam");
-                    setAlertMessage("Pemesanan paviliun memerlukan minimal menginap selama 1 malam. Tanggal check-in dan check-out tidak boleh sama.");
+                    setAlertTitle(t("booking.alert.title.minbook"));
+                    setAlertMessage(t("room.minbook.desc"));
                     setAlertOpen(true);
                     return;
                   }
@@ -674,10 +976,10 @@ function RoomDetail() {
                     current.setDate(current.getDate() + 1);
                   }
 
-                  if (hasBookedDate) {
+                  if (hasBookedDate || hasRangeConflict) {
                     e.preventDefault();
-                    setAlertTitle("Tanggal Tidak Tersedia");
-                    setAlertMessage("Rentang tanggal yang Anda pilih melewati tanggal yang sudah dipesan oleh orang lain. Silakan pilih rentang tanggal kosong lainnya.");
+                    setAlertTitle(t("booking.alert.title.unavailable"));
+                    setAlertMessage(t("booking.alert.msg.unavailable"));
                     setAlertOpen(true);
                     return;
                   }
