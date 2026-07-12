@@ -139,6 +139,16 @@ function RootShell({ children }: { children: ReactNode }) {
         <HeadContent />
         <style>{`@keyframes loaderSlide{0%{transform:scaleX(0);transform-origin:left}50%{transform:scaleX(1);transform-origin:left}50.1%{transform:scaleX(1);transform-origin:right}100%{transform:scaleX(0);transform-origin:right}}`}</style>
         <script type="text/javascript" src={snapUrl} data-client-key={clientKey}></script>
+        <script dangerouslySetInnerHTML={{ __html: `
+          if (typeof sessionStorage !== 'undefined') {
+            if (sessionStorage.getItem('hasSeenSplash') || window.location.pathname !== '/') {
+              document.documentElement.classList.add('hide-splash');
+            }
+          }
+        ` }} />
+        <style dangerouslySetInnerHTML={{ __html: `
+          .hide-splash #splash-screen { display: none !important; opacity: 0 !important; pointer-events: none !important; }
+        ` }} />
       </head>
       <body>
         <PageLoader />
@@ -151,16 +161,20 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function SplashScreen() {
   const location = useLocation();
-  const [visible, setVisible] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const isHome = location.pathname === '/';
-      const hasSeen = sessionStorage.getItem('hasSeenSplash');
-      return isHome && !hasSeen;
-    }
-    return false;
-  });
+  // Always true initially on server and client to avoid hydration mismatch (no "sudden" appearance).
+  const [visible, setVisible] = useState(true);
 
   useEffect(() => {
+    // Check condition once mounted on client
+    const isHome = location.pathname === '/';
+    const hasSeen = sessionStorage.getItem('hasSeenSplash');
+    
+    if (!isHome || hasSeen) {
+      // If the inline script already hid it, this removes it from the DOM entirely.
+      setVisible(false);
+      return;
+    }
+
     if (visible) {
       const timer = setTimeout(() => {
         setVisible(false);
@@ -168,12 +182,12 @@ function SplashScreen() {
       }, 2000);
       return () => clearTimeout(timer);
     }
-  }, [visible]);
+  }, [location.pathname, visible]);
 
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 z-[99999] bg-[#F5F6EB] flex items-center justify-center overflow-hidden animate-[splashFade_2s_ease_forwards]">
+    <div id="splash-screen" className="fixed inset-0 z-[99999] bg-[#F5F6EB] flex items-center justify-center overflow-hidden animate-[splashFade_2s_ease_forwards]">
       {/* Outer slow-expanding ring */}
       <div className="absolute w-[480px] h-[480px] sm:w-[600px] sm:h-[600px] rounded-full border border-[#C9A96E]/20 animate-[ringExpand_2s_ease-out_0.2s_forwards] opacity-0 pointer-events-none" />
       {/* Middle ring */}

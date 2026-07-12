@@ -116,30 +116,10 @@ function Calendar({
           ...classNames,
         }}
         components={{
-          Root: ({ className, rootRef, ...props }) => {
-            return <div data-slot="calendar" ref={rootRef} className={cn(className)} {...props} />;
-          },
-          Chevron: ({ className, orientation, ...props }) => {
-            if (orientation === "left") {
-              return <ChevronLeftIcon className={cn("size-4", className)} {...props} />;
-            }
-
-            if (orientation === "right") {
-              return <ChevronRightIcon className={cn("size-4", className)} {...props} />;
-            }
-
-            return <ChevronDownIcon className={cn("size-4", className)} {...props} />;
-          },
-          DayButton: CalendarDayButton,
-          WeekNumber: ({ children, ...props }) => {
-            return (
-              <td {...props}>
-                <div className="flex size-(--cell-size) items-center justify-center text-center">
-                  {children}
-                </div>
-              </td>
-            );
-          },
+          Root: CalendarRoot,
+          Chevron: CalendarChevron,
+          DayButton: CalendarDayButton as any,
+          WeekNumber: CalendarWeekNumber,
           ...components,
         }}
         {...props}
@@ -148,7 +128,31 @@ function Calendar({
   );
 }
 
-function CalendarDayButton({
+const CalendarRoot = ({ className, rootRef, ...props }: any) => {
+  return <div data-slot="calendar" ref={rootRef} className={cn(className)} {...props} />;
+};
+
+const CalendarChevron = ({ className, orientation, ...props }: any) => {
+  if (orientation === "left") {
+    return <ChevronLeftIcon className={cn("size-4", className)} {...props} />;
+  }
+  if (orientation === "right") {
+    return <ChevronRightIcon className={cn("size-4", className)} {...props} />;
+  }
+  return <ChevronDownIcon className={cn("size-4", className)} {...props} />;
+};
+
+const CalendarWeekNumber = ({ children, ...props }: any) => {
+  return (
+    <td {...props}>
+      <div className="flex size-(--cell-size) items-center justify-center text-center">
+        {children}
+      </div>
+    </td>
+  );
+};
+
+const CalendarDayButton = React.memo(function CalendarDayButtonInner({
   className,
   day,
   modifiers,
@@ -215,7 +219,6 @@ function CalendarDayButton({
       {/* Date number */}
       <span className="text-[15px] md:text-sm font-normal leading-none">{props.children}</span>
 
-      {/* Price label */}
       {showPrice && (
         priceData === null ? (
           // Loading skeleton
@@ -234,6 +237,16 @@ function CalendarDayButton({
       )}
     </Button>
   );
-}
+}, (prev, next) => {
+  if (prev.modifiers.selected !== next.modifiers.selected) return false;
+  if (prev.modifiers.range_start !== next.modifiers.range_start) return false;
+  if (prev.modifiers.range_end !== next.modifiers.range_end) return false;
+  if (prev.modifiers.range_middle !== next.modifiers.range_middle) return false;
+  if (prev.modifiers.focused !== next.modifiers.focused) return false;
+  if (prev.modifiers.disabled !== next.modifiers.disabled) return false;
+  if (prev.modifiers.outside !== next.modifiers.outside) return false;
+  if (prev.day.date.getTime() !== next.day.date.getTime()) return false;
+  return true;
+});
 
 export { Calendar, CalendarDayButton };
