@@ -281,7 +281,7 @@ function BookingFormPage() {
                   <h2 className="text-xl text-primary">{tDynamic(selectedRoomData, "name")}</h2>
                   <div className="mt-2 flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted-foreground">
                     <span className="inline-flex items-center gap-1.5"><Calendar className="h-3 w-3 text-gold" /> {params.checkIn || "—"} → {params.checkOut || "—"}</span>
-                    <span className="inline-flex items-center gap-1.5"><BedDouble className="h-3 w-3 text-gold" /> {pricing?.nights || 0} {pricing?.nights === 1 ? t("booking.night") : t("booking.nights", { count: pricing?.nights || 0 })}</span>
+                    <span className="inline-flex items-center gap-1.5"><BedDouble className="h-3 w-3 text-gold" /> {pricing?.nights === 1 ? t("booking.night", { count: pricing?.nights }) : t("booking.nights", { count: pricing?.nights || 0 })}</span>
                     <span className="inline-flex items-center gap-1.5"><Users className="h-3 w-3 text-gold" /> {params.guests} {lang === "en" ? (params.guests === 1 ? "guest" : "guests") : "tamu"}</span>
 
                   </div>
@@ -440,7 +440,7 @@ function BookingFormPage() {
                     <div className="flex justify-between">
                       <div className="flex items-center gap-2">
                         <span className="text-muted-foreground">{t("booking.summary.villa_price")}</span>
-                        <span className="text-[11px] text-muted-foreground/50">{pricing?.nights || differenceInDays(new Date(params.checkOut || Date.now()), new Date(params.checkIn || Date.now()))} {pricing?.nights === 1 ? t("booking.night") : t("booking.nights", { count: pricing?.nights || 0 })}</span>
+                        <span className="text-[11px] text-muted-foreground/50">{(pricing?.nights || differenceInDays(new Date(params.checkOut || Date.now()), new Date(params.checkIn || Date.now()))) === 1 ? t("booking.night", { count: 1 }) : t("booking.nights", { count: pricing?.nights || differenceInDays(new Date(params.checkOut || Date.now()), new Date(params.checkIn || Date.now())) })}</span>
                       </div>
                       <span className="font-medium">{pricing ? formatIDR(pricing.base_price_total) : '—'}</span>
                     </div>

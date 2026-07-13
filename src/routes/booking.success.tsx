@@ -122,7 +122,7 @@ function BookingSuccessPage() {
               <div className="text-muted-foreground mb-1 flex items-center gap-1.5">
                 <BedDouble className="h-3.5 w-3.5 text-gold" /> {t("booking.summary.nights")}
               </div>
-              <div className="font-medium">{nights} {nights === 1 ? t("booking.night") : t("booking.nights", { count: nights })}</div>
+              <div className="font-medium">{nights === 1 ? t("booking.night", { count: nights }) : t("booking.nights", { count: nights })}</div>
             </div>
             <div>
               <div className="text-muted-foreground mb-1 flex items-center gap-1.5">

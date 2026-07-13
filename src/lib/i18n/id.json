@@ -88,6 +88,7 @@
   "booking.alert.msg.checkin": "Silakan tentukan tanggal check-in dan check-out untuk reservasi Anda.",
   "booking.alert.title.checkout": "Pilih Tanggal Check-Out",
   "booking.alert.msg.checkout": "Silakan tentukan tanggal check-out untuk melengkapi durasi menginap Anda.",
+  "booking.night": "{count} malam",
   "booking.nights": "{count} malam",
   "booking.title": "Selesaikan Reservasi Anda",
   "booking.subtitle": "Tinggal selangkah lagi menuju pengalaman menginap yang tak terlupakan.",
