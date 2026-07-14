@@ -48,6 +48,7 @@ function BookingFormPage() {
   const [promoCode, setPromoCode] = useState("");
   const [isPromoApplied, setIsPromoApplied] = useState(false);
   const [isValidatingPromo, setIsValidatingPromo] = useState(false);
+  const [promoError, setPromoError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
 
@@ -84,29 +85,57 @@ function BookingFormPage() {
     }
   };
 
+  const handleCancelPromo = async () => {
+    setIsPromoApplied(false);
+    setPromoCode("");
+    setPromoError(null);
+    try {
+      await fetchPricing("");
+    } catch (e) {
+      // Ignored
+    }
+  };
+
   useEffect(() => {
     if (params.room) {
       api.getVilla(params.room).then(res => {
         if (res.status === 'success') setSelectedRoomData(res.data);
       });
-      fetchPricing();
+      fetchPricing().then(unwrapped => {
+        if (isPromoApplied && unwrapped && unwrapped.discount === 0) {
+          setIsPromoApplied(false);
+          setPromoCode("");
+          if (unwrapped.voucher_error === 'min_nights_not_met') {
+            setPromoError(t("booking.promo.removed_min_nights", { code: promoCode, nights: unwrapped.voucher_min_nights || 1 }));
+          } else {
+            setPromoError(t("booking.promo.invalid"));
+          }
+        }
+      });
     }
   }, [params.room, params.checkIn, params.checkOut, params.guests]);
 
   const handleApplyPromo = async () => {
     if (!promoCode) return;
     setIsValidatingPromo(true);
+    setPromoError(null);
     try {
       const unwrapped = await fetchPricing(promoCode);
       if (unwrapped && unwrapped.discount > 0) {
         setIsPromoApplied(true);
+        setPromoError(null);
         toast.success(t("booking.promo.success"));
       } else {
         setIsPromoApplied(false);
-        toast.error(t("booking.promo.invalid"));
+        if (unwrapped && unwrapped.voucher_error === 'min_nights_not_met') {
+          setPromoError(t("booking.promo.min_nights_error", { nights: unwrapped.voucher_min_nights || 1 }));
+        } else {
+          setPromoError(t("booking.promo.invalid"));
+        }
       }
-    } catch (error) {
+    } catch (error: any) {
       setIsPromoApplied(false);
+      setPromoError(error.message || t("booking.promo.invalid"));
     } finally {
       setIsValidatingPromo(false);
     }
@@ -486,21 +515,38 @@ function BookingFormPage() {
                       <input
                         type="text"
                         value={promoCode}
-                        onChange={(e) => setPromoCode(e.target.value)}
+                        onChange={(e) => {
+                          setPromoCode(e.target.value);
+                          if (promoError) setPromoError(null);
+                        }}
                         placeholder={t("booking.promo.placeholder")}
                         className="w-full bg-transparent border border-border px-3 py-2 outline-none focus:border-gold text-foreground placeholder:text-muted-foreground/50 transition-colors rounded-xl text-sm"
                         disabled={isPromoApplied || isValidatingPromo}
                       />
-                      <button
-                        type="button"
-                        onClick={handleApplyPromo}
-                        disabled={isPromoApplied || !promoCode || isValidatingPromo}
-                        className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:bg-primary/90 disabled:opacity-40 transition-colors inline-flex items-center gap-2"
-                      >
-                        {isValidatingPromo ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
-                        {isPromoApplied ? t("booking.promo.applied") : t("booking.promo.apply")}
-                      </button>
+                      {isPromoApplied ? (
+                        <button
+                          type="button"
+                          onClick={handleCancelPromo}
+                          disabled={isValidatingPromo}
+                          className="px-4 py-2 bg-destructive/10 text-destructive border border-destructive/20 rounded-xl text-sm font-medium hover:bg-destructive/20 transition-colors"
+                        >
+                          {t("booking.promo.cancel")}
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={handleApplyPromo}
+                          disabled={!promoCode || isValidatingPromo}
+                          className="px-4 py-2 bg-primary text-primary-foreground rounded-xl text-sm font-medium hover:bg-primary/90 disabled:opacity-40 transition-colors inline-flex items-center gap-2"
+                        >
+                          {isValidatingPromo ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+                          {t("booking.promo.apply")}
+                        </button>
+                      )}
                     </div>
+                    {promoError && (
+                      <p className="text-xs text-destructive mt-1 font-medium">{promoError}</p>
+                    )}
                     {isPromoApplied && availData && availData.discount > 0 && (
                       <div className="flex justify-between items-center text-sm text-green-600">
                         <span>{t("booking.summary.discount", { code: promoCode })}</span>
